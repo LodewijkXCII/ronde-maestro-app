@@ -1,0 +1,179 @@
+a.btn,
+.btn {
+  --_button-outline: 3px solid;
+
+  padding: 0.5rem 0.75rem;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  border-radius: var(--border-radius);
+  font-weight: 900;
+  text-decoration: none;
+  border: none;
+  user-select: none;
+
+  outline: var(--_button-outline) var(--background-mute);
+
+  background: var(--clr-background);
+
+  color: var(--clr-text);
+  transition:
+    outline 200ms ease-in,
+    color 200ms ease-in;
+
+  &:is(:disabled, [disabled="true"], .btn-disabled) {
+    cursor: not-allowed;
+    color: currentColor;
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
+
+  &:hover,
+  :focus-within {
+    cursor: pointer;
+    outline: var(--_button-outline) var(--clr-primary);
+  }
+
+  &-active {
+    color: var(--clr-text);
+    outline: var(--_button-outline) var(--clr-primary);
+  }
+
+  &-primary {
+    background: var(--clr-primary);
+    color: var(--clr-text-white);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: transparent;
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-primary);
+    }
+
+    &-active {
+      background: transparent;
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-primary);
+    }
+  }
+
+  &.action {
+    background: var(--clr-secondary);
+    color: var(--clr-text-black);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: transparent;
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-secondary);
+    }
+  }
+
+  &.danger {
+    color: var(--clr-text-white);
+    background: var(--clr-error);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: transparent;
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-error);
+    }
+  }
+
+  &.alert {
+    color: var(--clr-text-black);
+    background: var(--clr-alert);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: transparent;
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-alert);
+    }
+  }
+
+  &.secondary {
+    color: var(--clr-text);
+    background: transparent;
+    outline: var(--_button-outline) hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+      color: var(--clr-text);
+    }
+  }
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn-inline {
+  display: flex;
+  gap: 1rem;
+}
+
+.errormessage {
+  font-weight: 900;
+
+  border-radius: 5px;
+  margin-top: 1rem;
+  margin-right: 0.75rem;
+  padding: 0.5rem 0.75rem;
+
+  &.danger {
+    border: var(--_button-outline) var(--clr-error);
+    color: var(--clr-text);
+  }
+
+  &.alert {
+    border: var(--_button-outline) var(--clr-alert);
+    color: var(--clr-text);
+  }
+
+  &.succes {
+    border: var(--_button-outline) var(--clr-accent-green);
+    color: var(--clr-accent-green);
+  }
+}
+
+.alert {
+  display: grid;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: var(--border-radius);
+  padding-inline: 0.5rem;
+  padding-block: 0.25rem;
+  background-color: var(--clr-background-mute);
+  justify-content: start;
+  justify-items: start;
+  grid-auto-flow: column;
+  text-align: start;
+  border: 3px solid var(--clr-background-mute);
+  margin: 0.5rem 0;
+
+  &-error {
+    background-color: var(--clr-error);
+    border-color: var(--clr-error);
+    color: var(--clr-text-error);
+  }
+}

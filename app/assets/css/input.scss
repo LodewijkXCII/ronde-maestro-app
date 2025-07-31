@@ -1,0 +1,264 @@
+.input-group {
+  width: 100%;
+  margin: 0.25rem 0;
+  display: block;
+  position: relative;
+  user-select: none;
+
+  &:first-of-type:not(.checkbox-hidden) {
+    margin-top: 0;
+  }
+
+  .input__error {
+    border-bottom-color: var(--clr-error) !important;
+
+    + .input__text {
+      border: 3px solid var(--clr-text-error) !important;
+    }
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    height: 3em;
+    padding: 0.75rem 0.5rem;
+    background-color: var(--clr-background-mute);
+    color: currentColor;
+    border-radius: 2px;
+    outline: none;
+    border-bottom: solid 3px var(--clr-primary);
+
+    &:hover {
+      cursor: text;
+    }
+
+    &:focus,
+    &:focus-within {
+      border-width: 3px;
+      border-image: linear-gradient(to left, var(--clr-primary), var(--clr-secondary));
+      border-image-slice: 1;
+    }
+  }
+
+  input[type="checkbox"] {
+    accent-color: var(--clr-primary);
+    margin-right: 0.25em;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .input-error {
+    color: var(--clr-error);
+  }
+
+  .btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 2px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 900;
+    text-decoration: none;
+    border: none;
+    background: var(--clr-primary);
+    color: var(--clr-text-white);
+    margin: auto;
+    height: 100%;
+
+    transition:
+      background 200ms ease-in,
+      outline 200ms ease-in;
+
+    &:focus,
+    &:focus-within {
+      outline: solid 2px var(--clr-secondary);
+      outline-offset: -2px;
+    }
+
+    &:hover {
+      outline: solid 2px var(--clr-primary);
+      outline-offset: -2px;
+      cursor: pointer;
+      background: var(--clr-background-mute);
+      color: var(--clr-text);
+    }
+  }
+}
+
+form .btn {
+  margin-top: 0.5rem;
+}
+
+label {
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  img {
+    width: 25px;
+  }
+}
+
+.input.succes {
+  input {
+    accent-color: var(--clr-accent-green);
+  }
+
+  > * {
+    color: var(--clr-accent-green);
+  }
+}
+
+.delete-filter {
+  margin: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
+  outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+  display: inline-block;
+}
+
+.checkbox-hidden,
+.delete-filter {
+  background: var(--clr-background-mute);
+  width: max-content;
+  border-radius: 5px;
+
+  &:hover {
+    outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+    cursor: pointer;
+  }
+
+  &.selected {
+    background-color: var(--clr-primary);
+    outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+  }
+
+  label {
+    padding: 0.5rem 0.75rem;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  input {
+    display: none;
+  }
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+
+  button {
+    margin-left: 2rem;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  > :not(button):not(:first-child):is(input[type="checkbox"]) {
+    margin-left: 1rem;
+  }
+
+  .checkbox-hidden {
+    margin: 0;
+  }
+}
+
+select {
+  appearance: none;
+  width: 100%;
+}
+
+select,
+input {
+  /* A reset of styles, including removing the default dropdown arrow */
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+
+  /*  Stack above custom arrow */
+  z-index: 1;
+
+  /* // Remove dropdown arrow in IE10 & IE11 */
+  /* // @link https://www.filamentgroup.com/lab/select-css.html */
+  &::-ms-expand {
+    display: none;
+  }
+
+  /* // Remove focus outline, will add on alternate element */
+  outline: none;
+
+  &::placeholder {
+    color: var(--clr-text);
+    opacity: 1; /* Firefox */
+  }
+
+  &::-ms-input-placeholder {
+    /* Edge 12 -18 */
+    color: var(--clr-text);
+  }
+}
+
+select {
+  display: block;
+  padding: 0.75rem 1rem;
+  background-color: var(--clr-background-mute);
+  border-bottom: 2px solid var(--clr-primary);
+  margin: 0.5rem 0;
+  border-radius: 5px;
+  cursor: pointer;
+  line-height: 1.2;
+  align-items: center;
+  position: relative;
+  max-width: 100%;
+
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+
+  background-image: url("../assets/icons/FeArrowDown.svg");
+  background-repeat: no-repeat, repeat;
+  /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+  background-position:
+    right 0.7em top 50%,
+    0 0;
+  /* icon size, then gradient */
+  background-size:
+    0.65em auto,
+    100%;
+
+  select,
+  &::after {
+    grid-area: select;
+  }
+
+  &:focus {
+    border-color: var(--clr-secondary);
+    outline: 1px solid var(--clr-primary);
+  }
+
+  &:hover {
+    border-color: var(--clr-secondary);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: graytext;
+  }
+
+  &::-ms-expand {
+    display: none;
+  }
+}
