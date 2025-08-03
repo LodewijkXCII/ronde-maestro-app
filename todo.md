@@ -5,6 +5,10 @@
 ## Utilities
 - [x] Inloggen
 - [ ] Registeren
+- [ ] Navbar
+  - [ ] Hover modus
+  - [ ] Correct background flex item
+  - [ ] Wanneer je bij een specifiek etappe overzicht bent ook etappe overzicht als active bestempelen
 
 
 ## Pages

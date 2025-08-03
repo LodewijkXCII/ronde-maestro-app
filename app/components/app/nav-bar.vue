@@ -49,8 +49,20 @@ const SHOWNAVBARDROPDOWN = ref(false);
                     {{ race.name }}
                   </NuxtLink>
                   <ul>
+                    <!-- TODO NAVIGEER NAAR JUISTE GEDEELTE VAN ETAPPE -->
                     <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
-                      <NuxtLink to="/" class="">
+                      <NuxtLink
+                        :to="{
+                          name: 'dashboard-race-id-selecteer-nr',
+                          params:
+                            {
+                              race: slugify(race.name),
+                              id: stage.raceId,
+                              nr: stage.stageNr,
+                            },
+                        }"
+                        class=""
+                      >
                         <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
                           stage.finishCity }}
                       </NuxtLink>

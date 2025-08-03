@@ -3,6 +3,7 @@ import type { Stage } from "~/types/race";
 
 defineProps<{
   stage: Stage;
+  raceName: string;
 }>();
 
 const config = useRuntimeConfig();
@@ -32,7 +33,18 @@ const config = useRuntimeConfig();
       <Icon name="tabler:pencil-off" size="24" style="color:var(--clr-alert)" />
       Etappe onderweg
     </NuxtLink>
-    <NuxtLink v-else to="/dashboard">
+    <NuxtLink
+      v-else
+      :to="{
+        name: 'dashboard-race-id-selecteer-nr',
+        params:
+          {
+            race: slugify(raceName),
+            id: stage.raceId,
+            nr: stage.stageNr,
+          },
+      }"
+    >
       <Icon name="tabler:pencil" size="24" style="color:var(--clr-primary)" />
       Selecteer renners
     </NuxtLink>

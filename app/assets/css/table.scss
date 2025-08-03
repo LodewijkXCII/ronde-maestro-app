@@ -30,6 +30,7 @@
     &:hover:not(.table-header) {
       cursor: pointer;
       background-color: lightslategray;
+      color: var(--clr-text-white);
       .table-grow,
       .table-action {
         text-decoration: underline;

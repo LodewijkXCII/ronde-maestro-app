@@ -1,5 +1,9 @@
-import { isToday } from "date-fns";
+import { isPast, isToday } from "date-fns";
 
 export function stageUnderway(stageDate: Date | string): boolean {
-  return isToday(stageDate);
+  if (isToday(stageDate) || isPast(stageDate)) {
+    return true;
+  }
+
+  return false;
 }
