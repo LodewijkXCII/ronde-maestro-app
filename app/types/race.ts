@@ -1,4 +1,10 @@
-export type SelectRaceWithRelations = {
+import type { SelectCountry } from "./common";
+
+export type SelectRaceWithRelations = Race & {
+  stages: Stage[];
+};
+
+export type Race = {
   id: number;
   name: string;
   image: string | null;
@@ -9,16 +15,11 @@ export type SelectRaceWithRelations = {
   seasonTimeId: number;
   startDate: Date;
   finishDate: Date;
-  country: {
-    id: number;
-    name: string;
-    abbreviation: string;
-  };
+  country: SelectCountry;
   seasonTime: {
     id: number;
     name: string;
   };
-  stages: Stage[];
 };
 
 export type Stage = {

@@ -1,25 +1,11 @@
+import type { SelectCountry, SelectSpeciality, Team } from "./common";
+
 export type TeamWithStartlistCyclists = {
   team: Team;
   cyclists: CyclistWithRaceDetails[];
 };
 
 export type StartlistTeamsAndRiders = TeamWithStartlistCyclists[];
-
-export type Team = {
-  id: number;
-  name: string;
-  image: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  abbreviation: string;
-  level: Level;
-  countryId: number;
-  country: {
-    abbreviation: string;
-    id: number;
-    name: string;
-  };
-};
 
 export type StartlistWithTeam = {
   id: number;
@@ -29,8 +15,6 @@ export type StartlistWithTeam = {
   updatedAt: Date;
   team: Team;
 };
-
-type Level = "UCI ProTeams" | "UCI WorldTeams" | "UCI Women ProTeams" | "UCI Women WorldTeams" | "Geen Team";
 
 export type CyclistWithRaceDetails = CyclistWithRelations
   & { startlistDetails: StartlistDetails };
@@ -53,15 +37,4 @@ export type StartlistDetails = {
   raceNumber: number;
   withdraw: boolean;
   raceId: number;
-};
-
-export type SelectSpeciality = {
-  id: number;
-  name: string;
-  image: string;
-};
-export type SelectCountry = {
-  id: number;
-  name: string;
-  abbreviation: string;
 };

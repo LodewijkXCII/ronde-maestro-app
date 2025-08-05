@@ -21,13 +21,6 @@ a.btn,
     outline 200ms ease-in,
     color 200ms ease-in;
 
-  &:is(:disabled, [disabled="true"], .btn-disabled) {
-    cursor: not-allowed;
-    color: currentColor;
-    filter: grayscale(100%);
-    opacity: 0.5;
-  }
-
   &:hover,
   :focus-within {
     cursor: pointer;
@@ -60,7 +53,7 @@ a.btn,
     }
   }
 
-  &.action {
+  &-action {
     background: var(--clr-secondary);
     color: var(--clr-text-black);
     transition:
@@ -75,7 +68,7 @@ a.btn,
     }
   }
 
-  &.danger {
+  &-danger {
     color: var(--clr-text-white);
     background: var(--clr-error);
     transition:
@@ -90,7 +83,7 @@ a.btn,
     }
   }
 
-  &.alert {
+  &-alert {
     color: var(--clr-text-black);
     background: var(--clr-alert);
     transition:
@@ -105,7 +98,7 @@ a.btn,
     }
   }
 
-  &.secondary {
+  &-secondary {
     color: var(--clr-text);
     background: transparent;
     outline: var(--_button-outline) hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
@@ -118,6 +111,12 @@ a.btn,
       background: hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
       color: var(--clr-text);
     }
+  }
+  &:is(:disabled, [disabled="true"], .btn-disabled) {
+    cursor: not-allowed;
+    color: currentColor;
+    filter: grayscale(100%);
+    opacity: 0.5;
   }
 }
 
@@ -159,7 +158,7 @@ a.btn,
 .alert {
   display: grid;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
   border-radius: var(--border-radius);
   padding-inline: 0.5rem;
   padding-block: 0.25rem;
@@ -175,5 +174,78 @@ a.btn,
     background-color: var(--clr-error);
     border-color: var(--clr-error);
     color: var(--clr-text-error);
+  }
+  &-success {
+    background-color: var(--clr-accent-green);
+    border-color: var(--clr-accent-green);
+    color: var(--clr-text-black);
+  }
+}
+
+.avatar {
+  --_avatar-width: 75px;
+  aspect-ratio: 1 /1;
+  overflow: hidden;
+  border-radius: 50%;
+  width: var(--_avatar-width);
+  background: var(--clr-background-mute);
+
+  &-placeholder > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    place-items: center;
+    height: 100%;
+    text-transform: uppercase;
+  }
+}
+
+.cyclistCard, .team-info, .cyclist-info-box {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.75rem;
+  height: var(--rider-card-height);
+  max-width: var(--rider-card-width);
+  margin: 0.5rem 0;
+  font-size: 0.9rem; 
+
+  &:first-of-type {
+    margin-top: 1rem;
+  }
+}
+
+.stage-box {
+  background: var(--clr-background-mute);
+  padding: 1rem;
+  border-radius: 5px;
+  min-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &--body {
+    justify-content: start;
+  }
+}
+
+.points > span, span.points {
+      font-weight: 800;
+}
+.sum-line {
+  height: 3px;
+  display: block;
+  background-color: var(--clr-text);
+  margin: 1.5rem 0;
+max-width: var(--rider-card-width);
+  position: relative;
+
+  .plus {
+    position: absolute;
+    right: 0;
+    background: var(--clr-background);
+    font-size: var(--fs-600);
+    height: 3px;
+    line-height: 0;
+    width: 2rem;
+    text-align: center;
   }
 }

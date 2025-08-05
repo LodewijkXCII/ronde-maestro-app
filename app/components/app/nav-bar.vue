@@ -49,9 +49,37 @@ const SHOWNAVBARDROPDOWN = ref(false);
                     {{ race.name }}
                   </NuxtLink>
                   <ul>
-                    <!-- TODO NAVIGEER NAAR JUISTE GEDEELTE VAN ETAPPE -->
                     <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
                       <NuxtLink
+                        v-if="stage.done"
+                        :to="{
+                          name: 'dashboard-race-id-uitslagen-nr',
+                          params:
+                            {
+                              race: slugify(race.name),
+                              id: stage.raceId,
+                              nr: stage.stageNr,
+                            },
+
+                        }"
+                        class=""
+                      >
+                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                          stage.finishCity }} <Icon size="12" name="tabler:trophy" />
+                      </NuxtLink>
+                      <NuxtLink
+                        v-else-if="!stage.done && stageUnderway(stage.date)"
+                        :to="{
+                          name: 'dashboard',
+
+                        }"
+                        class=""
+                      >
+                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                          stage.finishCity }} <Icon size="12" name="tabler:pencil-off" />
+                      </NuxtLink>
+                      <NuxtLink
+                        v-else
                         :to="{
                           name: 'dashboard-race-id-selecteer-nr',
                           params:
@@ -64,7 +92,7 @@ const SHOWNAVBARDROPDOWN = ref(false);
                         class=""
                       >
                         <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                          stage.finishCity }}
+                          stage.finishCity }} <Icon size="12" name="tabler:pencil" />
                       </NuxtLink>
                     </li>
                   </ul>
@@ -179,6 +207,7 @@ const SHOWNAVBARDROPDOWN = ref(false);
 .menu-separate {
   position: absolute;
   top: 100%;
+  z-index: 100;
   margin-top: 0.5rem;
   background-color: var(--clr-background-mute);
   padding-block: 0.75rem;
@@ -191,6 +220,7 @@ const SHOWNAVBARDROPDOWN = ref(false);
   display: flex;
   gap: 0.75rem;
   padding-right: 0.5em;
+  place-items: center;
 }
 
 .nav-logo svg {

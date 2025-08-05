@@ -7,39 +7,58 @@ const startlistStore = useStartlistStore();
 
 const route = useRoute();
 
-const currentRace = computed(() => {
-  if (sideBarStore.currentRace) {
-    return sideBarStore.currentRace;
-  }
-  return null;
-});
+const { currentRace } = storeToRefs(sideBarStore);
 const { currentStage } = storeToRefs(sideBarStore);
 const compkey = ref(0);
 
-async function getRaceData() {
-  if (route.params.id) {
-    const searchId = getParamId(route.params.id);
+const showAllTeams = ref(false);
 
-    if (searchId) {
-      startlistStore.activeRaceIdForFetch = searchId;
-      await startlistStore.refreshStartlistData();
+function toggleAllTeams() {
+  showAllTeams.value = !showAllTeams.value;
+}
+function handleChildToggle() {
+  showAllTeams.value = false;
+}
 
-      const stageId = getParamId(route.params.nr);
+async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
+  if (!route.params.id) {
+    return;
+  }
 
-      if (stageId) {
-        sideBarStore.currentStage = currentRace.value?.stages.find(stage => stage.stageNr === stageId) || null;
-      }
-    }
+  const raceId = getParamId(route.params.id);
+  if (!raceId) {
+    return;
+  }
 
-    if (!sideBarStore.upcomingRace && sideBarStore.upcomingRaceStatus !== "pending") {
-      await sideBarStore.refreshUpcomingRace();
+  startlistStore.activeRaceIdForFetch = raceId;
+  await startlistStore.refreshStartlistData();
+
+  if (newRace && newRace.stages) {
+    const stageNr = getParamId(route.params.nr);
+    if (stageNr) {
+      const foundStage = newRace.stages.find(stage => stage.stageNr === stageNr) || null;
+      sideBarStore.currentStage = foundStage;
     }
   }
 }
 
-onMounted(() => {
-  getRaceData();
-});
+watch(
+  () => ({
+    raceId: route.params.id,
+    stageNr: route.params.nr,
+    currentRace: sideBarStore.currentRace,
+  }),
+  async ({ currentRace: newCurrentRace }) => {
+    if (!sideBarStore.upcomingRace && sideBarStore.upcomingRaceStatus !== "pending") {
+      await sideBarStore.refreshUpcomingRace();
+    }
+    setRaceAndStageData(newCurrentRace);
+  },
+  {
+    immediate: true,
+    deep: true,
+  },
+);
 </script>
 
 <template>
@@ -62,7 +81,9 @@ onMounted(() => {
                 Etappe {{ currentStage.stageNr }}: {{ currentStage.startCity }} - {{ currentStage.finishCity }}
               </p>
             </div>
-            <img :src="`${config.public.s3BucketURL}/${currentRace.image}`" :alt="currentRace.name">
+            <div class="avatar">
+              <img :src="`${config.public.s3BucketURL}/${currentRace.image}`" :alt="currentRace.name">
+            </div>
           </div>
           <div class="stage-box--body">
             <img :src="`${config.public.s3BucketURL}/${currentStage.image}`" :alt="`${currentStage.startCity}-${currentStage.finishCity}`">
@@ -70,10 +91,34 @@ onMounted(() => {
         </div>
         <StageTimer v-if="currentStage.date" :key="compkey" :stage-date="String(currentStage.date)" />
       </section>
-      <section>
-      <!-- Startlist -->
-      <!-- Selected Riders -->
+      <Loading v-if="startlistStore.loading" />
+      <section v-else class="cyclistSelector">
+        <h2>Teams en renners</h2>
+        <!-- TODO ADD FILTERS -->
+
+        <div class="filter-group">
+          <div class="toggle-switch">
+            <label class="switch">
+              <input type="checkbox" switch @click="toggleAllTeams">
+              <div class="slider round" />
+            </label>
+            <p>{{ showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
+          </div>
+        </div>
+        <!-- Startlist -->
+        <div v-if="startlistStore.startlistData" class="cyclistSelector--teams">
+          <StartlistTeam
+            v-for="{ team, cyclists } in startlistStore.startlistData"
+            :key="team.id"
+            :team="team"
+            :cyclists
+            :is-all-teams-shown="showAllTeams"
+            @toggle-team-state="handleChildToggle"
+          />
+        </div>
+        <!-- Selected Riders -->
       </section>
+      <StartlistSelectedRiders />
     </div>
   </main>
   <!-- TO TOP COMPONENT -->
@@ -108,7 +153,7 @@ onMounted(() => {
     display: grid;
     position: relative;
 
-    // TODO CHECK THIS OUT
+    // FIXME CHECK THIS OUT
     // &::after {
     //   content: "";
     //   height: 100%;
@@ -120,22 +165,19 @@ onMounted(() => {
   }
 
   .selected-riders {
-    position: sticky;
-    top: 2rem;
+    grid-area: select;
+    // position: sticky;
+    // top: 2rem;
   }
 }
 
-.stage-box {
-  background: var(--clr-background-mute);
-  padding: 1rem;
-  border-radius: 5px;
-  min-width: 90%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.cyclistSelector {
+  grid-area: startlist;
 
-  &--body {
-    justify-content: start;
+  &--teams {
+    display: grid;
+    gap: 2rem 1rem;
+    grid-template-columns: repeat(3, var(--rider-card-width));
   }
 }
 
@@ -180,12 +222,30 @@ onMounted(() => {
       }
     }
   }
+
+  .cyclistSelector {
+    grid-area: startlist;
+
+    &--teams {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: var(--rider-card-width-dynamic);
+    }
+  }
 }
 
 @media (min-width: 64em) and (max-width: 90em) {
   .cyclistOverview {
     grid-template-columns: repeat(3, var(--rider-card-width));
     grid-template-areas: "info info info" "startlist startlist select";
+  }
+  .cyclistSelector {
+    grid-area: startlist;
+
+    &--teams {
+      display: grid;
+      grid-template-columns: repeat(2, var(--rider-card-width));
+    }
   }
 }
 
@@ -194,5 +254,83 @@ onMounted(() => {
     grid-template-columns: repeat(6, var(--rider-card-width));
     grid-template-areas: "info info info info info info" "startlist startlist startlist startlist startlist select";
   }
+
+  .cyclistSelector {
+    grid-area: startlist;
+
+    &--teams {
+      display: grid;
+      grid-template-columns: repeat(5, var(--rider-card-width));
+    }
+  }
+}
+
+.toggle-switch {
+  display: flex;
+  gap: 0.35rem;
+  place-items: center;
+  margin-bottom: 1em;
+
+  p {
+    margin: 0;
+    vertical-align: text-top;
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #101010;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #101010;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>

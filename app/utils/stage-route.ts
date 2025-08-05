@@ -11,7 +11,7 @@ export async function goToStage(stageId: number) {
         if (stage.id === stageId) {
           if (stage.done) {
             await navigateTo({
-              name: "dashboard-race-id-uitslagen-etappe-nr",
+              name: "dashboard-race-id-uitslagen-nr",
               params: {
                 race: slugify(race.name),
                 id: race.id,
@@ -25,7 +25,7 @@ export async function goToStage(stageId: number) {
 
           else {
             await navigateTo({
-              name: "dashboard-race-id-selecteer-etappe-nr",
+              name: "dashboard-race-id-selecteer-nr",
               params: {
                 race: slugify(race.name),
                 id: race.id,
