@@ -119,7 +119,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
 
   &.active {
     outline: 2px solid var(--clr-primary);
-    background: hsl(from var(--clr-primary) h calc(s - 0.6) l / 0.9);
+    background: var(--clr-primary-dark);
   }
 }
 </style>

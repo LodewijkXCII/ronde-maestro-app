@@ -41,7 +41,6 @@ const config = useRuntimeConfig();
       </div>
     </div>
     <div v-if="showSpecialies" class="cyclistCard--specialities">
-      <!-- TODO CHECK TO PLACE IN RIGHT PLACE -->
       <img
         v-for="{ speciality } in cyclist.specialities"
         :key="speciality.id"
@@ -66,7 +65,7 @@ const config = useRuntimeConfig();
   &:hover:not([data-user-select="false"]) {
     transition: transform ease-in-out 0.3s;
     transform: scale(1.03);
-    outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l / 0.9);
+    outline: 2px solid var(--clr-primary-dark);
     color: var(--clr-text);
     cursor: pointer;
   }

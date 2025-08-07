@@ -3,7 +3,7 @@ import type { Cyclist } from "~/types/common";
 
 defineProps<{
   cyclist: Cyclist;
-  result: {
+  result?: {
     position: number;
     points: number;
   };
@@ -15,7 +15,8 @@ const config = useRuntimeConfig();
 <template>
   <div class="cyclistMiniCard">
     <div class="cyclistMiniCard--position">
-      {{ result.position }}.
+      <span v-if="result">{{ result.position }}.</span>
+      <span v-else>-</span>
     </div>
 
     <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
@@ -38,8 +39,8 @@ const config = useRuntimeConfig();
       </p>
     </div>
     <!-- FIXME IF NEEDED USE AS SLOT -->
-    <div v-show="result.points" class="points">
-      <span>{{ result.points }}</span> ptn
+    <div v-if="result?.points" class="points">
+      <span>{{ result?.points }}</span> ptn
     </div>
   </div>
 </template>
@@ -50,7 +51,7 @@ const config = useRuntimeConfig();
   font-size: 0.9rem;
   margin: 0.5rem 0;
   display: grid;
-  grid-template-columns: minmax(auto, 4ch) var(--_avatar-width) minmax(auto, 40ch) auto;
+  grid-template-columns: minmax(3ch, auto) var(--_avatar-width) minmax(auto, 40ch) auto;
   gap: 0.5rem;
   align-items: center;
   max-width: var(--rider-card-width);

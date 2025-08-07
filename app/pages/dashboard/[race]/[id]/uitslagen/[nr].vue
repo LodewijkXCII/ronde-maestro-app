@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import type { EntryWithResult, ResultCyclistByStage, ResultResponse, ResultUsersByStage } from "~/types/results";
+import type { ResultCyclistByStage, ResultResponse, ResultUsersByStage } from "~/types/results";
 
 import getParamId from "~/utils/param-extractor";
 
@@ -19,7 +19,9 @@ const { currentStage } = storeToRefs(sideBarStore);
 const errorMessage = ref("");
 const cyclistResult = ref<ResultCyclistByStage[]>([]);
 const usersResult = ref<ResultUsersByStage[]>([]);
-const usersEntry = ref<EntryWithResult[]>([]);
+
+const loading = ref(false);
+
 const totalUserScoredPoints = computed(() => {
   if (usersResult.value) {
     const foundUser = usersResult.value.find(user => user.userId === authStore.user.id);
@@ -29,6 +31,17 @@ const totalUserScoredPoints = computed(() => {
     return foundUser.points;
   }
   return 0;
+});
+
+const findUsersEntry = computed<ResultUsersByStage | null>(() => {
+  if (usersResult.value) {
+    const foundUser = usersResult.value.find(user => user.userId === authStore.user.id);
+    if (!foundUser) {
+      return null;
+    }
+    return foundUser;
+  }
+  return null;
 });
 
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
@@ -52,24 +65,30 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
     }
     // GET RESULT DATA
 
+    if (!currentStage.value?.id) {
+      return;
+    }
+
     try {
       errorMessage.value = "";
+      loading.value = true;
 
-      const { cyclist, users, entry } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${currentStage.value?.id}`, {
+      const { cyclist, users } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${currentStage.value?.id}`, {
         method: "get",
         credentials: "include",
       });
-      if (cyclist && users && entry) {
+      if (cyclist && users) {
         cyclistResult.value = cyclist;
         usersResult.value = users;
-        usersEntry.value = entry;
       }
     }
 
     catch (e) {
       const error = e as FetchError;
-
       errorMessage.value = getFetchErrorMessage(error);
+    }
+    finally {
+      loading.value = false;
     }
   }
 }
@@ -94,8 +113,8 @@ watch(
 </script>
 
 <template>
-  <main class="wrapper wrapper-small">
-    <Loading v-if="sideBarStore.loading" />
+  <main class="wrapper wrapper-sm">
+    <Loading v-if="sideBarStore.loading || loading" />
 
     <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
       <Icon name="tabler:alert-square-rounded" />
@@ -103,35 +122,39 @@ watch(
         Er is geen race data gevonden!
       </span>
     </div>
+    <div v-if="errorMessage" role="alert" class="alert alert-error">
+      <Icon name="tabler:alert-square-rounded" />
+      <span>
+        {{ errorMessage }}
+      </span>
+    </div>
 
     <section v-else-if="currentRace && currentStage">
-      <article>
-        <div class="stage-box stage-section">
-          <div class="stage-box--title stage-section--race">
-            <div>
-              <h3>Uitslag {{ currentRace.name }}</h3>
-              <p class="stage-section--stage__info">
-                Etappe {{ currentStage.stageNr }}: {{ currentStage.startCity }} - {{ currentStage.finishCity }}
-              </p>
-            </div>
-            <div class="avatar">
-              <img :src="`${config.public.s3BucketURL}/${currentRace.image}`" :alt="currentRace.name">
-            </div>
-          </div>
-          <div class="stage-box--body">
-            <img :src="`${config.public.s3BucketURL}/${currentStage.image}`" :alt="`${currentStage.startCity}-${currentStage.finishCity}`">
-          </div>
-        </div>
-      </article>
+      <StageInfo :race="currentRace" :stage="currentStage" />
 
       <!-- USER RESULT -->
-      <pre>{{ usersResult }}</pre>
+
+      <ul class="table result-table">
+        <li class="table-row table-header">
+          <div>Plaats</div>
+          <div>Naam </div>
+          <div>Punten</div>
+          <div />
+        </li>
+        <!-- TODO BOLD IF USER IS CURRENTUSER -->
+        <ResultRow
+          v-for="(user, index) in usersResult"
+          :key="index"
+          :user
+          :position="index + 1"
+        />
+      </ul>
       <!-- USER SELECTION WITH RESULT -->
       <div class="testClass">
-        <section v-if="usersEntry">
+        <section v-if="findUsersEntry">
           <h3>Geslecteerder renners</h3>
           <CyclistCardMedium
-            v-for="{ cyclist } in usersEntry"
+            v-for="{ cyclist } in findUsersEntry.entries"
             :key="cyclist.id"
             :cyclist
             :show-specialies="false"
@@ -139,7 +162,7 @@ watch(
             no-user-select
           >
             <template #actionSlot>
-              <div class="points">
+              <div v-if="cyclist.results[0]" class="points">
                 <span>{{ cyclist.results[0]?.points }}</span> pnt
               </div>
             </template>

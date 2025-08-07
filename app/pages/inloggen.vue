@@ -2,7 +2,6 @@
 import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
-import { NuxtLink } from "#components";
 import { useForm } from "vee-validate";
 import * as z from "zod";
 

@@ -148,3 +148,13 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
     </CyclistCardMedium>
   </div>
 </template>
+
+<style lang="scss">
+.selected-riders > .selected:nth-of-type(n + 10) {
+  background-color: var(--clr-error);
+
+  &:hover {
+    outline-color: hsl(from var(--clr-error) h calc(s - 0.1) l / 0.9);
+  }
+}
+</style>

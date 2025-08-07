@@ -9,7 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="wrapper-small">
+  <main class="wrapper-sm">
     <h2>Etappe overzicht</h2>
 
     <RaceTable v-for="race in sideBarStore.upcomingRace" :key="race.id" :race />

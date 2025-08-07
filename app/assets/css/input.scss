@@ -1,6 +1,6 @@
 .input-group {
   width: 100%;
-  margin: 0.25rem 0;
+  margin: 0.75rem 0;
   display: block;
   position: relative;
   user-select: none;
@@ -253,9 +253,11 @@ select {
     border-color: var(--clr-secondary);
   }
 
-  &:disabled,
+  & option:disabled,
   &[aria-disabled="true"] {
     color: graytext;
+    filter: grayscale(100%);
+    opacity: 0.5;
   }
 
   &::-ms-expand {

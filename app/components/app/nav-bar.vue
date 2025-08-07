@@ -2,7 +2,9 @@
 const showMobileDropdown = ref(false);
 const sideBarStore = useSideBarStore();
 
-const SHOWNAVBARDROPDOWN = ref(false);
+const SHOWETAPPESDROPDOWN = ref(false);
+const SHOWUITSLAGDROPDOWN = ref(false);
+const SHOWKLASSEMENTROPDOWN = ref(false);
 </script>
 
 <template>
@@ -17,8 +19,6 @@ const SHOWNAVBARDROPDOWN = ref(false);
           v-if="!sideBarStore.loading"
           class="primary-navigation"
           :data-visible="showMobileDropdown"
-          @mouseover="SHOWNAVBARDROPDOWN = true"
-          @mouseleave="SHOWNAVBARDROPDOWN = false"
         >
           <ul
             id="primary-navigation"
@@ -31,11 +31,14 @@ const SHOWNAVBARDROPDOWN = ref(false);
                 Dashboard
               </NuxtLink>
             </li>
-            <li>
+            <li
+              @mouseover="SHOWETAPPESDROPDOWN = true"
+              @mouseleave="SHOWETAPPESDROPDOWN = false"
+            >
               <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }">
                 Etappe overzicht
               </NuxtLink>
-              <div v-if="SHOWNAVBARDROPDOWN" class="menu-separate">
+              <div v-if="SHOWETAPPESDROPDOWN" class="menu-separate">
                 <ul v-for="race in sideBarStore.upcomingRace" :key="race.id">
                   <NuxtLink
                     :to="{
@@ -96,6 +99,72 @@ const SHOWNAVBARDROPDOWN = ref(false);
                       </NuxtLink>
                     </li>
                   </ul>
+                </ul>
+              </div>
+            </li>
+            <li
+              @mouseover="SHOWUITSLAGDROPDOWN = true"
+              @mouseleave="SHOWUITSLAGDROPDOWN = false"
+            >
+              Uitslagen
+              <div v-if="SHOWUITSLAGDROPDOWN" class="menu-separate">
+                <template v-for="race in sideBarStore.upcomingRace" :key="race.id">
+                  <ul v-if="race.stages.some(stage => stage.done)">
+                    <NuxtLink
+                      :to="{
+                        name: 'dashboard-etappe-overzicht-race-id',
+                        params: {
+                          race: slugify(race.name),
+                          id: race.id,
+                        },
+                      }"
+                    >
+                      {{ race.name }}
+                    </NuxtLink>
+                  </ul>
+                  <template v-for="stage in race.stages" :key="stage.id">
+                    <li v-if="stage.done" class="stage-nav">
+                      <NuxtLink
+                        :to="{
+                          name: 'dashboard-race-id-uitslagen-nr',
+                          params:
+                            {
+                              race: slugify(race.name),
+                              id: stage.raceId,
+                              nr: stage.stageNr,
+                            },
+
+                        }"
+                        class=""
+                      >
+                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                          stage.finishCity }}
+                      </NuxtLink>
+                    </li>
+                  </template>
+                </template>
+              </div>
+            </li>
+            <li
+              @mouseover="SHOWKLASSEMENTROPDOWN = true"
+              @mouseleave="SHOWKLASSEMENTROPDOWN = false"
+            >
+              Klassement
+              <div v-if="SHOWKLASSEMENTROPDOWN" class="menu-separate">
+                <ul>
+                  <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
+                    <NuxtLink
+                      :to="{
+                        name: 'dashboard-race-id-klassement',
+                        params: {
+                          race: slugify(race.name),
+                          id: race.id,
+                        },
+                      }"
+                    >
+                      {{ race.name }}
+                    </NuxtLink>
+                  </li>
                 </ul>
               </div>
             </li>

@@ -11,6 +11,7 @@
   --clr-background: #e7e5e4;
   --clr-background-mute: #f2f3f5;
   --clr-primary: #54759a;
+  --clr-primary-dark: hsl(from var(--clr-primary) h calc(s - 1) calc(l - 10) / 0.6);
   --clr-primary-content: var(--clr-text-white);
   --clr-secondary: #3cc4cc;
   --clr-error: #db5461;
@@ -80,14 +81,19 @@ body {
   margin-inline: auto;
 }
 
-.wrapper-small {
+.wrapper-lg {
   /* 3* rider card width  + 1rem gap per colum*/
-  width: min(100% - 3rem, calc((var(--rider-card-width) + 2rem) * 3 + 2rem));
+  width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 3);
+  margin-inline: auto;
+}
+.wrapper-sm {
+  /* 2* rider card width  + 1rem gap per colum*/
+  width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 2);
   margin-inline: auto;
 }
 
 .wrapper-xs {
-  width: min(100% - 1rem, calc(var(--rider-card-width) * 2));
+  width: min(100% - 1rem, var(--rider-card-width));
   margin-inline: auto;
 }
 
@@ -141,7 +147,7 @@ a {
   color: var(--clr-primary);
 }
 
-article {
+article.race {
   margin-top: 1em;
   margin-bottom: 3em;
 }

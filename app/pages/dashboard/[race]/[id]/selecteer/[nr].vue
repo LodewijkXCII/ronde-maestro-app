@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import getParamId from "~/utils/param-extractor";
 
-const config = useRuntimeConfig();
 const sideBarStore = useSideBarStore();
 const startlistStore = useStartlistStore();
 
@@ -73,22 +72,7 @@ watch(
     </div>
     <div class="cyclistOverview">
       <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
-        <div class="stage-box stage-section">
-          <div class="stage-box--title stage-section--race">
-            <div>
-              <h3>{{ currentRace.name }}</h3>
-              <p class="stage-section--stage__info">
-                Etappe {{ currentStage.stageNr }}: {{ currentStage.startCity }} - {{ currentStage.finishCity }}
-              </p>
-            </div>
-            <div class="avatar">
-              <img :src="`${config.public.s3BucketURL}/${currentRace.image}`" :alt="currentRace.name">
-            </div>
-          </div>
-          <div class="stage-box--body">
-            <img :src="`${config.public.s3BucketURL}/${currentStage.image}`" :alt="`${currentStage.startCity}-${currentStage.finishCity}`">
-          </div>
-        </div>
+        <StageInfo :race="currentRace" :stage="currentStage" />
         <StageTimer v-if="currentStage.date" :key="compkey" :stage-date="String(currentStage.date)" />
       </section>
       <Loading v-if="startlistStore.loading" />
@@ -122,6 +106,7 @@ watch(
     </div>
   </main>
   <!-- TO TOP COMPONENT -->
+  <AppToTop />
 </template>
 
 <style lang="scss">
@@ -152,22 +137,10 @@ watch(
     grid-template-columns: subgrid;
     display: grid;
     position: relative;
-
-    // FIXME CHECK THIS OUT
-    // &::after {
-    //   content: "";
-    //   height: 100%;
-    //   width: 100px;
-    //   background-image: linear-gradient(to right, transparent, var(--clr-background));
-    //   position: absolute;
-    //   right: 0;
-    // }
   }
 
   .selected-riders {
     grid-area: select;
-    // position: sticky;
-    // top: 2rem;
   }
 }
 
@@ -178,28 +151,6 @@ watch(
     display: grid;
     gap: 2rem 1rem;
     grid-template-columns: repeat(3, var(--rider-card-width));
-  }
-}
-
-.stage-section {
-  &--race {
-    display: flex;
-    gap: 0.25rem;
-    justify-content: space-between;
-    align-items: center;
-
-    img {
-      width: 75px;
-      aspect-ratio: 1;
-      object-fit: cover;
-    }
-    h3 {
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    p {
-      margin: 0;
-    }
   }
 }
 

@@ -1,10 +1,22 @@
 .table {
+  --_grid-columns: minmax(0, auto) minmax(0, auto) minmax(0, auto);
   display: grid;
   background: var(--clr-background-mute);
   padding: 0;
   border: 2px solid var(--clr-background-mute);
   border-radius: var(--border-radius);
   margin: 1em 0;
+
+  &:where(.race-table) {
+    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr 20px
+      minmax(5ch, 8ch) minmax(2ch, 15ch);
+  }
+  &:where(.result-table) {
+    --_grid-columns: 5ch 1fr minmax(4ch, auto) 3ch;
+  }
+&:where(.standings-table) {
+    --_grid-columns: 5ch minmax(10ch, auto) 7ch 7ch;
+  }
 
   &-header {
     background-color: var(--clr-primary);
@@ -14,9 +26,9 @@
   }
   &-row {
     list-style-type: none;
-    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr 20px minmax(5ch, 8ch) minmax(2ch, 15ch);
     display: grid;
     align-items: center;
+    // place-content: center;
     gap: 1rem;
     min-height: 3em;
     padding: 1rem;
@@ -36,6 +48,10 @@
         text-decoration: underline;
       }
     }
+  }
+
+  .user-row {
+    font-weight: 800;
   }
 
   &-action a {

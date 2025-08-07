@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <article>
+  <article class="race">
     <h3>Etappes voor {{ race.name }}</h3>
     <p>
       {{ new Date(race.startDate).toLocaleDateString("nl-NL", {
@@ -18,7 +18,7 @@ defineProps<{
         month: 'short',
       }) }}
     </p>
-    <ul class="table">
+    <ul class="table race-table">
       <li class="table-row table-header">
         <div>#</div>
         <div />

@@ -1,11 +1,4 @@
-import { createAuthClient } from "better-auth/vue";
-
-const authClient = createAuthClient({
-  baseURL: "http://localhost:5959/",
-  fetchOptions: {
-    credentials: "include",
-  },
-});
+import { authClient } from "~/lib/auth-client";
 
 type ErrorTypes = Partial<
   Record<
@@ -35,19 +28,25 @@ const {
   useSession,
   signIn,
   signOut,
+  signUp,
 } = authClient;
 
 export const useAuthStore = defineStore("useAuthstore", () => {
   const router = useRouter();
   const session = ref<ReturnType<typeof authClient.useSession> | null>(null);
 
-  function init() {
-    const data = useSession();
+  async function init() {
+    // TODO IF !DATA NAVIGATE TO /
+    const data = await useSession();
+
+    if (!data) {
+      return navigateTo("/");
+    }
     session.value = data;
   }
 
-  const user = computed(() => session.value?.value?.data?.user);
-  const loading = computed(() => session.value?.value?.isPending);
+  const user = computed(() => session.value?.value.data?.user);
+  const loading = computed(() => session.value?.value.isPending);
   const errorMessage = ref("");
 
   async function inloggen(body: { email: string; password: string }) {
@@ -58,6 +57,25 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     await signIn.email({
       email: body.email,
       password: body.password,
+      callbackURL: "/dashboard",
+      fetchOptions: {
+        headers,
+        onError(ctx) {
+          errorMessage.value = getErrorMessage(ctx.error.code, "nl");
+        },
+      },
+    });
+  }
+
+  async function registreren(body: { email: string; password: string; userName: string }) {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+
+    await signUp.email({
+      email: body.email,
+      password: body.password,
+      name: body.userName,
       callbackURL: "/dashboard",
       fetchOptions: {
         headers,
@@ -90,6 +108,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     loading,
     inloggen,
     uitloggen,
+    registreren,
     errorMessage,
   };
 });
