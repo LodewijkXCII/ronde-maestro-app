@@ -50,9 +50,14 @@ function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] {
       if (foundStage) {
         foundStage.results.push({
           ...userStageResult,
-
         });
       }
+    }
+  }
+
+  for (const stageResult of combinedResults) {
+    if (stageResult.results.length > 0) {
+      stageResult.results.sort((a, b) => b.points - a.points);
     }
   }
 

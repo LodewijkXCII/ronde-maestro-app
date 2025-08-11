@@ -90,6 +90,10 @@ const config = useRuntimeConfig();
     gap: 0.5rem;
     place-items: center;
     flex-wrap: wrap;
+
+    img {
+      width: 20px;
+    }
   }
 
   &--actions {

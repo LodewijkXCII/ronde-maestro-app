@@ -10,6 +10,8 @@ const props = defineProps<{
 const emit = defineEmits(["toggleTeamState"]);
 
 const selectedRidersStore = useSelectedRidersStore();
+const sideBarStore = useSideBarStore();
+const { currentStage } = storeToRefs(sideBarStore);
 
 const config = useRuntimeConfig();
 
@@ -18,6 +20,24 @@ const currentTeam = computed(() => {
     return props.team;
   }
   return null;
+});
+
+const tttCyclist = computed<CyclistWithRaceDetails | null | undefined>(() => {
+  if (currentStage.value?.stageType.name === "Ploegentijdrit" && props.cyclists && props.cyclists.length > 0) {
+    const firstActiveCyclist = props.cyclists.find(cyclist => cyclist.startlistDetails.withdraw === false);
+
+    return firstActiveCyclist;
+  }
+  return null;
+});
+
+const cyclistsToShow = computed<CyclistWithRaceDetails[]>(() => {
+  if (tttCyclist.value) {
+    // If it's a TTT stage, return a single-item array with the TTT cyclist
+    return [tttCyclist.value];
+  }
+  // Otherwise, return the full array of cyclists
+  return props.cyclists;
 });
 
 const showTeam = ref(false);
@@ -61,7 +81,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
     </div>
     <div v-if="isActive">
       <CyclistCardMedium
-        v-for="cyclist in cyclists"
+        v-for="cyclist in cyclistsToShow"
         :key="cyclist.id"
         :cyclist="cyclist"
         :race-details="cyclist.startlistDetails"

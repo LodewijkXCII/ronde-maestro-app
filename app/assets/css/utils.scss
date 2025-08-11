@@ -101,8 +101,7 @@ a.btn,
   &-secondary {
     color: var(--clr-text);
     background: transparent;
-    outline: var(--_button-outline)
-      var(--clr-primary-dark);
+    outline: var(--_button-outline) var(--clr-primary-dark);
     transition:
       background 200ms ease-in,
       color 200ms ease-in;
@@ -231,8 +230,6 @@ a.btn,
   }
 }
 
-
-
 .points > span,
 span.points {
   font-weight: 800;
@@ -257,9 +254,8 @@ span.points {
   }
 }
 
-
 .stage-type-image {
   display: inline-block;
-  margin-right: .5em;
+  margin-right: 0.5em;
   width: 20px;
 }

@@ -22,6 +22,8 @@ const loading = ref(false);
 const errorMessage = ref("");
 const submitMessage = ref("");
 
+const selectableRiders = ref(currentStage.value?.stageType.name === "Ploegentijdrit" ? 3 : 8);
+
 function addToSelection(cyclist: CyclistWithRaceDetails) {
   selectedRidersStore.handleCyclist(cyclist.id);
 }
@@ -32,9 +34,9 @@ async function handleSubmit() {
   }
   // Check count
   loading.value = true;
-  if (selectedRidersComponents.value.length > 8) {
+  if (selectedRidersComponents.value.length > selectableRiders.value) {
     loading.value = false;
-    return errorMessage.value = "Er zijn meer dan 8 renners geselecteerd!";
+    return errorMessage.value = `Er zijn meer dan ${selectableRiders.value} renners geselecteerd!`;
   }
 
   if (stageUnderway(currentStage.value.date)) {
@@ -42,10 +44,10 @@ async function handleSubmit() {
     return errorMessage.value = "De rit is al onderweg. Je kan niet meer invullen.";
   }
 
-  if (selectedRidersComponents.value.length < 8 && selectedRidersComponents.value.length >= 1) {
+  if (selectedRidersComponents.value.length < selectableRiders.value && selectedRidersComponents.value.length >= 1) {
     // TODO MAKE USE OF OTHER LIBARY
     // eslint-disable-next-line no-alert
-    const confirm = window.confirm("Weet je zeker dat je minder dan 8 renners wil inzetten?");
+    const confirm = window.confirm(`Weet je zeker dat je minder dan ${selectableRiders.value} renners wil inzetten?`);
     if (!confirm) {
       loading.value = false;
 
@@ -96,7 +98,7 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
   <div class="selected-riders">
     <h3>Geselecteerde renners</h3>
 
-    <p>{{ selectedRidersComponents.length }} van 8 renners geselecteerd</p>
+    <p>{{ selectedRidersComponents.length }} van {{ selectableRiders }} renners geselecteerd</p>
 
     <div v-if="errorMessage" role="alert" class="alert alert-error">
       <Icon name="tabler:alert-square-rounded" />
@@ -115,7 +117,7 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
         class="btn btn-primary"
         :disabled="!selectedRidersStore.formDirty
           || selectedRidersComponents.length === 0
-          || selectedRidersComponents.length > 8
+          || selectedRidersComponents.length > selectableRiders
           || loading"
         @click="handleSubmit"
       >

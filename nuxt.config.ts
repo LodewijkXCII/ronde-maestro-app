@@ -1,9 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    app: {
+      head: {
+        title: "RondeMaestro Admin",
+        htmlAttrs: {
+          lang: "nl",
+        },
+        link: [
+          { rel: "icon", type: "image/x-ixon", href: "/favicon.ico" },
+        ],
+      },
+    },
   runtimeConfig: {
     public: {
-      apiBase: "http://localhost:5959/api",
-      s3BucketURL: "http://localhost:9000/images",
+      // eslint-disable-next-line node/no-process-env
+      apiBase: process.env.API_BASE || "http://localhost:3000/api",
+      // eslint-disable-next-line node/no-process-env
+      s3BucketURL: process.env.AWS_ENDPOINT_URL_S3 || "http://localhost:9000/images",
     },
   },
 
