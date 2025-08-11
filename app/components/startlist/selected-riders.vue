@@ -151,7 +151,7 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .selected-riders > .selected:nth-of-type(n + 10) {
   background-color: var(--clr-error);
 

@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "RondeMaestro Admin",
+      title: "RondeMaestro | Het wielerspel waarbij je elke dag dezelfde kansen hebt!",
       htmlAttrs: {
         lang: "nl",
       },

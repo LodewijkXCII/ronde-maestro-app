@@ -13,7 +13,7 @@ defineProps<{
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .victories {
   display: flex;
   justify-content: center;
@@ -51,7 +51,7 @@ defineProps<{
   }
 }
 
-// .victories {
+/* // .victories {
 //   border-radius: 50%;
 //   aspect-ratio: 1/1;
 //   width: 30px;
@@ -62,5 +62,5 @@ defineProps<{
 //   &:hover {
 //     cursor: help;
 //   }
-// }
+// } */
 </style>

@@ -143,19 +143,19 @@ const onSubmit = handleSubmit(async (values) => {
             {{ errors.confirm }}
           </div>
         </div>
-        <p class="small">
-          Door te registeren ga je akkoord met de
-          <a href="https://rondemaestro.com/privacy/" target="_blank">Privacy Policy</a>
-          en de
-          <a href="https://rondemaestro.com/voorwaarden/" target="_blank">Algemene voorwaarden</a>
-          van RondeMaestro
-        </p>
+
         <button :disabled="loading" class="btn btn-primary" @click="onSubmit">
           Registeer
           <Loading v-if="loading" />
         </button>
       </form>
-
+      <p class="small">
+        Door te registeren ga je akkoord met de
+        <a href="https://rondemaestro.com/privacy/" target="_blank">Privacy Policy</a>
+        en de
+        <a href="https://rondemaestro.com/voorwaarden/" target="_blank">Algemene voorwaarden</a>
+        van RondeMaestro
+      </p>
       <p>
         Al een account bij RondeMaesto? <NuxtLink to="/inloggen">
           Ga naar inloggen.

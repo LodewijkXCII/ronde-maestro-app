@@ -117,7 +117,7 @@ label {
 .delete-filter {
   margin: 0.5rem 1rem;
   padding: 0.25rem 0.5rem;
-  outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+  outline: 2px solid var(--clr-primary-dark);
   display: inline-block;
 }
 
@@ -128,13 +128,13 @@ label {
   border-radius: 5px;
 
   &:hover {
-    outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+    outline: 2px solid var(--clr-primary-dark);
     cursor: pointer;
   }
 
   &.selected {
     background-color: var(--clr-primary);
-    outline: 2px solid hsl(from var(--clr-primary) h calc(s - 0.1) l/0.9);
+    outline: 2px solid var(--clr-primary-dark);
   }
 
   label {
