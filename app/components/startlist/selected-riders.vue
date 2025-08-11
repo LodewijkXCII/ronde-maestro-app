@@ -156,7 +156,7 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
   background-color: var(--clr-error);
 
   &:hover {
-    outline-color: hsl(from var(--clr-error) h calc(s - 0.1) l / 0.9);
+    outline-color: hsl(354 51% 59% / 0.9);
   }
 }
 </style>

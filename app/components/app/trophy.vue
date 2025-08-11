@@ -23,7 +23,7 @@ defineProps<{
   aspect-ratio: 1/1;
   position: relative;
   border: 1px solid gold;
-  background: hsl(from gold h s calc(l - 10) / 0.5);
+  background: hsl(51 100% 40% / 0.5);
   border-radius: 50%;
 
   .badge {
