@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.0.0",
+    "@flydotio/dockerfile": "^0.7.10",
     "@iconify-json/tabler": "^1.2.20",
     "eslint-plugin-format": "^1.0.1",
     "sass-embedded": "^1.89.2",

@@ -36,7 +36,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    authStore.registreren({
+    await authStore.registreren({
       email: values.email.trim(),
       password: values.password,
       userName: values.userName.trim(),

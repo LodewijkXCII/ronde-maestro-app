@@ -14,24 +14,13 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     signUp,
   } = authClient;
 
-  type ErrorTypes = Partial<
-    Record<
-      // This type is now based on your custom errorCodes object
-      keyof typeof errorCodes,
-      {
-        en: string;
-        nl: string;
-      }
-    >
-  >;
-
   const errorCodes = {
     INVALID_EMAIL_OR_PASSWORD: {
       en: "user already registered",
       nl: "Onjuist email of wachtwoord",
     },
     // Add other custom error codes here
-  } satisfies ErrorTypes;
+  };
 
   function getErrorMessage(code: string, lang: "en" | "nl") {
     if (code in errorCodes) {

@@ -30,7 +30,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    authStore.inloggen({
+    await authStore.inloggen({
       email: values.email,
       password: values.password,
     });
