@@ -1,15 +1,20 @@
-import { createAuthClient } from "better-auth/vue";
+import type { createAuthClient } from "better-auth/vue";
 
-const config = useRuntimeConfig();
+import { navigateTo } from "#app";
 
-export const authClient = createAuthClient({
-  baseURL: config.public.apiBase,
-  fetchOptions: {
-    credentials: "include",
-  },
-});
+export const useAuthStore = defineStore("useAuthstore", () => {
+  const nuxtApp = useNuxtApp();
 
-type ErrorTypes = Partial<
+  const authClient = nuxtApp.$authClient as ReturnType<typeof createAuthClient>;
+
+  const {
+    useSession,
+    signIn,
+    signOut,
+    signUp,
+  } = authClient;
+
+  type ErrorTypes = Partial<
   Record<
     keyof typeof authClient.$ERROR_CODES,
     {
@@ -19,34 +24,26 @@ type ErrorTypes = Partial<
   >
 >;
 
-const errorCodes = {
-  INVALID_EMAIL_OR_PASSWORD: {
-    en: "user already registered",
-    nl: "Onjuist email of wachtwoord",
-  },
-} satisfies ErrorTypes;
+  const errorCodes = {
+    INVALID_EMAIL_OR_PASSWORD: {
+      en: "user already registered",
+      nl: "Onjuist email of wachtwoord",
+    },
+  } satisfies ErrorTypes;
 
-function getErrorMessage(code: string, lang: "en" | "nl") {
-  if (code in errorCodes) {
-    return errorCodes[code as keyof typeof errorCodes][lang];
+  function getErrorMessage(code: string, lang: "en" | "nl") {
+    if (code in errorCodes) {
+      return errorCodes[code as keyof typeof errorCodes][lang];
+    }
+    return "";
   }
-  return "";
-}
 
-const {
-  useSession,
-  signIn,
-  signOut,
-  signUp,
-} = authClient;
-
-export const useAuthStore = defineStore("useAuthstore", () => {
   const router = useRouter();
-  const session = ref<ReturnType<typeof authClient.useSession> | null>(null);
+  const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
 
   async function init() {
     // TODO IF !DATA NAVIGATE TO /
-    const data = await useSession();
+    const data = await useSession(() => $fetch);
 
     if (!data) {
       return navigateTo("/");
@@ -54,8 +51,8 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     session.value = data;
   }
 
-  const user = computed(() => session.value?.value.data?.user);
-  const loading = computed(() => session.value?.value.isPending);
+  const user = computed(() => session.value?.data?.user);
+  const loading = computed(() => session.value?.isPending);
   const errorMessage = ref("");
 
   async function inloggen(body: { email: string; password: string }) {
