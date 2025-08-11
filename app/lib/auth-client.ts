@@ -1,7 +1,9 @@
 import { createAuthClient } from "better-auth/vue";
 
+const config = useRuntimeConfig();
+
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:5959/",
+  baseURL: config.public.apiBase,
   fetchOptions: {
     credentials: "include",
   },

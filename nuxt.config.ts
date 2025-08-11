@@ -1,16 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    app: {
-      head: {
-        title: "RondeMaestro Admin",
-        htmlAttrs: {
-          lang: "nl",
-        },
-        link: [
-          { rel: "icon", type: "image/x-ixon", href: "/favicon.ico" },
-        ],
+  app: {
+    head: {
+      title: "RondeMaestro Admin",
+      htmlAttrs: {
+        lang: "nl",
       },
+      link: [
+        { rel: "icon", type: "image/x-ixon", href: "/favicon.ico" },
+      ],
     },
+  },
   runtimeConfig: {
     public: {
       // eslint-disable-next-line node/no-process-env
