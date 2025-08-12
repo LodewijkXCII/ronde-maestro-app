@@ -1,9 +1,14 @@
-import type { createAuthClient } from "better-auth/vue";
+import { createAuthClient } from "better-auth/vue";
 
 export const useAuthStore = defineStore("useAuthstore", () => {
-  const nuxtApp = useNuxtApp();
+  const config = useRuntimeConfig();
 
-  const authClient = nuxtApp.$authClient as ReturnType<typeof createAuthClient>;
+  const authClient = createAuthClient({
+    baseURL: `${config.public.apiBase}/auth`,
+    fetchOptions: {
+      credentials: "include",
+    },
+  });
 
   const {
     useSession,
