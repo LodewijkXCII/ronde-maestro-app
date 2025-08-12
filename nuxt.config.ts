@@ -31,7 +31,6 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-csurf",
     "@vee-validate/nuxt",
-    "@sentry/nuxt/module",
   ],
 
   css: [
