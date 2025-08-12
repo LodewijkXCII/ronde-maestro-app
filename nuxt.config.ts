@@ -49,17 +49,4 @@ export default defineNuxtConfig({
     preference: "system",
     fallback: "light",
   },
-
-  sentry: {
-    sourceMapsUploadOptions: {
-      org: "rondemaestro",
-      project: "javascript-nuxt",
-    },
-
-    autoInjectServerSentry: "top-level-import",
-  },
-
-  sourcemap: {
-    client: "hidden",
-  },
 });

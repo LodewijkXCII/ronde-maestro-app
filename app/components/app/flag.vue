@@ -16,10 +16,6 @@ defineProps<{
 </template>
 
 <style>
-.normal-flag {
-  /* margin: 0 !important; */
-}
-
 .small-flag {
   margin-bottom: -1.1em !important;
   transform: scale(0.3) !important;
