@@ -11,6 +11,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   runtimeConfig: {
     public: {
       // eslint-disable-next-line node/no-process-env
@@ -22,6 +23,7 @@ export default defineNuxtConfig({
 
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+
   modules: [
     "@nuxt/eslint",
     "@pinia/nuxt",
@@ -29,7 +31,9 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-csurf",
     "@vee-validate/nuxt",
+    "@sentry/nuxt/module",
   ],
+
   css: [
     "~/assets/css/main.scss",
   ],
@@ -44,5 +48,18 @@ export default defineNuxtConfig({
     classSuffix: "",
     preference: "system",
     fallback: "light",
+  },
+
+  sentry: {
+    sourceMapsUploadOptions: {
+      org: "rondemaestro",
+      project: "javascript-nuxt",
+    },
+
+    autoInjectServerSentry: "top-level-import",
+  },
+
+  sourcemap: {
+    client: "hidden",
   },
 });

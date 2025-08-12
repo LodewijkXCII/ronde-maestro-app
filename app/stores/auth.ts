@@ -1,7 +1,5 @@
 import type { createAuthClient } from "better-auth/vue";
 
-import { navigateTo } from "#app";
-
 export const useAuthStore = defineStore("useAuthstore", () => {
   const nuxtApp = useNuxtApp();
 
@@ -34,10 +32,10 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
   async function init() {
     // TODO IF !DATA NAVIGATE TO /
-    const data = await useSession(() => $fetch);
+    const data = await useSession(async () => await $fetch);
 
     if (!data) {
-      return navigateTo("/");
+      return navigateTo("/inloggen");
     }
     session.value = data;
   }
