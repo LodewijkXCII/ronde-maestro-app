@@ -28,9 +28,9 @@
   - [ ] Uitslag team
 
 - [ ] Klassement
-  - [ ] Race klassement
-  - [ ] Klassement speler
-  - [ ] Klassement andere spelers
+  - [x] Race klassement
+  - [x] Klassement speler
+  - [x] Klassement andere spelers
   - [ ] Klassement team
 
 - [ ] Renners selecteren

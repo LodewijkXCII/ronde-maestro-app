@@ -61,6 +61,10 @@ export const useAuthStore = defineStore("useAuthstore", () => {
       fetchOptions: {
         headers,
         onError(ctx) {
+          if (ctx.error.status === 403) {
+            // eslint-disable-next-line no-alert
+            window.alert("Please verify your email address");
+          }
           errorMessage.value = getErrorMessage(ctx.error.code, "nl");
         },
       },

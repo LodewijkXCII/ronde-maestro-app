@@ -3,8 +3,10 @@ onMounted(async () => {
   const authStore = useAuthStore();
   await authStore.init();
 
-  const sideBarStore = useSideBarStore();
-  await sideBarStore.refreshUpcomingRace();
+  if (authStore.user) {
+    const sideBarStore = useSideBarStore();
+    await sideBarStore.refreshUpcomingRace();
+  }
 });
 </script>
 
