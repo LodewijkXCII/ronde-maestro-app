@@ -5,7 +5,6 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import * as z from "zod";
 
-import { useAuthStore } from "~/stores/auth";
 import getFetchErrorMessage from "~/utils/get-fetch-error-message";
 
 const schema = z.object({

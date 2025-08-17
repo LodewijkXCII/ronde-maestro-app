@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+const authStore = useAuthStore();
+const sideBarStore = useSideBarStore();
+
 onMounted(async () => {
-  const authStore = useAuthStore();
   await authStore.init();
 
   if (authStore.user) {
-    const sideBarStore = useSideBarStore();
     await sideBarStore.refreshUpcomingRace();
   }
 });

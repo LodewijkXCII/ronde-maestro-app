@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // eslint-disable-next-line node/no-process-env
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3000/api",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:5959/api",
       // eslint-disable-next-line node/no-process-env
       s3BucketURL: process.env.AWS_ENDPOINT_URL_S3 || "http://localhost:9000/images",
     },

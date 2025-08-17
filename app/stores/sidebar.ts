@@ -17,6 +17,11 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     credentials: "include",
     immediate: false,
     lazy: true,
+    onResponseError({ response }) {
+      if (response.status === 401) {
+        navigateTo("/inloggen");
+      }
+    },
   });
 
   const currentRace = computed<SelectRaceWithRelations | null>(() => {

@@ -1,4 +1,10 @@
+import type { User } from "better-auth";
+
 import { createAuthClient } from "better-auth/vue";
+
+export type UserWithId = Omit<User, "id"> & {
+  id: number;
+};
 
 export const useAuthStore = defineStore("useAuthstore", () => {
   const config = useRuntimeConfig();
@@ -11,7 +17,8 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   });
 
   const {
-    useSession,
+    getSession,
+    // useSession,
     signIn,
     signOut,
     signUp,
@@ -33,16 +40,18 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   }
 
   const router = useRouter();
-  const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
+  const session = ref<Awaited<ReturnType<typeof authClient.getSession>> | null>(null);
 
   async function init() {
     // TODO IF !DATA NAVIGATE TO /
-    const data = await useSession(async () => await $fetch);
+    const sessionData = await getSession();
 
-    if (!data) {
-      return navigateTo("/inloggen");
+    // if (!sessionData.data?.session) {
+    //   return navigateTo("/inloggen");
+    // }
+    if (sessionData.data?.session) {
+      session.value = sessionData;
     }
-    session.value = data;
   }
 
   const user = computed(() => session.value?.data?.user);
@@ -67,6 +76,9 @@ export const useAuthStore = defineStore("useAuthstore", () => {
           }
           errorMessage.value = getErrorMessage(ctx.error.code, "nl");
         },
+        onSuccess() {
+          navigateTo("/dashboard");
+        },
       },
     });
   }
@@ -90,6 +102,17 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     });
   }
 
+  // async function resendVerification(email: string) {
+  //   // const { csrf } = useCsrf();
+  //   // const headers = new Headers();
+  //   // headers.append("csrf-token", csrf);
+
+  //   await sendVerificationEmail({
+  //     email,
+  //     callbackURL: "/inloggen",
+  //   });
+  // }
+
   async function uitloggen() {
     const { csrf } = useCsrf();
     const headers = new Headers();
@@ -98,11 +121,11 @@ export const useAuthStore = defineStore("useAuthstore", () => {
       fetchOptions: {
         headers,
         onSuccess: () => {
+          session.value = null;
           router.push("/inloggen"); // redirect to login page
         },
       },
     });
-    // TODO REMOVE COOKIES AND ALL OTHER STUFF
   }
 
   return {
@@ -111,6 +134,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     user,
     loading,
     inloggen,
+
     uitloggen,
     registreren,
     errorMessage,
