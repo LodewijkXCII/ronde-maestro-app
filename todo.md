@@ -6,6 +6,7 @@
 
 - [x] Inloggen
 - [ ] Registeren
+  - [ ] Reponses toevoegen
 - [ ] Navbar
   - [ ] Hover modus
   - [ ] Correct background flex item

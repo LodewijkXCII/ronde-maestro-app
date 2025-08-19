@@ -15,12 +15,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // eslint-disable-next-line node/no-process-env
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:5959/api",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
       // eslint-disable-next-line node/no-process-env
-      s3BucketURL: process.env.AWS_ENDPOINT_URL_S3 || "http://localhost:9000/images",
+      s3BucketURL: process.env.NUXT_PUBLIC_S3 || "https://ronde-maestro-v2.s3.eu-central-1.amazonaws.com",
     },
   },
-
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 

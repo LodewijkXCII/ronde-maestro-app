@@ -69,7 +69,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
     <div class="team-info" :class="{ active: isActive }" @click="toggleTeam">
       <div class="team-info--info">
         <div class="avatar">
-          <img v-if="currentTeam.image !== '/'" :src="`${config.public.s3BucketURL}/${currentTeam.image}`" :alt="currentTeam.name">
+          <img v-if="currentTeam.image !== '/' || !currentTeam.image" :src="`${config.public.s3BucketURL}/${currentTeam.image}`" :alt="currentTeam.name">
         </div>
 
         <h4>{{ currentTeam.name }}</h4>

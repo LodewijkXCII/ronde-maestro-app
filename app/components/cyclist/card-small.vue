@@ -20,7 +20,7 @@ const config = useRuntimeConfig();
     </div>
 
     <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
-      <img v-if="cyclist.image !== '/'" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">
+      <img v-if="cyclist.image !== '/' || !cyclist.image" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">
       <span v-else>
         {{ cyclist.firstName.charAt(0) }}{{ cyclist.lastName.charAt(0) }}
       </span>
