@@ -149,7 +149,7 @@ watch(
 
   &--teams {
     display: grid;
-    gap: 2rem 1rem;
+    gap: 0 1rem;
     grid-template-columns: repeat(3, var(--rider-card-width));
   }
 }

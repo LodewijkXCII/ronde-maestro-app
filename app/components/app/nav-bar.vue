@@ -1,10 +1,29 @@
 <script setup lang="ts">
 const showMobileDropdown = ref(false);
 const sideBarStore = useSideBarStore();
+const authStore = useAuthStore();
 
 const SHOWETAPPESDROPDOWN = ref(false);
 const SHOWUITSLAGDROPDOWN = ref(false);
 const SHOWKLASSEMENTROPDOWN = ref(false);
+
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
+
+const isMobileActive = computed({
+  get() {
+    return showMobileDropdown.value === false;
+  },
+  set() {
+    showMobileDropdown.value = !showMobileDropdown.value;
+    SHOWKLASSEMENTROPDOWN.value = !SHOWKLASSEMENTROPDOWN.value;
+    SHOWUITSLAGDROPDOWN.value = !SHOWUITSLAGDROPDOWN.value;
+    SHOWETAPPESDROPDOWN.value = !SHOWETAPPESDROPDOWN.value;
+  },
+});
 </script>
 
 <template>
@@ -20,6 +39,14 @@ const SHOWKLASSEMENTROPDOWN = ref(false);
           class="primary-navigation"
           :data-visible="showMobileDropdown"
         >
+          <ul v-if="authStore.user" :data-visible="showMobileDropdown" class="mobile-user-list">
+            <li>
+              Hoi, {{ authStore.user.name }}
+            </li>
+            <li class="hover" @click="authStore.uitloggen">
+              Uitloggen
+            </li>
+          </ul>
           <ul
             id="primary-navigation"
             aria-label="Primary"
@@ -173,7 +200,36 @@ const SHOWKLASSEMENTROPDOWN = ref(false);
       </div>
       <div class="nav-right">
         <AppThemeToggle />
-        <AppAuthButton />
+        <AppAuthButton :show-mobile-dropdown />
+
+        <label class="swap" aria-label="Toggle menu">
+          <input v-model="isMobileActive" type="checkbox">
+
+          <Icon
+            class="swap-icon"
+            :class="{ active: isMounted && !showMobileDropdown }"
+
+            name="tabler:menu-2"
+            size="24"
+            color="currentColor"
+          />
+          <Icon
+            class="swap-icon"
+            :class="{ active: isMounted && showMobileDropdown }"
+            name="tabler:x"
+            size="24"
+            color="currentColor"
+          />
+
+          <span class="visually-hidden">Menu</span>
+        </label>
+
+        <!-- <button
+          class="mobile-nav-toggle"
+          aria-controls="primary-navigation"
+          :aria-expanded="!showMobileDropdown"
+          @click.prevent="showMobileDropdown = !showMobileDropdown"
+        /> -->
       </div>
     </div>
   </div>
@@ -273,6 +329,10 @@ const SHOWKLASSEMENTROPDOWN = ref(false);
   }
 }
 
+.hover {
+  cursor: pointer;
+}
+
 .menu-separate {
   position: absolute;
   top: 100%;
@@ -340,69 +400,66 @@ const SHOWKLASSEMENTROPDOWN = ref(false);
 //   }
 // }
 
-// @media (max-width: 780px) {
-//   .primary-navigation {
-//     display: none;
-//     position: absolute;
-//     top: 100%;
-//     right: 0;
-//     width: 100%;
-//     padding: 1rem;
-//     /* inset: 2rem auto; */
-//     text-align: right;
-//     background: var(--clr-background-mute);
-//     z-index: 10;
+@media (max-width: 780px) {
+  .primary-navigation {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    padding: 1rem;
+    /* inset: 2rem auto; */
+    text-align: right;
+    background: var(--clr-background-mute);
+    z-index: 10;
 
-//     ul {
-//       padding: 0;
-//     }
+    ul {
+      padding: 0;
+    }
 
-//     .nav-links {
-//       display: flex;
-//       flex-direction: column;
-//       align-items: flex-end;
-//       gap: 0.25rem;
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
 
-//       .nav-item {
-//         padding: 0;
-//         margin-bottom: 0.25rem;
-//       }
-//     }
-//   }
+      .nav-item {
+        padding: 0;
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
 
-//   .primary-navigation[data-visible="true"] {
-//     display: block;
-//   }
+  .primary-navigation[data-visible="true"] {
+    display: block;
+  }
 
-//   .mobile-user-list {
-//     display: block;
-//     border-top: 3px solid var(--clr-primary);
-//     margin-top: 0.75rem;
+  .mobile-user-list {
+    display: block;
+    border-bottom: 3px solid var(--clr-primary);
+    margin-bottom: 0.75rem;
 
-//     ul {
-//       padding: 0;
-//     }
+    ul {
+      padding: 0;
+    }
 
-//     li {
-//       list-style: none;
-//     }
-//   }
+    li {
+      list-style: none;
+    }
+  }
 
-//   .username {
-//     display: none;
-//   }
+  .mobile-nav-toggle {
+    display: block;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 0.5em;
+    color: var(--clr-text);
+  }
 
-//   .mobile-nav-toggle {
-//     display: block;
-//     cursor: pointer;
-//     background: transparent;
-//     border: 0;
-//     padding: 0.5em;
-//   }
-
-//   .nav-stage-menu {
-//     right: 0;
-//     width: 100%;
-//   }
-// }
+  .nav-stage-menu {
+    right: 0;
+    width: 100%;
+  }
+}
 </style>

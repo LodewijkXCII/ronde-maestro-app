@@ -18,7 +18,6 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
   const {
     getSession,
-    // useSession,
     signIn,
     signOut,
     signUp,
@@ -29,26 +28,27 @@ export const useAuthStore = defineStore("useAuthstore", () => {
       en: "user already registered",
       nl: "Onjuist email of wachtwoord",
     },
+    FAILED_TO_CREATE_USER: {
+      en: "Failed to create user",
+      nl: "Gebruikersnaam al in gerbuikt, kies een andere",
+    },
+    USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: {
+      en: "User already exists. Use another email.",
+      nl: "E-mailadres al in gebruik.",
+    },
     // Add other custom error codes here
   };
 
   function getErrorMessage(code: string, lang: "en" | "nl") {
-    if (code in errorCodes) {
-      return errorCodes[code as keyof typeof errorCodes][lang];
-    }
-    return "";
+    return errorCodes[code as keyof typeof errorCodes][lang];
   }
 
   const router = useRouter();
   const session = ref<Awaited<ReturnType<typeof authClient.getSession>> | null>(null);
 
   async function init() {
-    // TODO IF !DATA NAVIGATE TO /
     const sessionData = await getSession();
 
-    // if (!sessionData.data?.session) {
-    //   return navigateTo("/inloggen");
-    // }
     if (sessionData.data?.session) {
       session.value = sessionData;
     }
@@ -98,6 +98,9 @@ export const useAuthStore = defineStore("useAuthstore", () => {
         onError(ctx) {
           errorMessage.value = getErrorMessage(ctx.error.code, "nl");
         },
+        onSuccess() {
+          inloggen({ email: body.email, password: body.password });
+        },
       },
     });
   }
@@ -134,7 +137,6 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     user,
     loading,
     inloggen,
-
     uitloggen,
     registreren,
     errorMessage,

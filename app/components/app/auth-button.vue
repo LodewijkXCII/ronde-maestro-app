@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+defineProps<{
+  showMobileDropdown: boolean;
+}>();
 const authStore = useAuthStore();
 
 const loading = ref(false);
@@ -16,6 +19,7 @@ onMounted(() => {
     class="btn user-name"
     :user-menu-open="userMenuOpen"
     role="button"
+    :data-visible="showMobileDropdown"
     @click="userMenuOpen = !userMenuOpen"
   >
     <Icon name="tabler:user-check" />
@@ -111,6 +115,12 @@ onMounted(() => {
         cursor: pointer;
       }
     }
+  }
+}
+
+@media (max-width: 780px) {
+  .user-name {
+    display: none;
   }
 }
 </style>

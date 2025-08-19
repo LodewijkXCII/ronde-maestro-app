@@ -1,3 +1,8 @@
+input, textarea, button, select {
+  font: inherit;
+  color: inherit;
+}
+
 .input-group {
   width: 100%;
   margin: 0.75rem 0;
@@ -228,7 +233,7 @@ select {
   -webkit-appearance: none;
   appearance: none;
 
-  background-image: url("../assets/icons/FeArrowDown.svg");
+  
   background-repeat: no-repeat, repeat;
   /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
   background-position:

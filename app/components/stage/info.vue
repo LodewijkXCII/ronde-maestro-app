@@ -19,10 +19,10 @@ const config = useRuntimeConfig();
 
       <div v-if="stage" class="stage-section--stage__info">
         <p>
-          Etappe {{ stage.stageNr }}:  {{ new Date(stage.date).toLocaleDateString("nl-NL", {
+          {{ stage.stageNr }}:  {{ new Date(stage.date).toLocaleDateString("nl-NL", {
             day: '2-digit',
             month: 'short',
-          }) }}. {{ stage.startCity }} - {{ stage.finishCity }}
+          }) }}. - {{ stage.startCity }} - {{ stage.finishCity }}
         </p>
         <div v-if="stage" class="stage-section--stage__type badge">
           <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name" class="stage-type-image"><span>{{ stage.stageType.name }}</span>

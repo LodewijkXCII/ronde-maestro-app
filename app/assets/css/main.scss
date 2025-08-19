@@ -57,16 +57,19 @@
 
 * {
   margin: 0;
+  padding: 0;
+  font: inherit;
 }
 
 html {
   color-scheme: light dark;
 }
 
-img {
+img, picture, svg, video {
   max-width: 100%;
   display: block;
 }
+
 
 body {
   font-family: var(--ff-base);
@@ -74,6 +77,7 @@ body {
   font-size: var(--fs-400);
   color: var(--clr-text);
   background: var(--clr-background);
+  min-height: 100vh;
 }
 
 .wrapper {
@@ -150,4 +154,14 @@ a {
 article.race {
   margin-top: 1em;
   margin-bottom: 3em;
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
