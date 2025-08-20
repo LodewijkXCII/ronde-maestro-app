@@ -1,72 +1,143 @@
 <script setup lang="ts">
-const showMobileDropdown = ref(false);
-const sideBarStore = useSideBarStore();
-const authStore = useAuthStore();
+const config = useRuntimeConfig();
 
-const SHOWETAPPESDROPDOWN = ref(false);
-const SHOWUITSLAGDROPDOWN = ref(false);
-const SHOWKLASSEMENTROPDOWN = ref(false);
+const sideBarStore = useSideBarStore();
 
 const isMounted = ref(false);
+const showNavbar = ref(false);
+const navbarRef = ref(null);
+
+function closeNavbar() {
+  showNavbar.value = false;
+}
+
+function handleClickOutside(e: Event) {
+  if (navbarRef.value && !navbarRef.value.contains(e.target)) {
+    closeNavbar();
+  }
+}
 
 onMounted(() => {
   isMounted.value = true;
+  document.addEventListener("click", handleClickOutside);
 });
 
-const isMobileActive = computed({
+onBeforeUnmount(() => {
+  // Clean up the event listener to prevent memory leaks
+  document.removeEventListener("click", handleClickOutside);
+});
+
+const isNavbarActive = computed({
   get() {
-    return showMobileDropdown.value === false;
+    return showNavbar.value === false;
   },
   set() {
-    showMobileDropdown.value = !showMobileDropdown.value;
-    SHOWKLASSEMENTROPDOWN.value = !SHOWKLASSEMENTROPDOWN.value;
-    SHOWUITSLAGDROPDOWN.value = !SHOWUITSLAGDROPDOWN.value;
-    SHOWETAPPESDROPDOWN.value = !SHOWETAPPESDROPDOWN.value;
+    showNavbar.value = !showNavbar.value;
   },
 });
 </script>
 
 <template>
-  <div class="nav-wrapper">
+  <div ref="navbarRef" class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
-        <NuxtLink to="/" class="nav-logo">
+        <NuxtLink to="/" class="nav-logo" @click="closeNavbar">
           <AppLogo />
         </NuxtLink>
+      </div>
+      <nav class="nav-middle primary-navigation" :data-visible="showNavbar">
+        <div class="link-block">
+          <div class="link-block__title">
+            <NuxtLink to="/dashboard" @click="closeNavbar">
+              Dashboard
+            </NuxtLink>
+          </div>
+        </div>
+        <div class="link-block">
+          <div class="link-block__title">
+            <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }" @click="closeNavbar">
+              Etappe overzicht
+            </NuxtLink>
+          </div>
+          <div class="race-list">
+            <div v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
+              <NuxtLink
+                :to="{
+                  name: 'dashboard-etappe-overzicht-race-id',
+                  params: {
+                    race: slugify(race.name),
+                    id: race.id,
+                  },
+                }"
+                @click="closeNavbar"
+              >
+                {{ race.name }}
 
-        <nav
-          v-if="!sideBarStore.loading"
-          class="primary-navigation"
-          :data-visible="showMobileDropdown"
-        >
-          <ul v-if="authStore.user" :data-visible="showMobileDropdown" class="mobile-user-list">
-            <li>
-              Hoi, {{ authStore.user.name }}
-            </li>
-            <li class="hover" @click="authStore.uitloggen">
-              Uitloggen
-            </li>
-          </ul>
-          <ul
-            id="primary-navigation"
-            aria-label="Primary"
-            role="list"
-            class="menu"
-          >
-            <li>
-              <NuxtLink to="/dashboard">
-                Dashboard
+                <img v-if="race.image" :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name">
               </NuxtLink>
-            </li>
-            <li
-              @mouseover="SHOWETAPPESDROPDOWN = true"
-              @mouseleave="SHOWETAPPESDROPDOWN = false"
-            >
-              <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }">
-                Etappe overzicht
-              </NuxtLink>
-              <div v-if="SHOWETAPPESDROPDOWN" class="menu-separate">
-                <ul v-for="race in sideBarStore.upcomingRace" :key="race.id">
+              <ul>
+                <!-- TODO ADD CLASS BASED ON STAGE SETTING -->
+                <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
+                  <NuxtLink
+                    v-if="stage.done"
+                    :to="{
+                      name: 'dashboard-race-id-uitslagen-nr',
+                      params:
+                        {
+                          race: slugify(race.name),
+                          id: stage.raceId,
+                          nr: stage.stageNr,
+                        },
+
+                    }"
+                    class=""
+                    @click="closeNavbar"
+                  >
+                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                      stage.finishCity }} <Icon size="18" name="tabler:trophy" />
+                  </NuxtLink>
+                  <NuxtLink
+                    v-else-if="!stage.done && stageUnderway(stage.date)"
+                    :to="{
+                      name: 'dashboard',
+
+                    }"
+                    class=""
+                    @click="closeNavbar"
+                  >
+                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                      stage.finishCity }} <Icon size="18" name="tabler:pencil-off" />
+                  </NuxtLink>
+                  <NuxtLink
+                    v-else
+                    :to="{
+                      name: 'dashboard-race-id-selecteer-nr',
+                      params:
+                        {
+                          race: slugify(race.name),
+                          id: stage.raceId,
+                          nr: stage.stageNr,
+                        },
+                    }"
+                    class=""
+                    @click="closeNavbar"
+                  >
+                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                      stage.finishCity }} <Icon size="18" name="tabler:pencil" color="green" />
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="link-block">
+          <div class="link-block__title">
+            Uitslagen
+          </div>
+          <ul>
+            <li>
+              <template v-for="race in sideBarStore.upcomingRace" :key="race.id">
+                <ul v-if="race.stages.some(stage => stage.done)">
                   <NuxtLink
                     :to="{
                       name: 'dashboard-etappe-overzicht-race-id',
@@ -75,139 +146,69 @@ const isMobileActive = computed({
                         id: race.id,
                       },
                     }"
+                    @click="closeNavbar"
                   >
                     {{ race.name }}
                   </NuxtLink>
-                  <ul>
-                    <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
-                      <NuxtLink
-                        v-if="stage.done"
-                        :to="{
-                          name: 'dashboard-race-id-uitslagen-nr',
-                          params:
-                            {
-                              race: slugify(race.name),
-                              id: stage.raceId,
-                              nr: stage.stageNr,
-                            },
-
-                        }"
-                        class=""
-                      >
-                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                          stage.finishCity }} <Icon size="12" name="tabler:trophy" />
-                      </NuxtLink>
-                      <NuxtLink
-                        v-else-if="!stage.done && stageUnderway(stage.date)"
-                        :to="{
-                          name: 'dashboard',
-
-                        }"
-                        class=""
-                      >
-                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                          stage.finishCity }} <Icon size="12" name="tabler:pencil-off" />
-                      </NuxtLink>
-                      <NuxtLink
-                        v-else
-                        :to="{
-                          name: 'dashboard-race-id-selecteer-nr',
-                          params:
-                            {
-                              race: slugify(race.name),
-                              id: stage.raceId,
-                              nr: stage.stageNr,
-                            },
-                        }"
-                        class=""
-                      >
-                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                          stage.finishCity }} <Icon size="12" name="tabler:pencil" />
-                      </NuxtLink>
-                    </li>
-                  </ul>
                 </ul>
-              </div>
-            </li>
-            <li
-              @mouseover="SHOWUITSLAGDROPDOWN = true"
-              @mouseleave="SHOWUITSLAGDROPDOWN = false"
-            >
-              Uitslagen
-              <div v-if="SHOWUITSLAGDROPDOWN" class="menu-separate">
-                <template v-for="race in sideBarStore.upcomingRace" :key="race.id">
-                  <ul v-if="race.stages.some(stage => stage.done)">
+                <template v-for="stage in race.stages" :key="stage.id">
+                  <li v-if="stage.done" class="stage-nav">
                     <NuxtLink
                       :to="{
-                        name: 'dashboard-etappe-overzicht-race-id',
-                        params: {
-                          race: slugify(race.name),
-                          id: race.id,
-                        },
-                      }"
-                    >
-                      {{ race.name }}
-                    </NuxtLink>
-                  </ul>
-                  <template v-for="stage in race.stages" :key="stage.id">
-                    <li v-if="stage.done" class="stage-nav">
-                      <NuxtLink
-                        :to="{
-                          name: 'dashboard-race-id-uitslagen-nr',
-                          params:
-                            {
-                              race: slugify(race.name),
-                              id: stage.raceId,
-                              nr: stage.stageNr,
-                            },
+                        name: 'dashboard-race-id-uitslagen-nr',
+                        params:
+                          {
+                            race: slugify(race.name),
+                            id: stage.raceId,
+                            nr: stage.stageNr,
+                          },
 
-                        }"
-                        class=""
-                      >
-                        <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                          stage.finishCity }}
-                      </NuxtLink>
-                    </li>
-                  </template>
-                </template>
-              </div>
-            </li>
-            <li
-              @mouseover="SHOWKLASSEMENTROPDOWN = true"
-              @mouseleave="SHOWKLASSEMENTROPDOWN = false"
-            >
-              Klassement
-              <div v-if="SHOWKLASSEMENTROPDOWN" class="menu-separate">
-                <ul>
-                  <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
-                    <NuxtLink
-                      :to="{
-                        name: 'dashboard-race-id-klassement',
-                        params: {
-                          race: slugify(race.name),
-                          id: race.id,
-                        },
                       }"
+                      class=""
+                      @click="closeNavbar"
                     >
-                      {{ race.name }}
+                      <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
+                        stage.finishCity }}
                     </NuxtLink>
                   </li>
-                </ul>
-              </div>
+                </template>
+              </template>
             </li>
           </ul>
-        </nav>
-      </div>
+        </div>
+        <div class="link-block">
+          <div class="link-block__title">
+            Klassement
+          </div>
+          <ul>
+            <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
+              <NuxtLink
+                :to="{
+                  name: 'dashboard-race-id-klassement',
+                  params: {
+                    race: slugify(race.name),
+                    id: race.id,
+                  },
+                }"
+                @click="closeNavbar"
+              >
+                {{ race.name }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
       <div class="nav-right">
+        <AppAuthButton :show-navbar-content="showNavbar" />
         <AppThemeToggle />
-        <AppAuthButton :show-mobile-dropdown />
 
         <label class="swap" aria-label="Toggle menu">
-          <input v-model="isMobileActive" type="checkbox">
+          <input v-model="isNavbarActive" type="checkbox">
 
           <Icon
             class="swap-icon"
-            :class="{ active: isMounted && !showMobileDropdown }"
+            :class="{ active: isMounted && isNavbarActive }"
 
             name="tabler:menu-2"
             size="24"
@@ -215,7 +216,7 @@ const isMobileActive = computed({
           />
           <Icon
             class="swap-icon"
-            :class="{ active: isMounted && showMobileDropdown }"
+            :class="{ active: isMounted && !isNavbarActive }"
             name="tabler:x"
             size="24"
             color="currentColor"
@@ -223,102 +224,79 @@ const isMobileActive = computed({
 
           <span class="visually-hidden">Menu</span>
         </label>
-
-        <!-- <button
-          class="mobile-nav-toggle"
-          aria-controls="primary-navigation"
-          :aria-expanded="!showMobileDropdown"
-          @click.prevent="showMobileDropdown = !showMobileDropdown"
-        /> -->
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 0;
+    margin: 0;
+  }
+}
+
 .nav-wrapper {
   padding: 1rem;
   background: var(--clr-background-mute);
   margin-bottom: 1rem;
   width: 100%;
-  position: relative;
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  min-height: var(--navbar-height);
+  box-shadow: var(--box-shadow);
+}
 
-  .navbar {
+.nav-wrapper:has(.primary-navigation[data-visible="true"]) {
+  position: absolute;
+}
+
+.navbar {
+  display: grid;
+  gap: 1rem;
+  justify-content: space-between;
+  border-top: 1px solid var(--clr-primary);
+  padding-top: 1rem;
+  grid-template-columns: minmax(0, auto) auto minmax(0, auto);
+  grid-template-areas: "left middle right";
+
+  .nav-left {
     display: flex;
     gap: 1rem;
-    justify-content: space-between;
+    grid-area: left;
+  }
 
-    .nav-left {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .nav-right {
-      display: flex;
-      gap: 1rem;
-    }
+  .nav-right {
+    display: flex;
+    gap: 1rem;
+    grid-area: right;
+    flex-wrap: wrap;
   }
 }
 
-.menu {
-  display: inline-flex;
+.primary-navigation {
+  display: none;
+}
+
+.primary-navigation[data-visible="true"] {
+  display: flex;
   flex-direction: row;
-  gap: 1rem;
-  padding: 0;
-  font-weight: 200;
-  font-size: var(--fs-400);
-  list-style: none;
-  position: relative;
-
-  :where(li) {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: stretch;
-    margin-block: 0.35rem;
-
-    // padding-inline: .5rem;
-    // padding-block: .75rem;
-    // border-radius: var(--border-radius);
-  }
-
-  :where(li ul) {
-    position: relative;
-    margin-inline-start: 1rem;
-    padding-inline-start: 0.5rem;
-    white-space: nowrap;
-  }
-  // a,
-  // .nav-item {
-  //   text-decoration: none;
-  //   color: var(--clr-text);
-  //   position: relative;
-  //   display: flex;
-  //   flex-shrink: 0;
-  //   flex-direction: column;
-  //   flex-wrap: wrap;
-  //   align-items: stretch;
-  //   margin-block: .25rem;
-  // }
-
-  // .nav-item:hover,
-  // .nav-item:hover a,
-  // .nav-item:focus-within,
-  // .nav-item:focus-within a {
-
-  //   background: var(--clr-background);
-  //   cursor: pointer;
-  //   color: var(--clr-primary);
-  // }
+  grid-column-gap: 5rem;
+  grid-row-gap: 1rem;
 
   a {
-    display: inline-block;
-    width: 100%;
+    text-decoration: none;
+    color: currentColor;
 
     &:hover {
-      background-color: var(--clr-background);
+      color: var(--clr-primary);
+      font-weight: 800;
     }
   }
 
@@ -329,137 +307,103 @@ const isMobileActive = computed({
   }
 }
 
+.link-block {
+  min-width: 15ch;
+  &__title {
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 90em) {
+  .navbar {
+    grid-template-columns: minmax(0, auto) minmax(0, auto);
+    grid-template-rows: minmax(0, auto) 1fr;
+    grid-template-areas: "left right" "middle middle";
+
+    .nav-right {
+      gap: 0.25rem 0.5rem;
+      justify-content: flex-end;
+    }
+  }
+
+  .navbar:has(.primary-navigation[data-visible="true"]) {
+    height: 100dvh;
+
+    .user-container {
+      position: absolute;
+      bottom: 3rem;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 1rem;
+    }
+  }
+
+  .primary-navigation[data-visible="true"] {
+    flex-flow: column wrap;
+    grid-area: middle;
+  }
+
+  .link-block {
+    max-width: 100%;
+  }
+}
+
+.nav-wrapper:has(.primary-navigation[data-visible="true"]) {
+  height: auto;
+}
+
 .hover {
   cursor: pointer;
 }
 
-.menu-separate {
-  position: absolute;
-  top: 100%;
-  z-index: 100;
-  margin-top: 0.5rem;
-  background-color: var(--clr-background-mute);
-  padding-block: 0.75rem;
-  padding-right: 1rem;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+.race-list {
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
+
+  &__race > a {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    align-items: center;
+
+    &:hover {
+      color: var(--clr-primary);
+      font-weight: 800;
+    }
+
+    img {
+      max-width: 75px;
+      height: auto;
+    }
+  }
 }
 
-.stage-nav,
 .stage-nav a {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2ch minmax(150px, auto) 30px;
   gap: 0.75rem;
-  padding-right: 0.5em;
-  place-items: center;
+  align-items: center;
+
+  &:hover {
+    color: var(--clr-primary);
+    font-weight: 800;
+  }
 }
 
-.nav-logo svg {
-  width: 100px;
-  height: auto;
+.nav-logo {
+  svg {
+    width: 100px;
+    height: auto;
+  }
 }
-
 .mobile-nav-toggle {
   display: none;
 }
 
 .mobile-user-list {
   display: none;
-}
-
-.primary-navigation {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  a {
-    text-decoration: none;
-    color: currentColor;
-  }
-}
-
-// .nav-stage-menu {
-//   position: absolute;
-//   background: var(--clr-background-mute);
-//   top: 100%;
-//   padding: 1rem;
-//   color: var(--clr-text);
-//   z-index: 10;
-// }
-
-// .nav-stage-dropdown {
-
-//   &:hover,
-//   &:focus-visible {
-//     >svg {
-//       rotate: 0deg;
-//       transition: rotate 200ms ease-in-out;
-//     }
-//   }
-
-//   >svg {
-//     rotate: -90deg;
-//   }
-// }
-
-@media (max-width: 780px) {
-  .primary-navigation {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    padding: 1rem;
-    /* inset: 2rem auto; */
-    text-align: right;
-    background: var(--clr-background-mute);
-    z-index: 10;
-
-    ul {
-      padding: 0;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
-
-      .nav-item {
-        padding: 0;
-        margin-bottom: 0.25rem;
-      }
-    }
-  }
-
-  .primary-navigation[data-visible="true"] {
-    display: block;
-  }
-
-  .mobile-user-list {
-    display: block;
-    border-bottom: 3px solid var(--clr-primary);
-    margin-bottom: 0.75rem;
-
-    ul {
-      padding: 0;
-    }
-
-    li {
-      list-style: none;
-    }
-  }
-
-  .mobile-nav-toggle {
-    display: block;
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-    padding: 0.5em;
-    color: var(--clr-text);
-  }
-
-  .nav-stage-menu {
-    right: 0;
-    width: 100%;
-  }
 }
 </style>

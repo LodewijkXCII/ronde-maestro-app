@@ -97,7 +97,7 @@ form .btn {
   margin-top: 0.5rem;
 }
 
-label {
+label:not(.swap) {
   font-weight: 700;
   display: flex;
   flex-wrap: wrap;

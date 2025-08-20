@@ -32,12 +32,14 @@
   --fs-900: clamp(1.8rem, calc(0.22rem + 7.93vw), 6.36rem);
 
   --border-radius: 0.5rem;
+  --navbar-height: 85px;
 
   --rider-card-width: 400px;
   --rider-card-height: 85px;
 
   --rider-card-width-dynamic: minmax(325px, var(--rider-card-width));
   --rider-card-height-dynamic: minmax(var(--rider-card-height), 130px);
+  --box-shadow: 0px 12px 28px -7px rgba(0, 0, 0, 0.35);
 }
 
 .dark {
@@ -46,6 +48,7 @@
   --clr-primary: #54759a;
   --clr-secondary: #64d0d7;
   --clr-text: var(--clr-text-white);
+  --box-shadow: 0px 12px 28px -7px rgba(0, 0, 0, 0.75);
 }
 
 *,
@@ -58,7 +61,6 @@
 * {
   margin: 0;
   padding: 0;
-  font: inherit;
 }
 
 html {
@@ -78,7 +80,18 @@ body {
   color: var(--clr-text);
   background: var(--clr-background);
   min-height: 100vh;
+
+  &:has(.primary-navigation[data-visible="true"]) {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
+
+main {
+  margin-top: calc(var(--navbar-height) + 2rem);
+}
+
+
 
 .wrapper {
   width: min(100% - 3rem, 200ch);

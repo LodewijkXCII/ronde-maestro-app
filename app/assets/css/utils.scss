@@ -189,10 +189,11 @@ a.btn,
   border-radius: 50%;
   width: var(--_avatar-width);
   background: var(--clr-background-mute);
-
+  display: flex;
+  
+  
   &-placeholder > * {
-    display: flex;
-    align-items: center;
+    place-items: center;
     justify-content: center;
     place-items: center;
     height: 100%;

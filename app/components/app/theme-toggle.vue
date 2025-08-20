@@ -43,7 +43,10 @@ const isDark = computed({
   position: relative;
   display: inline-grid;
   cursor: pointer;
-  place-content: center;
+  background: var(--clr-background);
+  height: min-content;
+  padding: 0.25rem;
+  border-radius: 50%;
 
   & input {
     appearance: none;
