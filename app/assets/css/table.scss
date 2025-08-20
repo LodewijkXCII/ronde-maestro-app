@@ -41,6 +41,7 @@
     &:hover:not(.table-header) {
       cursor: pointer;
       background-color: lightslategray;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
       color: var(--clr-text-white);
       .table-grow,
       .table-action {

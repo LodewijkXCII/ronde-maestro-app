@@ -124,6 +124,7 @@ watch(selectedStage, (newValue) => {
     </div>
 
     <template v-else-if="currentRace && !loading">
+      <AppNavigation current-route="Klassement" />
       <StageInfo :race="currentRace" />
 
       <section>

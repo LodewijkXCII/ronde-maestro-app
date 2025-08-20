@@ -5,27 +5,26 @@
 ## Utilities
 
 - [x] Inloggen
-- [ ] Registeren
-  - [ ] Reponses toevoegen
-- [ ] Navbar
-  - [ ] Hover modus
-  - [ ] Correct background flex item
-  - [ ] Wanneer je bij een specifiek etappe overzicht bent ook etappe overzicht als active bestempelen
-  - [ ] Juiste locatie wanneer bepaalde waarde is bij etappe
+- [x] Registeren
+  - [x] Reponses toevoegen
+- [x] Navbar
+  - [x] Hover modus
+  - [x] Juiste locatie wanneer bepaalde waarde is bij etappe
+- [ ] Footer toevoegen
+- [x] Breadcrums of algehele navigatie verbeteren
 
 ## Pages
 
+### Dashboard
+
+- [ ] Geslecteerde renners laten zien
+
 ### Races
 
-- [ ] Etappe overzicht
-  - [x] Etappes
-  - [x] Check of etappe klaar is
-  - [x] Navigatie
-
 - [ ] Uitslagen
-  - [ ] Etappe uitslag
-  - [ ] Uitslag van speler
-  - [ ] Uitslag andere spelers
+  - [x] Etappe uitslag
+  - [x] Uitslag van speler
+  - [x] Uitslag andere spelers
   - [ ] Uitslag team
 
 - [ ] Klassement
@@ -36,13 +35,12 @@
 
 - [ ] Renners selecteren
   - [x] Geselecteerde renners laden
+  - [ ] Na succesvol invullen -> ri dashboard gaan
+  - [x] Navigatie buttons
   - [x] Wanneer .active class bij geselecteerd
   - [ ] Check of etappe klaar is
     - [ ] Bij klaar, ri uitslag doorsturen
     - [ ] Bij bezig, laat je geselecteerde renners zien
-  - [x] Alle renners toggle
-  - [x] Etappe overzicht
-  - [x] Countdowntimer
 
 ### Teamspel
 

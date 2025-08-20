@@ -25,7 +25,19 @@ const config = useRuntimeConfig();
   </div>
   <div>{{ stage.distance }} km</div>
   <div class="table-action">
-    <NuxtLink v-if="stage.done" to="/dashboard">
+    <NuxtLink
+      v-if="stage.done"
+      :to="{
+        name: 'dashboard-race-id-uitslagen-nr',
+        params:
+          {
+            race: slugify(raceName),
+            id: stage.raceId,
+            nr: stage.stageNr,
+          },
+
+      }"
+    >
       <Icon name="tabler:trophy" size="24" style="color:var(--clr-accent-green)" />
       Bekijk uitslag
     </NuxtLink>

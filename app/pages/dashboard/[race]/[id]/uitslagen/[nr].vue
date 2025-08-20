@@ -130,6 +130,7 @@ watch(
     </div>
 
     <section v-else-if="currentRace && currentStage">
+      <AppNavigation :current-route="`Uitslag etappe ${currentStage.stageNr}`" />
       <StageInfo :race="currentRace" :stage="currentStage" />
 
       <!-- USER RESULT -->
@@ -160,6 +161,7 @@ watch(
             :show-specialies="false"
             show-team-data
             no-user-select
+            rider-selected="false"
           >
             <template #actionSlot>
               <div v-if="cyclist.results[0]" class="points">

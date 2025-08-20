@@ -3,6 +3,7 @@ import VueCountdown from "@chenfengyuan/vue-countdown";
 
 const props = defineProps<{
   stageDate: string;
+  stageId: number;
 }>();
 
 const timeRemaining = computed(() => {
@@ -37,7 +38,7 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
       :interval="1000"
       :transform="transformSlotProps"
       class="counter stage-box--body"
-      @end="() => console.log('Countdown ended from component')"
+      @end="() => goToStage(stageId)"
     >
       <div class="counter-days">
         <span>
@@ -88,7 +89,7 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
       margin-bottom: 0.2rem;
       padding: 1rem 0.5rem;
       color: var(--clr-primary);
-      border-radius: 5px;
+      border-radius: var(--border-radius);
     }
   }
 }

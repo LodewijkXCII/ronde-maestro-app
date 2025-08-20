@@ -45,3 +45,14 @@ export type SelectCountry = {
   name: string;
   abbreviation: string;
 };
+
+export type NavigationLink = {
+  label: string;
+  to: string;
+  params?: {
+    race?: string;
+    id?: number;
+    nr?: number;
+  };
+
+};

@@ -130,7 +130,7 @@ label:not(.swap) {
 .delete-filter {
   background: var(--clr-background-mute);
   width: max-content;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 
   &:hover {
     outline: 2px solid var(--clr-primary-dark);
@@ -222,7 +222,7 @@ select {
   background-color: var(--clr-background-mute);
   border-bottom: 2px solid var(--clr-primary);
   margin: 0.5rem 0;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   line-height: 1.2;
   align-items: center;

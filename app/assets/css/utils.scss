@@ -118,6 +118,28 @@ a.btn,
     filter: grayscale(100%);
     opacity: 0.5;
   }
+
+  &-outline {
+    color: var(--clr-text);
+    background: transparent;
+    outline: var(--_button-outline) var(--clr-text);
+    transition:
+    background 200ms ease-in,
+    color 200ms ease-in;
+    
+    &:hover,
+    :focus-within {
+      outline: var(--_button-outline) var(--clr-text);
+      background: var(--clr-primary-dark);
+      color: var(--clr-text-white);
+    }
+  }
+  &:is(:disabled, [disabled="true"], .btn-disabled) {
+    cursor: not-allowed;
+    color: currentColor;
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
 }
 
 .btn-group {
@@ -134,7 +156,7 @@ a.btn,
 .errormessage {
   font-weight: 900;
 
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   margin-top: 1rem;
   margin-right: 0.75rem;
   padding: 0.5rem 0.75rem;
@@ -219,7 +241,7 @@ a.btn,
 .stage-box {
   background: var(--clr-background-mute);
   padding: 1rem;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   min-width: 90%;
   display: flex;
   flex-direction: column;
@@ -228,6 +250,14 @@ a.btn,
 
   &--body {
     justify-self: start;
+
+    img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      overflow: hidden;
+
+    }
   }
 }
 

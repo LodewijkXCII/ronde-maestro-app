@@ -1,18 +1,17 @@
 <script setup lang="ts">
-const config = useRuntimeConfig();
-
 const sideBarStore = useSideBarStore();
+const authStore = useAuthStore();
 
 const isMounted = ref(false);
 const showNavbar = ref(false);
-const navbarRef = ref(null);
+const navbarRef = ref<HTMLElement | null>(null);
 
 function closeNavbar() {
   showNavbar.value = false;
 }
 
 function handleClickOutside(e: Event) {
-  if (navbarRef.value && !navbarRef.value.contains(e.target)) {
+  if (navbarRef.value && !navbarRef.value.contains(e.target as Node)) {
     closeNavbar();
   }
 }
@@ -78,7 +77,6 @@ const isNavbarActive = computed({
                 <!-- <img v-if="race.image" :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name"> -->
               </NuxtLink>
               <ul>
-                <!-- TODO ADD CLASS BASED ON STAGE SETTING -->
                 <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
                   <NuxtLink
                     v-if="stage.done"
@@ -96,7 +94,7 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:trophy" />
+                      stage.finishCity }} <Icon size="18" name="tabler:trophy" style="color:var(--clr-accent-green)" />
                   </NuxtLink>
                   <NuxtLink
                     v-else-if="!stage.done && stageUnderway(stage.date)"
@@ -108,7 +106,7 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:pencil-off" />
+                      stage.finishCity }} <Icon size="18" name="tabler:pencil-off" style="color:var(--clr-alert)" />
                   </NuxtLink>
                   <NuxtLink
                     v-else
@@ -125,7 +123,7 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:pencil" color="green" />
+                      stage.finishCity }} <Icon size="18" name="tabler:pencil" style="color:var(--clr-primary)" />
                   </NuxtLink>
                 </li>
               </ul>
@@ -205,7 +203,7 @@ const isNavbarActive = computed({
         <AppAuthButton :show-navbar-content="showNavbar" />
         <AppThemeToggle />
 
-        <label class="swap" aria-label="Toggle menu">
+        <label v-if="authStore.session" class="swap" aria-label="Toggle menu">
           <input v-model="isNavbarActive" type="checkbox">
 
           <Icon
@@ -279,18 +277,49 @@ ul {
     gap: 1rem;
     grid-area: right;
     flex-wrap: wrap;
+    align-items: baseline;
   }
 }
 
 .primary-navigation {
-  display: none;
+  display: flex;
+  // flex-direction: column;
+  grid-column-gap: 3rem;
+  grid-row-gap: 1rem;
+  overflow: hidden; /* Crucial for the max-height transition */
+  visibility: hidden;
+  pointer-events: none;
+  max-height: 0; /* Starting point for the height transition */
+  opacity: 0;
+  transition:
+    max-height 0.5s ease-in-out,
+    opacity 0.3s ease-in-out,
+    visibility 0.5s;
+
+  // display: none;
+  // opacity: 0;
+  // transition:
+  //   display 0.5s,
+  //   heigth 1s,
+  //   opacity 0.5s;
+  // transition-behavior: allow-discrete;
 }
 
 .primary-navigation[data-visible="true"] {
-  display: flex;
-  flex-direction: row;
-  grid-column-gap: 3rem;
-  grid-row-gap: 1rem;
+  max-height: 200vh; /* A value that is larger than the content's height */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  // display: flex;
+  // opacity: 1;
+  // flex-direction: row;
+  // grid-column-gap: 3rem;
+  // grid-row-gap: 1rem;
+
+  @starting-style {
+    opacity: 0;
+  }
 
   a {
     text-decoration: none;
@@ -323,7 +352,7 @@ ul {
 @media screen and (max-width: 90em) {
   .navbar {
     grid-template-columns: minmax(0, auto) minmax(0, auto);
-    grid-template-rows: minmax(0, auto) 1fr;
+    grid-template-rows: minmax(45px, auto) 1fr;
     grid-template-areas: "left right" "middle middle";
 
     .nav-right {
@@ -345,6 +374,7 @@ ul {
   }
 
   .primary-navigation[data-visible="true"] {
+    display: flex;
     flex-flow: column wrap;
     grid-area: middle;
   }
@@ -352,11 +382,17 @@ ul {
   .link-block {
     max-width: 100%;
   }
+
+  .primary-navigation {
+    /* Reset styles for desktop */
+    display: none;
+    opacity: 0;
+  }
 }
 
-.nav-wrapper:has(.primary-navigation[data-visible="true"]) {
-  height: auto;
-}
+// .nav-wrapper:has(.primary-navigation[data-visible="true"]) {
+//   height: auto;
+// }
 
 .hover {
   cursor: pointer;

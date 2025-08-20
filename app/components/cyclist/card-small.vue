@@ -55,7 +55,7 @@ const config = useRuntimeConfig();
   gap: 0.5rem;
   align-items: center;
   max-width: var(--rider-card-width);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 
   &:first-of-type {
     margin-top: 1rem;

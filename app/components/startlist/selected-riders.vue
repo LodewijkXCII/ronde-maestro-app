@@ -92,6 +92,11 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
     setTimeout(emtpyErrorMessage, 2000);
   }
 });
+
+onBeforeRouteLeave(() => {
+  // TODO VRAAG OF GEBRUIKER WEG WIL
+  selectedRidersStore.clearSelection();
+});
 </script>
 
 <template>

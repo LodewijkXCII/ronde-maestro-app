@@ -62,6 +62,7 @@ watch(
 
 <template>
   <main class="wrapper">
+    <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" class="wrapper-sm" />
     <Loading v-if="sideBarStore.loading" />
 
     <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
@@ -73,7 +74,12 @@ watch(
     <div class="cyclistOverview">
       <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
         <StageInfo :race="currentRace" :stage="currentStage" />
-        <StageTimer v-if="currentStage.date" :key="compkey" :stage-date="String(currentStage.date)" />
+        <StageTimer
+          v-if="currentStage.date"
+          :key="compkey"
+          :stage-date="String(currentStage.date)"
+          :stage-id="currentStage.id"
+        />
       </section>
       <Loading v-if="startlistStore.loading" />
       <section v-else class="cyclistSelector">
