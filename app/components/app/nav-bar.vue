@@ -60,7 +60,10 @@ const isNavbarActive = computed({
             </NuxtLink>
           </div>
           <div class="race-list">
-            <div v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
+            <details v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
+              <summary>
+                {{ race.name }}
+              </summary>
               <NuxtLink
                 :to="{
                   name: 'dashboard-etappe-overzicht-race-id',
@@ -71,9 +74,8 @@ const isNavbarActive = computed({
                 }"
                 @click="closeNavbar"
               >
-                {{ race.name }}
-
-                <img v-if="race.image" :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name">
+                Alle etappes
+                <!-- <img v-if="race.image" :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name"> -->
               </NuxtLink>
               <ul>
                 <!-- TODO ADD CLASS BASED ON STAGE SETTING -->
@@ -127,7 +129,7 @@ const isNavbarActive = computed({
                   </NuxtLink>
                 </li>
               </ul>
-            </div>
+            </details>
           </div>
         </div>
         <div class="link-block">
@@ -287,7 +289,7 @@ ul {
 .primary-navigation[data-visible="true"] {
   display: flex;
   flex-direction: row;
-  grid-column-gap: 5rem;
+  grid-column-gap: 3rem;
   grid-row-gap: 1rem;
 
   a {
@@ -308,10 +310,13 @@ ul {
 }
 
 .link-block {
-  min-width: 15ch;
+  min-width: 25ch;
+  max-width: 35ch;
+
   &__title {
     font-weight: 800;
     margin-bottom: 0.75rem;
+    text-transform: uppercase;
   }
 }
 
@@ -361,35 +366,86 @@ ul {
   &:not(:last-child) {
     margin-bottom: 1em;
   }
+}
 
-  &__race > a {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-    align-items: center;
+summary a {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  align-items: center;
 
-    &:hover {
-      color: var(--clr-primary);
-      font-weight: 800;
-    }
-
-    img {
-      max-width: 75px;
-      height: auto;
-    }
+  &:hover {
+    color: var(--clr-primary);
+    font-weight: 800;
   }
+
+  img {
+    max-width: 75px;
+    height: 50px;
+    object-fit: contain;
+  }
+}
+
+details {
+  margin-block: 0.5rem;
+  padding-block: 0.5rem;
+}
+
+summary {
+  /* Pin the custom marker to the container */
+  position: relative;
+  /* Register summary as an anchor element */
+  anchor-name: --summary;
+
+  &::marker {
+    content: "";
+  }
+
+  &::before,
+  &::after {
+    /* Custom marker dimensions */
+    content: "";
+    border-block-start: 3px solid var(--clr-primary);
+    height: 0;
+    width: 1rem;
+
+    /* Positions the lines */
+    inset-block-start: 50%;
+    inset-inline-end: 0;
+
+    /* Anchor the shape to the summary */
+    position: absolute;
+    position-anchor: --summary;
+    position-area: top end;
+  }
+
+  /* Rotate just the ::after line to create a "+"" shape */
+  &::after {
+    transform: rotate(90deg);
+    transform-origin: 50%;
+  }
+}
+
+/* Rotate the line when open */
+details[open] summary::after {
+  transform: rotate(0deg);
 }
 
 .stage-nav a {
   display: grid;
   grid-template-columns: 2ch minmax(150px, auto) 30px;
   gap: 0.75rem;
-  align-items: center;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
 
   &:hover {
     color: var(--clr-primary);
     font-weight: 800;
+  }
+
+  span.iconify {
+    justify-self: end;
   }
 }
 
