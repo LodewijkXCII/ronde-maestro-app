@@ -85,7 +85,7 @@ const { currentRace } = storeToRefs(sideBarStore);
     </ul>
 
     <button
-      class="btn btn-outline"
+      class="btn btn-outline btn-sm"
       @click="router.back()"
     >
       <Icon name="tabler:arrow-left" size="18" />

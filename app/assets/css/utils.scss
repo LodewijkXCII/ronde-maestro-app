@@ -134,6 +134,14 @@ a.btn,
       color: var(--clr-text-white);
     }
   }
+
+  &-sm {
+      --_button-outline: 1px solid;
+    font-size: var(--fs-200);
+    padding: .5rem .75rem;
+    gap: .25rem;
+  }
+  
   &:is(:disabled, [disabled="true"], .btn-disabled) {
     cursor: not-allowed;
     color: currentColor;

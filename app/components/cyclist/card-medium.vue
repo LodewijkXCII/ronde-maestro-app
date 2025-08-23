@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { CyclistWithRelations, StartlistDetails } from "~/types/startlist";
 
-const props = defineProps<{
+defineProps<{
   cyclist: CyclistWithRelations;
   raceDetails?: StartlistDetails;
   showSpecialies?: boolean;
@@ -10,12 +10,10 @@ const props = defineProps<{
 }>();
 
 const config = useRuntimeConfig();
-
-const isSelected = riderSelected(props.cyclist.id);
 </script>
 
 <template>
-  <div class="cyclistCard" :class="{ withdraw: raceDetails?.withdraw, selected: isSelected }" :data-user-select="noUserSelect ? false : true">
+  <div class="cyclistCard" :class="{ withdraw: raceDetails?.withdraw, selected: riderSelected(cyclist.id) }" :data-user-select="noUserSelect ? false : true">
     <div class="cyclistCard--avatar">
       <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
         <img v-if="cyclist.image !== '/' || !cyclist.image" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">

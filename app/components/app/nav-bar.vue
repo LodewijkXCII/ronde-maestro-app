@@ -350,9 +350,12 @@ ul {
 }
 
 @media screen and (max-width: 90em) {
+  .nav-wrapper {
+    --navbar-height: 45px;
+  }
   .navbar {
     grid-template-columns: minmax(0, auto) minmax(0, auto);
-    grid-template-rows: minmax(45px, auto) 1fr;
+    grid-template-rows: minmax(0, auto) 1fr;
     grid-template-areas: "left right" "middle middle";
 
     .nav-right {

@@ -19,6 +19,7 @@ async function getSelectedRiders(stageId: number) {
 }
 
 const loading = ref(false);
+const submitted = ref(false);
 const errorMessage = ref("");
 const submitMessage = ref("");
 
@@ -64,7 +65,14 @@ async function handleSubmit() {
       credentials: "include",
     });
 
+    // TODO set as toast
     submitMessage.value = "Je team is ingevuld!";
+    submitted.value = true;
+
+    navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
+      race: slugify(sideBarStore.currentRace?.name as string),
+      id: sideBarStore.currentRace?.id,
+    } });
   }
   catch (e) {
     const error = e as FetchError;
@@ -94,8 +102,15 @@ watch(() => errorMessage.value, (oldMessage, newMessage) => {
 });
 
 onBeforeRouteLeave(() => {
-  // TODO VRAAG OF GEBRUIKER WEG WIL
-  selectedRidersStore.clearSelection();
+  if (selectedRidersStore.formDirty && !submitted.value) {
+    // eslint-disable-next-line no-alert
+    const confirm = window.confirm("Weet je zeker dat je weg gaat, je team wordt niet opgeslagen.");
+    if (!confirm) {
+      return false;
+    }
+
+    selectedRidersStore.clearSelection();
+  }
 });
 </script>
 
