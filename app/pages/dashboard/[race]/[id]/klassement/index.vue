@@ -170,28 +170,44 @@ watch(selectedStage, (newValue) => {
             </option>
           </select>
         </div>
-        <ul v-if="selectedStage && selectedStageResult && selectedStageResult.results.length" class="table standings-table">
-          <li class="table-row table-header">
-            <div>#</div>
-            <div>Naam</div>
-            <div>Punten</div>
-            <div />
-          </li>
-          <li
-            v-for="(user, index) in selectedStageResult.results"
-            :key="user.userId"
-            class="table-row"
-            :class="{ 'is-user': authUser?.id === user.userId }"
+        <div v-if="selectedStage && selectedStageResult && selectedStageResult.results.length">
+          <NuxtLink
+            v-if="currentRace"
+            :to="{
+              name: 'dashboard-race-id-uitslagen-nr',
+              params: {
+                race: slugify(currentRace.name),
+                id: currentRace.id,
+                nr: selectedStage,
+              },
+            }"
+            class="btn btn-secondary"
           >
-            <div>{{ index + 1 }}</div>
-            <div>{{ user.name }}</div>
-            <div>{{ user.points }}</div>
-            <div class="standings-action">
-              <AppTrophy v-if="user.winner" />
-            </div>
-          </li>
-        </ul>
-
+            Ga naar etappe uitslag
+            <Icon name="tabler:arrow-right" />
+          </NuxtLink>
+          <ul class="table standings-table">
+            <li class="table-row table-header">
+              <div>#</div>
+              <div>Naam</div>
+              <div>Punten</div>
+              <div />
+            </li>
+            <li
+              v-for="(user, index) in selectedStageResult.results"
+              :key="user.userId"
+              class="table-row"
+              :class="{ 'is-user': authUser?.id === user.userId }"
+            >
+              <div>{{ index + 1 }}</div>
+              <div>{{ user.name }}</div>
+              <div>{{ user.points }}</div>
+              <div class="standings-action">
+                <AppTrophy v-if="user.winner" />
+              </div>
+            </li>
+          </ul>
+        </div>
         <p v-else-if="selectedStage && selectedStageResult && !stageUnderway(selectedStageResult.stage.date)">
           Je kan nog je renners voor deze etappe invullen. <NuxtLink
             :to="{

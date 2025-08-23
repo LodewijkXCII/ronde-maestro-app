@@ -134,7 +134,20 @@ watch(
       <StageInfo :race="currentRace" :stage="currentStage" />
 
       <!-- USER RESULT -->
-
+      <NuxtLink
+        v-if="currentRace"
+        :to="{
+          name: 'dashboard-race-id-klassement',
+          params: {
+            race: slugify(currentRace.name),
+            id: currentRace.id,
+          },
+        }"
+        class="btn btn-secondary"
+      >
+        Ga naar klassement
+        <Icon name="tabler:arrow-right" />
+      </NuxtLink>
       <ul class="table result-table">
         <li class="table-row table-header">
           <div>Plaats</div>
