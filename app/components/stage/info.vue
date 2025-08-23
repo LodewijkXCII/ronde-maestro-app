@@ -35,7 +35,7 @@ const config = useRuntimeConfig();
           }) }}
         </p>
       </div>
-      <div class="avatar">
+      <div class="avatar avatar-race">
         <img :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name">
       </div>
     </div>

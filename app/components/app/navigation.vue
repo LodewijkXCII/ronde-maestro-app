@@ -126,7 +126,7 @@ ul.breadcrumb-list li + li:before {
 
 /* Add a color to all links inside the list */
 ul.breadcrumb-list li a {
-  color: #0275d8;
+  color: var(--clr-primary);
   text-decoration: none;
 }
 

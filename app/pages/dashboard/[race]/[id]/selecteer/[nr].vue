@@ -62,7 +62,6 @@ watch(
 
 <template>
   <main class="wrapper">
-    <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" class="wrapper-sm" />
     <Loading v-if="sideBarStore.loading" />
 
     <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
@@ -72,6 +71,7 @@ watch(
       </span>
     </div>
     <div class="cyclistOverview">
+      <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" />
       <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
         <StageInfo :race="currentRace" :stage="currentStage" />
         <StageTimer
@@ -115,12 +115,13 @@ watch(
   <AppToTop />
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .cyclistOverview {
   display: grid;
   grid-template-columns: repeat(4, var(--rider-card-width));
   grid-template-rows: auto auto;
   grid-template-areas:
+    "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
     "startlist startlist startlist select";
   gap: 2rem 1rem;
@@ -160,11 +161,17 @@ watch(
   }
 }
 
+.breadcrumbs {
+  grid-column: 1 / -1;
+  grid-area: breadcrumbs;
+}
+
 @media (min-width: 20em) and (max-width: 64em) {
   .cyclistOverview {
     grid-template-columns: var(--rider-card-width-dynamic);
     grid-template-rows: auto;
     grid-template-areas:
+      "breadcrumbs"
       "info"
       "select"
       "startlist";
@@ -194,7 +201,7 @@ watch(
 @media (min-width: 64em) and (max-width: 90em) {
   .cyclistOverview {
     grid-template-columns: repeat(3, var(--rider-card-width));
-    grid-template-areas: "info info info" "startlist startlist select";
+    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
   }
   .cyclistSelector {
     grid-area: startlist;
@@ -209,7 +216,7 @@ watch(
 @media (min-width: 160em) {
   .cyclistOverview {
     grid-template-columns: repeat(6, var(--rider-card-width));
-    grid-template-areas: "info info info info info info" "startlist startlist startlist startlist startlist select";
+    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs breadcrumbs" "info info info info info info" "startlist startlist startlist startlist startlist select";
   }
 
   .cyclistSelector {

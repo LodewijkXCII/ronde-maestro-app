@@ -82,10 +82,10 @@ body {
   background: var(--clr-background);
   min-height: 100vh;
 
-  &:has(.primary-navigation[data-visible="true"]) {
-    height: 100dvh;
-    overflow: hidden;
-  }
+  // &:has(.primary-navigation[data-visible="true"]) {
+  //   height: 100dvh;
+  //   overflow: hidden;
+  // }
 }
 
 main {

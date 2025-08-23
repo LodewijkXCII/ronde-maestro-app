@@ -4,20 +4,15 @@
 
 ## Utilities
 
-- [x] Inloggen
-- [x] Registeren
-  - [x] Reponses toevoegen
-- [x] Navbar
-  - [x] Hover modus
-  - [x] Juiste locatie wanneer bepaalde waarde is bij etappe
 - [ ] Footer toevoegen
-- [x] Breadcrums of algehele navigatie verbeteren
+- [ ] Wachtwoord vergeten
 
 ## Pages
 
 ### Dashboard
 
 - [ ] Geslecteerde renners laten zien
+- [ ] Wanneer je inlogt en koers is bezig, groot overzicht van je gekozen renners
 
 ### Races
 
@@ -33,6 +28,7 @@
   - [x] Klassement andere spelers
   - [ ] Klassement team
 
+- [ ] Goed checken voor ploegentijdrit
 - [ ] Renners selecteren
   - [x] Geselecteerde renners laden
   - [ ] Na succesvol invullen -> ri dashboard gaan

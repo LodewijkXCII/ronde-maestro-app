@@ -211,8 +211,11 @@ a.btn,
   border-radius: 50%;
   width: var(--_avatar-width);
   background: var(--clr-background-mute);
-  display: flex;
   
+  &-race {
+    
+    display: flex;
+  }
   
   &-placeholder > * {
     place-items: center;

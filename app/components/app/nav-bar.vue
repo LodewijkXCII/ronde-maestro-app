@@ -362,7 +362,7 @@ ul {
   }
 
   .navbar:has(.primary-navigation[data-visible="true"]) {
-    height: 100dvh;
+    min-height: 100dvh;
 
     .user-container {
       position: absolute;
@@ -375,7 +375,7 @@ ul {
 
   .primary-navigation[data-visible="true"] {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column;
     grid-area: middle;
   }
 
