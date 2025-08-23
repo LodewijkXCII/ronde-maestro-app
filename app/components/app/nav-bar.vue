@@ -229,7 +229,7 @@ const isNavbarActive = computed({
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 ul {
   list-style-type: none;
   padding: 0;
