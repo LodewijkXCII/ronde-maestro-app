@@ -20,12 +20,18 @@ defineProps<{
     </p>
     <ul class="table race-table">
       <li class="table-row table-header">
-        <div>#</div>
-        <div />
-        <div>Start en finish</div>
-        <div />
-        <div>Afstand</div>
-        <div />
+        <div class="table-stage-nr">
+          #
+        </div>
+        <div class="table-date" />
+        <div class="table-start-finish">
+          Start en finish
+        </div>
+
+        <div class="table-type">
+          Afstand
+        </div>
+        <div class="table-action" />
       </li>
       <li
         v-for="stage in race.stages"
@@ -38,3 +44,39 @@ defineProps<{
     </ul>
   </article>
 </template>
+
+<style>
+@media screen and (max-width: 1300px) {
+  .table-row {
+    grid-template-areas:
+      "stageNr startFinish action"
+      "date type action";
+    align-items: start;
+  }
+
+  .table-stage-nr {
+    grid-area: stageNr;
+  }
+  .table-date {
+    grid-area: date;
+  }
+  .table-start-finish {
+    grid-area: startFinish;
+  }
+  .table-type {
+    display: type;
+  }
+  .table-distance {
+    grid-area: distance;
+  }
+  .table-action {
+    grid-area: action;
+    align-self: center;
+  }
+
+  .table-stage-nr,
+  .table-start-finish {
+    align-self: last baseline;
+  }
+}
+</style>

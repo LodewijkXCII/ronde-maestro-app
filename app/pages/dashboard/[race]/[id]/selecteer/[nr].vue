@@ -119,7 +119,7 @@ watch(
 .cyclistOverview {
   display: grid;
   grid-template-columns: repeat(4, var(--rider-card-width));
-  grid-template-rows: auto auto;
+  grid-template-rows: auto minmax(0, 350px) auto;
   grid-template-areas:
     "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
@@ -166,10 +166,9 @@ watch(
   grid-area: breadcrumbs;
 }
 
-@media (min-width: 20em) and (max-width: 64em) {
+@media (min-width: 20em) and (max-width: 900px) {
   .cyclistOverview {
     grid-template-columns: var(--rider-card-width-dynamic);
-    grid-template-rows: auto;
     grid-template-areas:
       "breadcrumbs"
       "info"
@@ -198,7 +197,36 @@ watch(
   }
 }
 
-@media (min-width: 64em) and (max-width: 90em) {
+@media (min-width: 900px) and (max-width: 1300px) {
+  .cyclistOverview {
+    grid-template-columns: repeat(2, var(--rider-card-width));
+    grid-template-areas: "breadcrumbs  breadcrumbs" "info  info" "startlist  select";
+  }
+  .cyclistSelector {
+    grid-area: startlist;
+
+    &--teams {
+      display: grid;
+      grid-template-columns: repeat(1, var(--rider-card-width));
+    }
+  }
+}
+@media (min-width: 1300px) and (max-width: 1720px) {
+  .cyclistOverview {
+    grid-template-columns: repeat(3, var(--rider-card-width));
+    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
+  }
+  .cyclistSelector {
+    grid-area: startlist;
+
+    &--teams {
+      display: grid;
+      grid-template-columns: repeat(2, var(--rider-card-width));
+    }
+  }
+}
+
+@media (min-width: 1720px) and (max-width: 90em) {
   .cyclistOverview {
     grid-template-columns: repeat(3, var(--rider-card-width));
     grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
@@ -216,7 +244,10 @@ watch(
 @media (min-width: 160em) {
   .cyclistOverview {
     grid-template-columns: repeat(6, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs breadcrumbs" "info info info info info info" "startlist startlist startlist startlist startlist select";
+    grid-template-areas:
+      "breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
+      "info info info info info info"
+      "startlist startlist startlist startlist startlist select";
   }
 
   .cyclistSelector {

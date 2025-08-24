@@ -8,7 +8,8 @@
   margin: 1em 0;
 
   &:where(.race-table) {
-    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr 20px minmax(5ch, 8ch) minmax(2ch, 15ch);
+    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr minmax(6ch, 10ch)
+      minmax(2ch, 15ch);
   }
   &:where(.result-table) {
     --_grid-columns: 5ch 1fr minmax(4ch, auto) 3ch;
@@ -40,14 +41,15 @@
 
     &:hover:not(.table-header) {
       cursor: pointer;
-      background-color: lightslategray;
-      color: var(--clr-text-white);
+      background-color: var(--clr-primary);
+      color: var(--clr-primary-content);
       .table-grow,
       .table-action {
         text-decoration: underline;
       }
     }
-    &:last-of-type  {
+
+    &:last-of-type {
       border-radius: 0 0 var(--border-radius) var(--border-radius);
     }
   }
@@ -68,5 +70,19 @@
     span {
       width: 100%;
     }
+  }
+}
+
+.table-type {
+  display: flex;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 1300px) {
+  .table:where(.race-table) {
+    --_grid-columns: minmax(3ch, 75px) 50% minmax(4ch, 10ch);
+    --_grid-rows: auto auto;
+
+    grid-template-rows: var(--_grid-rows);
   }
 }

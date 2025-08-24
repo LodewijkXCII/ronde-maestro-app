@@ -10,20 +10,23 @@ const config = useRuntimeConfig();
 </script>
 
 <template>
-  <div>{{ stage.stageNr }}</div>
-  <div>
+  <div class="table-stage-nr">
+    {{ stage.stageNr }}
+  </div>
+  <div class="table-date">
     {{ new Date(stage.date).toLocaleDateString("nl-NL", {
       day: '2-digit',
       month: 'short',
     }) }}
   </div>
-  <div class="table-grow">
+  <div class="table-grow table-start-finish">
     {{ stage.startCity }} - {{ stage.finishCity }}
   </div>
-  <div>
+  <div class="table-type">
     <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name">
+    {{ stage.distance }} km
   </div>
-  <div>{{ stage.distance }} km</div>
+
   <div class="table-action">
     <NuxtLink
       v-if="stage.done"

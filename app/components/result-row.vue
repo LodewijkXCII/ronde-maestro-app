@@ -53,4 +53,10 @@ const showTeam = ref(false);
 .is-user {
   font-weight: 900;
 }
+
+@media screen and (max-width: 90em) {
+  .table-row .selected-riders {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

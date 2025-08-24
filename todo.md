@@ -4,7 +4,6 @@
 
 ## Utilities
 
-- [ ] Footer toevoegen
 - [ ] Wachtwoord vergeten
 
 ## Pages

@@ -10,6 +10,7 @@
   --clr-text-white: hsl(20, 6%, 90%);
   --clr-background: #e7e5e4;
   --clr-background-mute: #f2f3f5;
+  --clr-background-app: #d4d4d4;
   --clr-primary: #54759a;
   --clr-primary-dark: hsl(213 28% 37% / 0.6);
   --clr-primary-content: var(--clr-text-white);
@@ -45,6 +46,8 @@
 .dark {
   --clr-background: #25242d;
   --clr-background-mute: #333740;
+  --clr-background-app: #201f25;
+
   --clr-primary: #54759a;
   --clr-secondary: #64d0d7;
   --clr-text: var(--clr-text-white);
@@ -63,13 +66,9 @@
   padding: 0;
 }
 
-
-
 html {
   color-scheme: light dark;
 }
-
-
 
 #__nuxt {
   display: flex;
@@ -77,19 +76,21 @@ html {
   min-height: 100vh;
 }
 
-img, picture, svg, video {
+img,
+picture,
+svg,
+video {
   max-width: 100%;
   display: block;
   object-fit: contain;
 }
-
 
 body {
   font-family: var(--ff-base);
   line-height: 1.6;
   font-size: var(--fs-400);
   color: var(--clr-text);
-  background: var(--clr-background);
+  background: var(--clr-background-app);
   min-height: 100vh;
 
   // &:has(.primary-navigation[data-visible="true"]) {
@@ -99,31 +100,33 @@ body {
 }
 
 main {
-  margin-top: calc(var(--navbar-height) + 2rem);
-  flex-grow: 1; 
+  margin-top: calc(var(--navbar-height) + .25rem);
+  flex-grow: 1;
 }
 
-
+.wrapper, .wrapper-lg, .wrapper-sm, .wrapper-xs {
+  margin-inline: auto;
+  background: var(--clr-background);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
 
 .wrapper {
-  width: min(100% - 3rem, 200ch);
-  margin-inline: auto;
+  max-width: min(100% - 3rem, 240ch);
 }
 
 .wrapper-lg {
   /* 3* rider card width  + 1rem gap per colum*/
   width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 3);
-  margin-inline: auto;
 }
 .wrapper-sm {
   /* 2* rider card width  + 1rem gap per colum*/
-  width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 2);
-  margin-inline: auto;
+  width: min(100% - 3rem, (var(--rider-card-width) + 2rem) * 2);
 }
 
 .wrapper-xs {
   width: min(100% - 1rem, var(--rider-card-width));
-  margin-inline: auto;
 }
 
 .flow > * + * {

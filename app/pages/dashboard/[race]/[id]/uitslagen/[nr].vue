@@ -164,7 +164,7 @@ watch(
         />
       </ul>
       <!-- USER SELECTION WITH RESULT -->
-      <div class="testClass">
+      <div class="cyclist-result">
         <section v-if="findUsersEntry">
           <h3>Geslecteerder renners</h3>
           <CyclistCardMedium
@@ -206,11 +206,17 @@ watch(
 </template>
 
 <style lang="scss">
-.testClass {
+.cyclist-result {
   display: grid;
   grid-template-columns: repeat(2, var(--rider-card-width));
   gap: 2rem;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 90em) {
+  .cyclist-result {
+    grid-template-columns: auto;
+  }
 }
 
 .cyclist-info-box {
