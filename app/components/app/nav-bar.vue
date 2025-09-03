@@ -40,7 +40,7 @@ const isNavbarActive = computed({
   <div ref="navbarRef" class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
-        <NuxtLink to="/" class="nav-logo" @click="closeNavbar">
+        <NuxtLink to="/dashboard" class="nav-logo" @click="closeNavbar">
           <AppLogo />
         </NuxtLink>
       </div>

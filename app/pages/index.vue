@@ -1,5 +1,11 @@
 <script setup lang="ts">
+const authStore = useAuthStore();
 
+onMounted(() => {
+  if (authStore.user && authStore.session) {
+    navigateTo("/dashboard");
+  }
+});
 </script>
 
 <template>
