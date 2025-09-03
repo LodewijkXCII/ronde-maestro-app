@@ -61,54 +61,56 @@ watch(
 </script>
 
 <template>
-  <main class="wrapper">
-    <Loading v-if="sideBarStore.loading" />
+  <main>
+    <div class="wrapper">
+      <Loading v-if="sideBarStore.loading" />
 
-    <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
-      <Icon name="tabler:alert-square-rounded" />
-      <span>
-        Er is geen race data gevonden!
-      </span>
-    </div>
-    <div class="cyclistOverview">
-      <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" />
-      <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
-        <StageInfo :race="currentRace" :stage="currentStage" />
-        <StageTimer
-          v-if="currentStage.date"
-          :key="compkey"
-          :stage-date="String(currentStage.date)"
-          :stage-id="currentStage.id"
-        />
-      </section>
-      <Loading v-if="startlistStore.loading" />
-      <section v-else class="cyclistSelector">
-        <h2>Teams en renners</h2>
-        <!-- TODO ADD FILTERS -->
-
-        <div class="filter-group">
-          <div class="toggle-switch">
-            <label class="switch">
-              <input type="checkbox" switch @click="toggleAllTeams">
-              <div class="slider round" />
-            </label>
-            <p>{{ showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
-          </div>
-        </div>
-        <!-- Startlist -->
-        <div v-if="startlistStore.startlistData" class="cyclistSelector--teams">
-          <StartlistTeam
-            v-for="{ team, cyclists } in startlistStore.startlistData"
-            :key="team.id"
-            :team="team"
-            :cyclists
-            :is-all-teams-shown="showAllTeams"
-            @toggle-team-state="handleChildToggle"
+      <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          Er is geen race data gevonden!
+        </span>
+      </div>
+      <div class="cyclistOverview">
+        <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" />
+        <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
+          <StageInfo :race="currentRace" :stage="currentStage" />
+          <StageTimer
+            v-if="currentStage.date"
+            :key="compkey"
+            :stage-date="String(currentStage.date)"
+            :stage-id="currentStage.id"
           />
-        </div>
+        </section>
+        <Loading v-if="startlistStore.loading" />
+        <section v-else class="cyclistSelector">
+          <h2>Teams en renners</h2>
+          <!-- TODO ADD FILTERS -->
+
+          <div class="filter-group">
+            <div class="toggle-switch">
+              <label class="switch">
+                <input type="checkbox" switch @click="toggleAllTeams">
+                <div class="slider round" />
+              </label>
+              <p>{{ showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
+            </div>
+          </div>
+          <!-- Startlist -->
+          <div v-if="startlistStore.startlistData" class="cyclistSelector--teams">
+            <StartlistTeam
+              v-for="{ team, cyclists } in startlistStore.startlistData"
+              :key="team.id"
+              :team="team"
+              :cyclists
+              :is-all-teams-shown="showAllTeams"
+              @toggle-team-state="handleChildToggle"
+            />
+          </div>
         <!-- Selected Riders -->
-      </section>
-      <StartlistSelectedRiders />
+        </section>
+        <StartlistSelectedRiders />
+      </div>
     </div>
   </main>
   <!-- TO TOP COMPONENT -->

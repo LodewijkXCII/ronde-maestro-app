@@ -11,6 +11,7 @@
 ### Dashboard
 
 - [ ] Geslecteerde renners laten zien
+  - [ ] Bepalen of startlijst ook ingeladen moet worden.
 - [ ] Wanneer je inlogt en koers is bezig, groot overzicht van je gekozen renners
 
 ### Races

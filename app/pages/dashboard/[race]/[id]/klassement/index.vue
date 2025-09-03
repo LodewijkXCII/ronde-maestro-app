@@ -108,85 +108,29 @@ watch(selectedStage, (newValue) => {
 </script>
 
 <template>
-  <main class="wrapper wrapper-sm">
-    <Loading v-if="sideBarStore.loading || loading" />
-    <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
-      <Icon name="tabler:alert-square-rounded" />
-      <span>
-        Er is geen race data gevonden!
-      </span>
-    </div>
-    <div v-if="errorMessage" role="alert" class="alert alert-error">
-      <Icon name="tabler:alert-square-rounded" />
-      <span>
-        {{ errorMessage }}
-      </span>
-    </div>
+  <main>
+    <div class="wrapper wrapper-sm">
+      <Loading v-if="sideBarStore.loading || loading" />
+      <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          Er is geen race data gevonden!
+        </span>
+      </div>
+      <div v-if="errorMessage" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          {{ errorMessage }}
+        </span>
+      </div>
 
-    <template v-else-if="currentRace && !loading">
-      <AppNavigation current-route="Klassement" />
-      <StageInfo :race="currentRace" />
+      <template v-else-if="currentRace && !loading">
+        <AppNavigation current-route="Klassement" />
+        <StageInfo :race="currentRace" />
 
-      <section>
-        <h3>Algemeen klassement</h3>
-        <ul v-if="raceResult.length" class="table standings-table">
-          <li class="table-row table-header">
-            <div>#</div>
-            <div>Naam</div>
-            <div>Punten</div>
-            <div />
-          </li>
-          <li
-            v-for="(user, index) in raceResult"
-            :key="user.userId"
-            class="table-row"
-            :class="{ 'is-user': authUser?.id === user.userId }"
-          >
-            <div>{{ index + 1 }}</div>
-            <div>{{ user.name }}</div>
-            <div>{{ user.totalPoints }}</div>
-            <div class="standings-action">
-              <AppTrophy v-if="user.totalWins" :victory-count="user.totalWins" />
-            </div>
-          </li>
-        </ul>
-      </section>
-
-      <section v-if="resultPerStage">
-        <h3>Etappe klassement</h3>
-        <div class="input-group">
-          <label>Selecteer etappe:</label>
-          <select v-model="selectedStage">
-            <option value="null" disabled>
-              Selecteer etappe
-            </option>
-            <option
-              v-for="{ stage } in resultPerStage"
-              :key="stage.id"
-
-              :value="stage.stageNr"
-            >
-              {{ stage.stageNr }}. {{ stage.startCity }} - {{ stage.finishCity }}
-            </option>
-          </select>
-        </div>
-        <div v-if="selectedStage && selectedStageResult && selectedStageResult.results.length">
-          <NuxtLink
-            v-if="currentRace"
-            :to="{
-              name: 'dashboard-race-id-uitslagen-nr',
-              params: {
-                race: slugify(currentRace.name),
-                id: currentRace.id,
-                nr: selectedStage,
-              },
-            }"
-            class="btn btn-secondary"
-          >
-            Ga naar etappe uitslag
-            <Icon name="tabler:arrow-right" />
-          </NuxtLink>
-          <ul class="table standings-table">
+        <section>
+          <h3>Algemeen klassement</h3>
+          <ul v-if="raceResult.length" class="table standings-table">
             <li class="table-row table-header">
               <div>#</div>
               <div>Naam</div>
@@ -194,43 +138,101 @@ watch(selectedStage, (newValue) => {
               <div />
             </li>
             <li
-              v-for="(user, index) in selectedStageResult.results"
+              v-for="(user, index) in raceResult"
               :key="user.userId"
               class="table-row"
               :class="{ 'is-user': authUser?.id === user.userId }"
             >
               <div>{{ index + 1 }}</div>
               <div>{{ user.name }}</div>
-              <div>{{ user.points }}</div>
+              <div>{{ user.totalPoints }}</div>
               <div class="standings-action">
-                <AppTrophy v-if="user.winner" />
+                <AppTrophy v-if="user.totalWins" :victory-count="user.totalWins" />
               </div>
             </li>
           </ul>
-        </div>
-        <p v-else-if="selectedStage && selectedStageResult && !stageUnderway(selectedStageResult.stage.date)">
-          Je kan nog je renners voor deze etappe invullen. <NuxtLink
-            :to="{
-              name: 'dashboard-race-id-selecteer-nr',
-              params: {
-                race: slugify(currentRace.name),
-                id: currentRace.id,
-                nr: selectedStageResult.stage.stageNr,
-              },
-            }"
-          >
-            Selecteer renners.
-          </NuxtLink>
-        </p>
-        <p v-else-if="selectedStage">
-          De uitslag van deze etappe is nog niet bekend. Kom later terug.
-        </p>
-      </section>
+        </section>
 
-      <p v-if="!raceResult.length && !resultPerStage.length">
-        Er is nog geen uitslag bekend. Kom later terug.
-      </p>
-    </template>
+        <section v-if="resultPerStage">
+          <h3>Etappe klassement</h3>
+          <div class="input-group">
+            <label>Selecteer etappe:</label>
+            <select v-model="selectedStage">
+              <option value="null" disabled>
+                Selecteer etappe
+              </option>
+              <option
+                v-for="{ stage } in resultPerStage"
+                :key="stage.id"
+
+                :value="stage.stageNr"
+              >
+                {{ stage.stageNr }}. {{ stage.startCity }} - {{ stage.finishCity }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedStage && selectedStageResult && selectedStageResult.results.length">
+            <NuxtLink
+              v-if="currentRace"
+              :to="{
+                name: 'dashboard-race-id-uitslagen-nr',
+                params: {
+                  race: slugify(currentRace.name),
+                  id: currentRace.id,
+                  nr: selectedStage,
+                },
+              }"
+              class="btn btn-secondary"
+            >
+              Ga naar etappe uitslag
+              <Icon name="tabler:arrow-right" />
+            </NuxtLink>
+            <ul class="table standings-table">
+              <li class="table-row table-header">
+                <div>#</div>
+                <div>Naam</div>
+                <div>Punten</div>
+                <div />
+              </li>
+              <li
+                v-for="(user, index) in selectedStageResult.results"
+                :key="user.userId"
+                class="table-row"
+                :class="{ 'is-user': authUser?.id === user.userId }"
+              >
+                <div>{{ index + 1 }}</div>
+                <div>{{ user.name }}</div>
+                <div>{{ user.points }}</div>
+                <div class="standings-action">
+                  <AppTrophy v-if="user.winner" />
+                </div>
+              </li>
+            </ul>
+          </div>
+          <p v-else-if="selectedStage && selectedStageResult && !stageUnderway(selectedStageResult.stage.date)">
+            Je kan nog je renners voor deze etappe invullen. <NuxtLink
+              :to="{
+                name: 'dashboard-race-id-selecteer-nr',
+                params: {
+                  race: slugify(currentRace.name),
+                  id: currentRace.id,
+                  nr: selectedStageResult.stage.stageNr,
+                },
+              }"
+            >
+              Selecteer renners.
+            </NuxtLink>
+          </p>
+          <p v-else-if="selectedStage">
+            De uitslag van deze etappe is nog niet bekend. Kom later terug.
+          </p>
+        </section>
+
+        <p v-if="!raceResult.length && !resultPerStage.length">
+          Er is nog geen uitslag bekend. Kom later terug.
+        </p>
+      </template>
+    </div>
   </main>
 </template>
 

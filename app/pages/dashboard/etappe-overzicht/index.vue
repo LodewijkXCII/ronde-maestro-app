@@ -9,9 +9,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="wrapper-sm">
-    <h2>Etappe overzicht</h2>
+  <main>
+    <div class="wrapper-sm">
+      <h2>Etappe overzicht</h2>
 
-    <RaceTable v-for="race in sideBarStore.upcomingRace" :key="race.id" :race />
+      <RaceTable v-for="race in sideBarStore.upcomingRace" :key="race.id" :race />
+    </div>
   </main>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <div class="footer-wrapper footer-top wrapper">
+    <div class="footer-wrapper footer-top">
       <div>
         <NuxtLink to="/" class="nav-logo">
           <AppLogo />
@@ -12,7 +12,7 @@
 
       <AppAuthButton :show-navbar-content="false" />
     </div>
-    <div class="footer-wrapper footer-bottom wrapper">
+    <div class="footer-wrapper footer-bottom">
       <div class="bottom-links">
         <NuxtLink to="https://www.rondemaestro.com/spelregels">
           Spelregels

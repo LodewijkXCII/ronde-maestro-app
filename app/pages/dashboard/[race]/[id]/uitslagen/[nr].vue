@@ -113,95 +113,97 @@ watch(
 </script>
 
 <template>
-  <main class="wrapper wrapper-sm">
-    <Loading v-if="sideBarStore.loading || loading" />
+  <main>
+    <div class="wrapper wrapper-sm">
+      <Loading v-if="sideBarStore.loading || loading" />
 
-    <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
-      <Icon name="tabler:alert-square-rounded" />
-      <span>
-        Er is geen race data gevonden!
-      </span>
-    </div>
-    <div v-if="errorMessage" role="alert" class="alert alert-error">
-      <Icon name="tabler:alert-square-rounded" />
-      <span>
-        {{ errorMessage }}
-      </span>
-    </div>
-
-    <section v-else-if="currentRace && currentStage">
-      <AppNavigation :current-route="`Uitslag etappe ${currentStage.stageNr}`" />
-      <StageInfo :race="currentRace" :stage="currentStage" />
-
-      <!-- USER RESULT -->
-      <NuxtLink
-        v-if="currentRace"
-        :to="{
-          name: 'dashboard-race-id-klassement',
-          params: {
-            race: slugify(currentRace.name),
-            id: currentRace.id,
-          },
-        }"
-        class="btn btn-secondary"
-      >
-        Ga naar klassement
-        <Icon name="tabler:arrow-right" />
-      </NuxtLink>
-      <ul class="table result-table">
-        <li class="table-row table-header">
-          <div>Plaats</div>
-          <div>Naam </div>
-          <div>Punten</div>
-          <div />
-        </li>
-        <!-- TODO BOLD IF USER IS CURRENTUSER -->
-        <ResultRow
-          v-for="(user, index) in usersResult"
-          :key="index"
-          :user
-          :position="index + 1"
-        />
-      </ul>
-      <!-- USER SELECTION WITH RESULT -->
-      <div class="cyclist-result">
-        <section v-if="findUsersEntry">
-          <h3>Geslecteerder renners</h3>
-          <CyclistCardMedium
-            v-for="{ cyclist } in findUsersEntry.entries"
-            :key="cyclist.id"
-            :cyclist
-            :show-specialies="false"
-            show-team-data
-            no-user-select
-            rider-selected="false"
-          >
-            <template #actionSlot>
-              <div v-if="cyclist.results[0]" class="points">
-                <span>{{ cyclist.results[0]?.points }}</span> pnt
-              </div>
-            </template>
-          </CyclistCardMedium>
-          <span class="sum-line"><span class="plus">+</span></span>
-
-          <div class="cyclist-info-box totalScore">
-            <p>Totaal gescoorde punten: </p>
-            <span class="points">{{ totalUserScoredPoints }} pnt</span>
-          </div>
-        </section>
-
-        <!-- CYCLIST RESULT -->
-        <section v-if="cyclistResult">
-          <h3>Etappe uitslag</h3>
-          <CyclistCardSmall
-            v-for="{ cyclist, position, points } in cyclistResult"
-            :key="cyclist.id"
-            :cyclist="cyclist"
-            :result="{ position, points }"
-          />
-        </section>
+      <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          Er is geen race data gevonden!
+        </span>
       </div>
-    </section>
+      <div v-if="errorMessage" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          {{ errorMessage }}
+        </span>
+      </div>
+
+      <section v-else-if="currentRace && currentStage">
+        <AppNavigation :current-route="`Uitslag etappe ${currentStage.stageNr}`" />
+        <StageInfo :race="currentRace" :stage="currentStage" />
+
+        <!-- USER RESULT -->
+        <NuxtLink
+          v-if="currentRace"
+          :to="{
+            name: 'dashboard-race-id-klassement',
+            params: {
+              race: slugify(currentRace.name),
+              id: currentRace.id,
+            },
+          }"
+          class="btn btn-secondary"
+        >
+          Ga naar klassement
+          <Icon name="tabler:arrow-right" />
+        </NuxtLink>
+        <ul class="table result-table">
+          <li class="table-row table-header">
+            <div>Plaats</div>
+            <div>Naam </div>
+            <div>Punten</div>
+            <div />
+          </li>
+          <!-- TODO BOLD IF USER IS CURRENTUSER -->
+          <ResultRow
+            v-for="(user, index) in usersResult"
+            :key="index"
+            :user
+            :position="index + 1"
+          />
+        </ul>
+        <!-- USER SELECTION WITH RESULT -->
+        <div class="cyclist-result">
+          <section v-if="findUsersEntry">
+            <h3>Geslecteerder renners</h3>
+            <CyclistCardMedium
+              v-for="{ cyclist } in findUsersEntry.entries"
+              :key="cyclist.id"
+              :cyclist
+              :show-specialies="false"
+              show-team-data
+              no-user-select
+              rider-selected="false"
+            >
+              <template #actionSlot>
+                <div v-if="cyclist.results[0]" class="points">
+                  <span>{{ cyclist.results[0]?.points }}</span> pnt
+                </div>
+              </template>
+            </CyclistCardMedium>
+            <span class="sum-line"><span class="plus">+</span></span>
+
+            <div class="cyclist-info-box totalScore">
+              <p>Totaal gescoorde punten: </p>
+              <span class="points">{{ totalUserScoredPoints }} pnt</span>
+            </div>
+          </section>
+
+          <!-- CYCLIST RESULT -->
+          <section v-if="cyclistResult">
+            <h3>Etappe uitslag</h3>
+            <CyclistCardSmall
+              v-for="{ cyclist, position, points } in cyclistResult"
+              :key="cyclist.id"
+              :cyclist="cyclist"
+              :result="{ position, points }"
+            />
+          </section>
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 

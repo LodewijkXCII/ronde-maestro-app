@@ -32,6 +32,20 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     return null;
   });
 
+  const upComingStage = computed<Stage | null>(() => {
+    if (!upcomingRace || !upcomingRace.value) {
+      return null;
+    }
+
+    const nextStage = upcomingRace.value[0]?.stages.find(stage => stage.done === false && stageUnderway(stage.date));
+
+    if (!nextStage) {
+      return null;
+    }
+
+    return nextStage;
+  });
+
   const currentStage = ref<Stage | null>(null);
 
   const loading = computed(() => upcomingRaceStatus.value === "pending");
@@ -43,5 +57,6 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     refreshUpcomingRace,
     currentRace,
     currentStage,
+    upComingStage,
   };
 });

@@ -51,67 +51,69 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <main class="wrapper">
-    <div class="login-form">
-      <h2>Inloggen</h2>
+  <main>
+    <div class="wrapper">
+      <div class="login-form">
+        <h2>Inloggen</h2>
 
-      <div v-if="submitError" role="alert" class="alert alert-error">
-        <Icon name="tabler:alert-square-rounded" />
-        <span>
-          {{ submitError }}
-        </span>
-      </div>
-      <div v-if="authStore.errorMessage" role="alert" class="alert alert-error">
-        <Icon name="tabler:alert-square-rounded" />
-        <span>
-          {{ authStore.errorMessage }}
-        </span>
-      </div>
-      <form @submit="onSubmit">
-        <div class="input-group">
-          <label for="email" class="input">Email:</label>
-          <input
-            v-model="email"
-            v-bind="emailAttrs"
-            type="email"
-            class="input__text"
-            :class="{ input__error: errors.email }"
-            placeholder="Email"
-            required
-            name="email"
-            autocomplete="email"
-          >
-          <div v-if="errors?.email" class="input-error">
-            {{ errors.email }}
-          </div>
+        <div v-if="submitError" role="alert" class="alert alert-error">
+          <Icon name="tabler:alert-square-rounded" />
+          <span>
+            {{ submitError }}
+          </span>
         </div>
-        <div class="input-group">
-          <label for="password" class="input">Wachtwoord:</label>
-          <input
-            v-model="password"
-            v-bind="passwordAttrs"
-            type="password"
-            class="input__text"
-            :class="{ input__error: errors.password }"
-            placeholder="Wachtwoord"
-            name="password"
-            autocomplete="current-password"
-          >
-          <div v-if="errors?.password" class="input-error">
-            {{ errors.password }}
-          </div>
+        <div v-if="authStore.errorMessage" role="alert" class="alert alert-error">
+          <Icon name="tabler:alert-square-rounded" />
+          <span>
+            {{ authStore.errorMessage }}
+          </span>
         </div>
-        <button :disabled="loading" class="btn btn-primary" @click="onSubmit">
-          Login
-          <Loading v-if="loading" />
-        </button>
-      </form>
+        <form @submit="onSubmit">
+          <div class="input-group">
+            <label for="email" class="input">Email:</label>
+            <input
+              v-model="email"
+              v-bind="emailAttrs"
+              type="email"
+              class="input__text"
+              :class="{ input__error: errors.email }"
+              placeholder="Email"
+              required
+              name="email"
+              autocomplete="email"
+            >
+            <div v-if="errors?.email" class="input-error">
+              {{ errors.email }}
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="password" class="input">Wachtwoord:</label>
+            <input
+              v-model="password"
+              v-bind="passwordAttrs"
+              type="password"
+              class="input__text"
+              :class="{ input__error: errors.password }"
+              placeholder="Wachtwoord"
+              name="password"
+              autocomplete="current-password"
+            >
+            <div v-if="errors?.password" class="input-error">
+              {{ errors.password }}
+            </div>
+          </div>
+          <button :disabled="loading" class="btn btn-primary" @click="onSubmit">
+            Login
+            <Loading v-if="loading" />
+          </button>
+        </form>
 
-      <p>
-        Nog geen account bij RondeMaestro? <NuxtLink to="/registreren">
-          Registeer je dan snel!
-        </Nuxtlink>
-      </p>
+        <p>
+          Nog geen account bij RondeMaestro? <NuxtLink to="/registreren">
+            Registeer je dan snel!
+          </Nuxtlink>
+        </p>
+      </div>
     </div>
   </main>
 </template>

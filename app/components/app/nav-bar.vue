@@ -134,23 +134,24 @@ const isNavbarActive = computed({
           <div class="link-block__title">
             Uitslagen
           </div>
-          <ul>
-            <li>
-              <template v-for="race in sideBarStore.upcomingRace" :key="race.id">
-                <ul v-if="race.stages.some(stage => stage.done)">
-                  <NuxtLink
-                    :to="{
-                      name: 'dashboard-etappe-overzicht-race-id',
-                      params: {
-                        race: slugify(race.name),
-                        id: race.id,
-                      },
-                    }"
-                    @click="closeNavbar"
-                  >
-                    {{ race.name }}
-                  </NuxtLink>
-                </ul>
+          <div class="race-list">
+            <details v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
+              <summary>
+                {{ race.name }}
+              </summary>
+              <NuxtLink
+                :to="{
+                  name: 'dashboard-etappe-overzicht-race-id',
+                  params: {
+                    race: slugify(race.name),
+                    id: race.id,
+                  },
+                }"
+                @click="closeNavbar"
+              >
+                Alle etappes
+              </NuxtLink>
+              <ul>
                 <template v-for="stage in race.stages" :key="stage.id">
                   <li v-if="stage.done" class="stage-nav">
                     <NuxtLink
@@ -172,9 +173,9 @@ const isNavbarActive = computed({
                     </NuxtLink>
                   </li>
                 </template>
-              </template>
-            </li>
-          </ul>
+              </ul>
+            </details>
+          </div>
         </div>
         <div class="link-block">
           <div class="link-block__title">

@@ -102,10 +102,11 @@ body {
 main {
   margin-top: calc(var(--navbar-height) + .25rem);
   flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .wrapper, .wrapper-lg, .wrapper-sm, .wrapper-xs {
-  margin-inline: auto;
   background: var(--clr-background);
   padding: 1rem;
   border-radius: var(--border-radius);
@@ -113,7 +114,7 @@ main {
 }
 
 .wrapper {
-  max-width: min(100% - 3rem, 240ch);
+  width: min(100% - 3rem, 240ch);
 }
 
 .wrapper-lg {
