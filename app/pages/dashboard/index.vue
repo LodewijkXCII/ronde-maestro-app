@@ -79,8 +79,8 @@ onMounted(async () => {
 <style>
 .selected-stage {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(auto, 200px));
+  grid-template-columns: repeat(auto-fit, minmax(auto, 150px));
   place-content: center;
-  gap: 1rem 2rem;
+  gap: 1rem;
 }
 </style>

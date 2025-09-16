@@ -57,7 +57,7 @@ const config = useRuntimeConfig();
   text-align: center;
   padding: 0.75rem;
   border-radius: var(--border-radius);
-  max-width: 200px;
+  max-width: 150px;
 
   &--avatar {
     position: relative;
@@ -88,7 +88,7 @@ const config = useRuntimeConfig();
   }
 
   &--cyclistInfo__team {
-    font-size: var(--fs-300);
+    font-size: var(--fs-200);
   }
 
   &--actions {

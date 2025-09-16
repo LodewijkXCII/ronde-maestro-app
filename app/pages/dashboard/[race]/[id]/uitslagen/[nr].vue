@@ -64,7 +64,6 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
       sideBarStore.currentStage = foundStage;
     }
     // GET RESULT DATA
-
     if (!currentStage.value?.id) {
       return;
     }
@@ -156,7 +155,7 @@ watch(
             <div>Punten</div>
             <div />
           </li>
-          <!-- TODO BOLD IF USER IS CURRENTUSER -->
+
           <ResultRow
             v-for="(user, index) in usersResult"
             :key="index"
@@ -167,7 +166,7 @@ watch(
         <!-- USER SELECTION WITH RESULT -->
         <div class="cyclist-result">
           <section v-if="findUsersEntry">
-            <h3>Geslecteerder renners</h3>
+            <h3>Geselecteerde renners</h3>
             <CyclistCardMedium
               v-for="{ cyclist } in findUsersEntry.entries"
               :key="cyclist.id"
