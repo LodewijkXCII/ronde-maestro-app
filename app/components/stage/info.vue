@@ -40,7 +40,9 @@ const config = useRuntimeConfig();
       </div>
     </div>
     <div v-if="stage" class="stage-box--body">
-      <img :src="`${config.public.s3BucketURL}/${stage.image}`" :alt="`${stage.startCity}-${stage.finishCity}`">
+      <div class="stage-image">
+        <img :src="`${config.public.s3BucketURL}/${stage.image}`" :alt="`${stage.startCity}-${stage.finishCity}`">
+      </div>
     </div>
   </article>
 </template>
@@ -74,10 +76,18 @@ const config = useRuntimeConfig();
       grid-column: -1/1;
     }
   }
+}
 
-  // .avatar:has(:not(.stage-section--stage__info)) {
-  //   grid-row: span 2;
-  // }
+.stage-image {
+  width: 100%;
+  max-height: 180px;
+  overflow: hidden;
+  border: 1px dotted pink;
+
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
 }
 
 .badge {

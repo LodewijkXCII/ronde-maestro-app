@@ -28,9 +28,9 @@ const config = useRuntimeConfig();
         </div>
       </div>
       <div class="cyclistCardLarge--cyclistInfo">
-        <div class="cyclistCardLarge--cyclistInfo__name">
+        <h4 class="cyclistCardLarge--cyclistInfo__name">
           {{ cyclist.firstName }} <strong>{{ cyclist.lastName }}</strong>
-        </div>
+        </h4>
         <div v-if="showTeamData" class="cyclistCardLarge--cyclistInfo__team">
           {{ cyclist.team.name }}
         </div>
@@ -50,9 +50,11 @@ const config = useRuntimeConfig();
 
 <style lang="scss">
 .cyclistCardLarge {
+  --_avatar-width: 85px;
   display: grid;
-  place-content: center;
-  gap: 0.75rem;
+  justify-content: center;
+  grid-template-rows: var(--_avatar-width) auto;
+  gap: 1rem;
   background: var(--clr-background-mute);
   text-align: center;
   padding: 0.75rem;
@@ -72,7 +74,7 @@ const config = useRuntimeConfig();
   }
 
   .avatar {
-    --_avatar-width: 85px;
+    --_avatar-width: var(--_avatar-width);
   }
 
   &--raceInfo,
@@ -87,10 +89,15 @@ const config = useRuntimeConfig();
     }
   }
 
-  &--cyclistInfo__team {
-    font-size: var(--fs-200);
+  &--cyclistInfo {
+    &__name {
+      font-weight: 400;
+      margin-bottom: 0.5em;
+    }
+    &__team {
+      font-size: var(--fs-200);
+    }
   }
-
   &--actions {
     justify-self: end;
     align-self: start;

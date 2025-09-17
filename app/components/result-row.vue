@@ -18,7 +18,9 @@ const showTeam = ref(false);
     <div class="points">
       <span>{{ user.points }}</span> pnt
     </div>
-    <div>
+    <div class="standings-action">
+      <AppTrophy v-if="user.winner" />
+    </div>    <div>
       <Icon v-if="showTeam" name="tabler:circle-chevron-down" size="24" />
       <Icon v-else name="tabler:circle-chevron-right" size="24" />
     </div>

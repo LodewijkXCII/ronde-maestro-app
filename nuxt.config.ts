@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: "RondeMaestro | Het wielerspel waarbij je elke dag dezelfde kansen hebt!",
+      charset: "utf-16",
+      viewport: "width=device-width, initial-scale=1, maximum-scale=1",
       htmlAttrs: {
         lang: "nl",
       },

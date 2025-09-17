@@ -12,7 +12,7 @@
       minmax(2ch, 15ch);
   }
   &:where(.result-table) {
-    --_grid-columns: 5ch 1fr minmax(4ch, auto) 3ch;
+    --_grid-columns: 5ch 1fr minmax(4ch, auto) 3ch 3ch;
   }
   &:where(.standings-table) {
     --_grid-columns: 5ch minmax(10ch, auto) 7ch 7ch;
@@ -85,4 +85,55 @@
 
     grid-template-rows: var(--_grid-rows);
   }
+}
+
+section > h2 {
+  margin-top: 0.75em;
+}
+table {
+  border-collapse: collapse;
+  border: 2px solid var(--clr-primary);
+  text-align: left;
+  margin: auto;
+}
+
+.calender-table {
+  width: min(80vw, 700px);
+
+  th:first-of-type,
+  td:first-of-type {
+    width: 25ch;
+  }
+}
+
+.score-table {
+  width: min(80vw, 500px);
+
+  th:first-of-type,
+  td:first-of-type {
+    width: 10ch;
+  }
+}
+
+caption {
+  caption-side: bottom;
+  padding: 10px;
+  font-size: var(--fs-200);
+  font-weight: 200;
+}
+
+thead,
+tfoot {
+  background-color: var(--clr-primary);
+  color: var(--clr-primary-content);
+}
+
+th,
+td {
+  border: 1px solid var(--clr-primary-dark);
+  padding: 8px 10px;
+}
+
+tbody > tr:nth-of-type(even) {
+  background-color: var(--clr-background-app);
 }

@@ -14,14 +14,17 @@
     </div>
     <div class="footer-wrapper footer-bottom">
       <div class="bottom-links">
-        <NuxtLink to="https://www.rondemaestro.com/spelregels">
+        <NuxtLink to="/spelregels">
           Spelregels
         </NuxtLink>
-        <NuxtLink to="https://www.rondemaestro.com/spelregels">
+        <NuxtLink to="/kalender">
+          Kalender
+        </NuxtLink>
+        <NuxtLink to="/privacy">
           Terms of service
         </NuxtLink>
-        <NuxtLink to="https://www.rondemaestro.com/spelregels">
-          Contact
+        <NuxtLink to="/voorwaarden">
+          Voorwaarden
         </NuxtLink>
       </div>
     </div>

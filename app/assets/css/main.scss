@@ -106,6 +106,20 @@ main {
   justify-content: center;
 }
 
+ol, ul {
+  padding-left: 1.5rem;
+
+  li {
+    padding-left: .5rem;
+    padding-block: .25rem;
+
+    &::marker {
+      color: var(--clr-primary);
+      font-weight: 800;
+    }
+  }
+}
+
 .wrapper, .wrapper-lg, .wrapper-sm, .wrapper-xs {
   background: var(--clr-background);
   padding: 1rem;
@@ -115,6 +129,10 @@ main {
 
 .wrapper {
   width: min(100% - 3rem, 240ch);
+
+  .text-section {
+    padding-inline: 1rem;
+  }
 }
 
 .wrapper-lg {
@@ -174,6 +192,7 @@ h3 {
 h4 {
   font-size: var(--fs-400);
   font-weight: 800;
+  line-height: 1.1;
 }
 
 a {

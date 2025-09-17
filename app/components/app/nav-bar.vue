@@ -51,6 +51,18 @@ const isNavbarActive = computed({
               Dashboard
             </NuxtLink>
           </div>
+          <ul>
+            <li>
+              <NuxtLink to="/kalender" @click="closeNavbar">
+                Kalender
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/spelregels" @click="closeNavbar">
+                Spelregels
+              </NuxtLink>
+            </li>
+          </ul>
         </div>
         <div class="link-block">
           <div class="link-block__title">
@@ -94,7 +106,8 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:trophy" style="color:var(--clr-accent-green)" />
+                      stage.finishCity }}
+                    <Icon size="18" name="tabler:trophy" style="color:var(--clr-accent-green)" />
                   </NuxtLink>
                   <NuxtLink
                     v-else-if="!stage.done && stageUnderway(stage.date)"
@@ -106,7 +119,8 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:pencil-off" style="color:var(--clr-alert)" />
+                      stage.finishCity }}
+                    <Icon size="18" name="tabler:pencil-off" style="color:var(--clr-alert)" />
                   </NuxtLink>
                   <NuxtLink
                     v-else
@@ -123,7 +137,8 @@ const isNavbarActive = computed({
                     @click="closeNavbar"
                   >
                     <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }} <Icon size="18" name="tabler:pencil" style="color:var(--clr-primary)" />
+                      stage.finishCity }}
+                    <Icon size="18" name="tabler:pencil" style="color:var(--clr-primary)" />
                   </NuxtLink>
                 </li>
               </ul>
@@ -210,7 +225,6 @@ const isNavbarActive = computed({
           <Icon
             class="swap-icon"
             :class="{ active: isMounted && isNavbarActive }"
-
             name="tabler:menu-2"
             size="24"
             color="currentColor"
@@ -287,10 +301,12 @@ ul {
   // flex-direction: column;
   grid-column-gap: 3rem;
   grid-row-gap: 1rem;
-  overflow: hidden; /* Crucial for the max-height transition */
+  overflow: hidden;
+  /* Crucial for the max-height transition */
   visibility: hidden;
   pointer-events: none;
-  max-height: 0; /* Starting point for the height transition */
+  max-height: 0;
+  /* Starting point for the height transition */
   opacity: 0;
   transition:
     max-height 0.5s ease-in-out,
@@ -307,7 +323,8 @@ ul {
 }
 
 .primary-navigation[data-visible="true"] {
-  max-height: 200vh; /* A value that is larger than the content's height */
+  max-height: 200vh;
+  /* A value that is larger than the content's height */
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -354,6 +371,7 @@ ul {
   .nav-wrapper {
     --navbar-height: 45px;
   }
+
   .navbar {
     grid-template-columns: minmax(0, auto) minmax(0, auto);
     grid-template-rows: minmax(0, auto) 1fr;
@@ -495,6 +513,7 @@ details[open] summary::after {
     height: auto;
   }
 }
+
 .mobile-nav-toggle {
   display: none;
 }
