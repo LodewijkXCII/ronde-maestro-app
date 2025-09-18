@@ -32,6 +32,7 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-csurf",
     "@vee-validate/nuxt",
+    "@vite-pwa/nuxt",
   ],
 
   css: [
@@ -48,5 +49,27 @@ export default defineNuxtConfig({
     classSuffix: "",
     preference: "system",
     fallback: "light",
+  },
+
+  pwa: {
+    manifest: {
+      name: "RondeMaestro",
+      short_name: "RondeMaestro",
+      description: "RondeMaestro | Het wielerspel waarbij je elke dag dezelfde kansen hebt!",
+      theme_color: "#F2F3F5",
+      background_color: "#F2F3F5",
+      icons: [
+        {
+          src: "/android-chrome-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "/android-chrome-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+      ],
+    },
   },
 });
