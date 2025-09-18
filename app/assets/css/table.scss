@@ -98,16 +98,20 @@ table {
 }
 
 .calender-table {
-  width: min(80vw, 700px);
+  width: min(100%, 600px);
 
   th:first-of-type,
   td:first-of-type {
     width: 25ch;
   }
+
+  @media (width < 500px) {
+    font-size: var(--fs-200);
+  }
 }
 
 .score-table {
-  width: min(80vw, 500px);
+  width: min(100%, 600px);
 
   th:first-of-type,
   td:first-of-type {

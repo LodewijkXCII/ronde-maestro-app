@@ -5,6 +5,9 @@
         <NuxtLink to="/" class="nav-logo">
           <AppLogo />
         </NuxtLink>
+        <p class="callout">
+          Ronde Maestro, hét wielerspel waarbij je dagelijks dezelfde kansen hebt!
+        </p>
         <p class="copyright">
           &copy; 2021 - {{ new Date().getFullYear() }} by ZweersDesign
         </p>
@@ -73,5 +76,11 @@ footer {
       }
     }
   }
+}
+
+.callout {
+  font-size: var(--fs-300);
+  font-weight: 800;
+  margin-top: 0.5em;
 }
 </style>

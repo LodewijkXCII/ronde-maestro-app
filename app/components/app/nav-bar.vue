@@ -40,13 +40,13 @@ const isNavbarActive = computed({
   <div ref="navbarRef" class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
-        <NuxtLink to="/dashboard" class="nav-logo" @click="closeNavbar">
+        <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo" @click="closeNavbar">
           <AppLogo />
         </NuxtLink>
       </div>
       <nav class="nav-middle primary-navigation" :data-visible="showNavbar">
         <div class="link-block">
-          <div class="link-block__title">
+          <div v-if="authStore.session" class="link-block__title">
             <NuxtLink to="/dashboard" @click="closeNavbar">
               Dashboard
             </NuxtLink>
@@ -64,7 +64,7 @@ const isNavbarActive = computed({
             </li>
           </ul>
         </div>
-        <div class="link-block">
+        <div v-if="authStore.session" class="link-block">
           <div class="link-block__title">
             <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }" @click="closeNavbar">
               Etappe overzicht
@@ -145,7 +145,7 @@ const isNavbarActive = computed({
             </details>
           </div>
         </div>
-        <div class="link-block">
+        <div v-if="authStore.session" class="link-block">
           <div class="link-block__title">
             Uitslagen
           </div>
@@ -192,7 +192,7 @@ const isNavbarActive = computed({
             </details>
           </div>
         </div>
-        <div class="link-block">
+        <div v-if="authStore.session" class="link-block">
           <div class="link-block__title">
             Klassement
           </div>
@@ -219,7 +219,7 @@ const isNavbarActive = computed({
         <AppAuthButton :show-navbar-content="showNavbar" />
         <AppThemeToggle />
 
-        <label v-if="authStore.session" class="swap" aria-label="Toggle menu">
+        <label class="swap" aria-label="Toggle menu">
           <input v-model="isNavbarActive" type="checkbox">
 
           <Icon
@@ -278,7 +278,7 @@ ul {
   justify-content: space-between;
   border-top: 1px solid var(--clr-primary);
   padding-top: 1rem;
-  grid-template-columns: minmax(0, auto) auto minmax(0, auto);
+  grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
   grid-template-areas: "left middle right";
 
   .nav-left {
