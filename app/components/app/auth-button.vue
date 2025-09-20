@@ -12,11 +12,17 @@ const authStore = useAuthStore();
       tabindex="0"
       class="user-name"
       role="button"
+      @click="navigateTo('/gebruiker')"
     >
       <Icon name="tabler:user-check" size="24" />
       <span class="user-name__name">{{ authStore.user.name }}</span>
     </div>
     <ul v-if="showNavbarContent" class="user-nav">
+      <li>
+        <NuxtLink to="/gebruiker">
+          Account
+        </NuxtLink>
+      </li>
       <li class="hover" @click="authStore.uitloggen">
         Uitloggen
       </li>
@@ -48,6 +54,12 @@ const authStore = useAuthStore();
   background: var(--clr-background);
   height: min-content;
   border-radius: 1000px;
+
+  &:hover {
+    background-color: var(--clr-primary);
+    color: var(--clr-primary-content);
+    cursor: pointer;
+  }
 }
 
 .user-nav {

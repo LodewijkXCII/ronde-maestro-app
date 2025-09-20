@@ -23,8 +23,11 @@ onMounted(() => {
           </p>
 
           <button class="btn btn-primary">
-            <NuxtLink to="/registreren">
+            <NuxtLink v-if="!authStore.user" to="/registreren">
               Inschrijven
+            </NuxtLink>
+            <NuxtLink v-else to="/dashboard">
+              Naar dashboard
             </NuxtLink>
           </button>
         </div>
@@ -114,8 +117,11 @@ onMounted(() => {
     <div class="text-block text-center">
       <h2>Waar wacht je nog op?</h2>
       <button class="btn btn-primary">
-        <NuxtLink to="/registreren">
+        <NuxtLink v-if="!authStore.user" to="/registreren">
           Inschrijven
+        </NuxtLink>
+        <NuxtLink v-else to="/dashboard">
+          Naar dashboard
         </NuxtLink>
       </button>
     </div>

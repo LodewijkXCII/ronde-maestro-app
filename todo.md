@@ -7,6 +7,7 @@
 - [ ] Wachtwoord vergeten
 - [ ] Mogelijkheid om shortlist te maken
 - [ ] Pagina titels toevoegen
+- [x] Als speler is ingelogd, direct naar dashboard gaan
 
 ## Pages
 
@@ -31,3 +32,6 @@
 - [ ] Alles
 
 ### Account
+
+- [ ] Opt in voor notificaties 
+- [ ] Opt in voor mailtjes 

@@ -3,19 +3,9 @@ import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
-import * as z from "zod";
 
+import { schema } from "~/lib/user-schema";
 import { useAuthStore } from "~/stores/auth";
-
-const schema = z.object({
-  email: z.string().email("Onjuist emailadres").nonempty(),
-  password: z.string().nonempty().min(8, "Het wachtwoord moet uit minimaal 8 karakters bestaan."),
-  confirm: z.string().nonempty(),
-  userName: z.string().nonempty({ message: "Naam mag niet leeg zijn." }),
-}).refine(data => data.password === data.confirm, {
-  message: "Wachtwoord is niet gelijk.",
-  path: ["confirm"],
-}); ;
 
 const loading = ref(false);
 const submitted = ref(false);

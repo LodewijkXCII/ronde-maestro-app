@@ -1,17 +1,83 @@
-input, textarea, button, select {
+input,
+textarea,
+button,
+select {
   font: inherit;
   color: inherit;
+}
+
+fieldset {
+  padding-block: .5rem;
+  border: 0;
+
+  display: grid;
+  gap: inherit;
+  grid-template-columns: inherit;
+
+  .input-group {
+    margin-block: 0.25rem;
+    padding-left: 1rem;
+  }
+
+  legend {
+    font-weight: 800;
+    margin-bottom: .05rem;
+  }
+
+  .subtle {
+    font-size: var(--fs-300);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-top: -.5rem;
+  }
+}
+
+:not(.swap) > [type="radio"],
+:not(.swap) > [type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  appearance: none;
+  border-radius: 50%;
+
+  border: 2px solid #999999;
+  transition: 0.2s all linear;
+  margin-inline: 5px;
+
+  position: relative;
+  top: 6px;
+  accent-color: var(--clr-primary);
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:checked {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-background-mute);
+    
+  }
 }
 
 .input-group {
   width: 100%;
   margin: 0.75rem 0;
-  display: block;
   position: relative;
   user-select: none;
+  display: grid;
 
   &:first-of-type:not(.checkbox-hidden) {
     margin-top: 0;
+  }
+
+  &:has([type="radio"], [type="checkbox"]) {
+    display: flex;
+    gap: 1ch;
+  }
+
+  &:has([type="radio"]:checked) {
+    background-color: var(--clr-primary-mute);
+    border-color: var(--clr-primary);
+    font-weight: 800;
   }
 
   .input__error {
@@ -34,6 +100,13 @@ input, textarea, button, select {
     outline: none;
     border-bottom: solid 3px var(--clr-primary);
 
+    &:disabled,
+    &[aria-disabled="true"] {
+      color: graytext;
+      filter: grayscale(100%);
+      opacity: 0.5;
+    }
+
     &:hover {
       cursor: text;
     }
@@ -41,17 +114,12 @@ input, textarea, button, select {
     &:focus,
     &:focus-within {
       border-width: 3px;
-      border-image: linear-gradient(to left, var(--clr-primary), var(--clr-secondary));
+      border-image: linear-gradient(
+        to left,
+        var(--clr-primary),
+        var(--clr-secondary)
+      );
       border-image-slice: 1;
-    }
-  }
-
-  input[type="checkbox"] {
-    accent-color: var(--clr-primary);
-    margin-right: 0.25em;
-
-    &:hover {
-      cursor: pointer;
     }
   }
 
@@ -97,7 +165,7 @@ form .btn {
   margin-top: 0.5rem;
 }
 
-label:not(.swap) {
+label:not(.swap, :where(:not([type='radio']))) {
   font-weight: 700;
   display: flex;
   flex-wrap: wrap;
@@ -233,7 +301,6 @@ select {
   -webkit-appearance: none;
   appearance: none;
 
-  
   background-repeat: no-repeat, repeat;
   /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
   background-position:
