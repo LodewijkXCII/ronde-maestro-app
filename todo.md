@@ -7,7 +7,12 @@
 - [ ] Wachtwoord vergeten
 - [ ] Mogelijkheid om shortlist te maken
 - [ ] Pagina titels toevoegen
-- [x] Als speler is ingelogd, direct naar dashboard gaan
+- [X] Als speler is ingelogd, direct naar dashboard gaan
+- [ ] Toast aanmaken voor meldingen
+  - [ ] Na invoeren van je team
+  - [ ] Na updaten van account voorkeuren
+  - [ ] Na updaten van account gegevens
+
 
 ## Pages
 
@@ -34,4 +39,5 @@
 ### Account
 
 - [ ] Opt in voor notificaties 
-- [ ] Opt in voor mailtjes 
+- [X] Opt in voor mailtjes 
+- [X] Gebruikers info aanpassen

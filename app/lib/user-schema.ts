@@ -1,15 +1,30 @@
 import * as z from "zod";
 
-export const schema = z.object({
+export const userSchema = z.object({
   email: z.string().email("Onjuist emailadres").nonempty(),
   password: z.string().nonempty().min(8, "Het wachtwoord moet uit minimaal 8 karakters bestaan."),
-  oldPassword: z.string().min(8, "Het wachtwoord moet uit minimaal 8 karakters bestaan.").optional(),
   confirm: z.string().nonempty(),
-  userName: z.string().nonempty({ message: "Naam mag niet leeg zijn." }),
-}).refine(data => data.password === data.confirm, {
+  name: z.string().nonempty({ message: "Naam mag niet leeg zijn." }),
+});
+
+export const schema = userSchema.refine(data => data.password === data.confirm, {
   message: "Wachtwoord is niet gelijk.",
   path: ["confirm"],
-}); ;
+});
+
+export const accountSchema = userSchema.pick({
+  name: true,
+  email: true,
+});
+
+export type AccountSchema = z.infer<typeof accountSchema>;
+
+export const passwordSchema = userSchema.pick({
+  password: true,
+  confirm: true,
+}).extend({
+  oldPassword: z.string().nonempty(),
+});
 
 const options = ["email", "push", "email_push", "none"] as const;
 

@@ -2,18 +2,17 @@
 import type { Component } from "vue";
 
 import { UserAccount, UserPreferences } from "#components";
-import { slugify } from "#imports";
 
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const activeComponent = ref<Component>(UserAccount);
+const activeComponent = ref<Component>(markRaw(UserAccount));
 const errorMessage = ref("");
 const loading = ref(false);
 
 const menuItems = ref([
-  { name: "Account gegevens", slug: slugify("Account gegevens"), component: UserAccount },
-  { name: "Voorkeuren", slug: slugify("Voorkeuren"), component: UserPreferences },
+  { name: "Account gegevens", slug: slugify("Account gegevens"), component: markRaw(UserAccount) },
+  { name: "Voorkeuren", slug: slugify("Voorkeuren"), component: markRaw(UserPreferences) },
 ]);
 
 function changeComponent(componentName: Component) {
