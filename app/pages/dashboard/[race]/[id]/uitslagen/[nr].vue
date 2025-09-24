@@ -130,18 +130,18 @@ watch(
       </div>
 
       <section v-else-if="currentRace && currentStage">
-        <AppNavigation :current-route="`Uitslag etappe ${currentStage.stageNr}`" />
+        <AppNavigation :current-route="`Uitslag ${sideBarStore.isClassicSeason ? currentRace.name : `etappe ${currentStage.stageNr}`}`" />
         <StageInfo :race="currentRace" :stage="currentStage" />
 
         <!-- USER RESULT -->
         <NuxtLink
           v-if="currentRace"
           :to="{
-            name: 'dashboard-race-id-klassement',
+            name: 'dashboard-klassement-race',
             params: {
-              race: slugify(currentRace.name),
-              id: currentRace.id,
+              race: sideBarStore.isClassicSeason ? 'klassiekers' : slugify(currentRace.name),
             },
+            query: { race: `${slugify(currentRace.name)}` },
           }"
           class="btn btn-secondary"
         >

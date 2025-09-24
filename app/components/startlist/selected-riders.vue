@@ -9,6 +9,7 @@ const config = useRuntimeConfig();
 
 const selectedRidersStore = useSelectedRidersStore();
 const sideBarStore = useSideBarStore();
+const toastStore = useToastStore();
 
 const { currentStage } = storeToRefs(sideBarStore);
 const { selectedRidersComponents } = storeToRefs(selectedRidersStore);
@@ -67,12 +68,25 @@ async function handleSubmit() {
 
     // TODO set as toast
     submitMessage.value = "Je team is ingevuld!";
+
+    const toastBody: ToastBody = {
+      title: "Je team is ingevuld!",
+      description: "Je team is succesvol opgeslagen, veel geluk!",
+      responseStatus: "success",
+    };
+    toastStore.showToast(toastBody);
+
     submitted.value = true;
 
-    navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
-      race: slugify(sideBarStore.currentRace?.name as string),
-      id: sideBarStore.currentRace?.id,
-    } });
+    if (!sideBarStore.isClassicSeason) {
+      navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
+        race: slugify(sideBarStore.currentRace?.name as string),
+        id: sideBarStore.currentRace?.id,
+      } });
+    }
+    else {
+      navigateTo({ name: "dashboard-etappe-overzicht" });
+    }
   }
   catch (e) {
     const error = e as FetchError;

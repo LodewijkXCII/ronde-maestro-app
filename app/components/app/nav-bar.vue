@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { watch } from "vue";
+
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
+const route = useRoute();
 
 const isMounted = ref(false);
 const showNavbar = ref(false);
@@ -33,6 +36,13 @@ const isNavbarActive = computed({
   set() {
     showNavbar.value = !showNavbar.value;
   },
+});
+
+// TODO ADD WATCH OF THE ROUTE TO CLOSE NAVBAR
+watch(route, () => {
+  if (showNavbar.value) {
+    closeNavbar();
+  }
 });
 </script>
 
@@ -70,79 +80,21 @@ const isNavbarActive = computed({
               Etappe overzicht
             </NuxtLink>
           </div>
-          <div class="race-list">
-            <details v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
-              <summary>
-                {{ race.name }}
-              </summary>
-              <NuxtLink
-                :to="{
-                  name: 'dashboard-etappe-overzicht-race-id',
-                  params: {
-                    race: slugify(race.name),
-                    id: race.id,
-                  },
-                }"
-                @click="closeNavbar"
-              >
-                Alle etappes
-                <!-- <img v-if="race.image" :src="`${config.public.s3BucketURL}/${race.image}`" :alt="race.name"> -->
-              </NuxtLink>
-              <ul>
-                <li v-for="stage in race.stages" :key="stage.id" class="stage-nav">
-                  <NuxtLink
-                    v-if="stage.done"
-                    :to="{
-                      name: 'dashboard-race-id-uitslagen-nr',
-                      params:
-                        {
-                          race: slugify(race.name),
-                          id: stage.raceId,
-                          nr: stage.stageNr,
-                        },
-
-                    }"
-                    class=""
-                    @click="closeNavbar"
-                  >
-                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }}
-                    <Icon size="18" name="tabler:trophy" style="color:var(--clr-accent-green)" />
-                  </NuxtLink>
-                  <NuxtLink
-                    v-else-if="!stage.done && stageUnderway(stage.date)"
-                    :to="{
-                      name: 'dashboard',
-
-                    }"
-                    class=""
-                    @click="closeNavbar"
-                  >
-                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }}
-                    <Icon size="18" name="tabler:pencil-off" style="color:var(--clr-alert)" />
-                  </NuxtLink>
-                  <NuxtLink
-                    v-else
-                    :to="{
-                      name: 'dashboard-race-id-selecteer-nr',
-                      params:
-                        {
-                          race: slugify(race.name),
-                          id: stage.raceId,
-                          nr: stage.stageNr,
-                        },
-                    }"
-                    class=""
-                    @click="closeNavbar"
-                  >
-                    <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                      stage.finishCity }}
-                    <Icon size="18" name="tabler:pencil" style="color:var(--clr-primary)" />
-                  </NuxtLink>
-                </li>
-              </ul>
-            </details>
+          <div v-if="!sideBarStore.isClassicSeason" class="race-list">
+            <NavList
+              v-for="race in sideBarStore.upcomingRace"
+              :key="race.id"
+              :grand-tour="race"
+              :on-closed="closeNavbar"
+              comp-location="overzicht"
+            />
+          </div>
+          <div v-else-if="sideBarStore.classicsRaces">
+            <NavList
+              :classics-races="sideBarStore.classicsRaces"
+              :on-closed="closeNavbar"
+              comp-location="overzicht"
+            />
           </div>
         </div>
         <div v-if="authStore.session" class="link-block">
@@ -150,46 +102,22 @@ const isNavbarActive = computed({
             Uitslagen
           </div>
           <div class="race-list">
-            <details v-for="race in sideBarStore.upcomingRace" :key="race.id" class="race-list__race">
-              <summary>
-                {{ race.name }}
-              </summary>
-              <NuxtLink
-                :to="{
-                  name: 'dashboard-etappe-overzicht-race-id',
-                  params: {
-                    race: slugify(race.name),
-                    id: race.id,
-                  },
-                }"
-                @click="closeNavbar"
-              >
-                Alle etappes
-              </NuxtLink>
-              <ul>
-                <template v-for="stage in race.stages" :key="stage.id">
-                  <li v-if="stage.done" class="stage-nav">
-                    <NuxtLink
-                      :to="{
-                        name: 'dashboard-race-id-uitslagen-nr',
-                        params:
-                          {
-                            race: slugify(race.name),
-                            id: stage.raceId,
-                            nr: stage.stageNr,
-                          },
-
-                      }"
-                      class=""
-                      @click="closeNavbar"
-                    >
-                      <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-                        stage.finishCity }}
-                    </NuxtLink>
-                  </li>
-                </template>
-              </ul>
-            </details>
+            <div v-if="!sideBarStore.isClassicSeason" class="race-list">
+              <NavList
+                v-for="race in sideBarStore.upcomingRace"
+                :key="race.id"
+                :grand-tour="race"
+                :on-closed="closeNavbar"
+                comp-location="uitslag"
+              />
+            </div>
+            <div v-else-if="sideBarStore.classicsRaces">
+              <NavList
+                :classics-races="sideBarStore.classicsRaces"
+                :on-closed="closeNavbar"
+                comp-location="uitslag"
+              />
+            </div>
           </div>
         </div>
         <div v-if="authStore.session" class="link-block">
@@ -197,20 +125,37 @@ const isNavbarActive = computed({
             Klassement
           </div>
           <ul>
-            <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
-              <NuxtLink
-                :to="{
-                  name: 'dashboard-race-id-klassement',
-                  params: {
-                    race: slugify(race.name),
-                    id: race.id,
-                  },
-                }"
-                @click="closeNavbar"
-              >
-                {{ race.name }}
-              </NuxtLink>
-            </li>
+            <template v-if="!sideBarStore.isClassicSeason">
+              <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
+                <NuxtLink
+                  :to="{
+                    name: 'dashboard-klassement-race',
+                    params: {
+                      race: slugify(race.name),
+                    },
+                  }"
+                  @click="closeNavbar"
+                >
+                  {{ race.name }}
+                </NuxtLink>
+              </li>
+            </template>
+
+            <template v-else>
+              <li>
+                <NuxtLink
+                  :to="{
+                    name: 'dashboard-klassement-race',
+                    params: {
+                      race: 'klassiekers',
+                    },
+                  }"
+                  @click="closeNavbar"
+                >
+                  Klassiekers
+                </NuxtLink>
+              </li>
+            </template>
           </ul>
         </div>
       </nav>
@@ -225,7 +170,7 @@ const isNavbarActive = computed({
           <Icon
             class="swap-icon"
             :class="{ active: isMounted && isNavbarActive }"
-            name="tabler:menu-2"
+            name="tabler:align-justified"
             size="24"
             color="currentColor"
           />
@@ -298,28 +243,20 @@ ul {
 
 .primary-navigation {
   display: flex;
-  // flex-direction: column;
+
   grid-column-gap: 3rem;
   grid-row-gap: 1rem;
   overflow: hidden;
-  /* Crucial for the max-height transition */
+
   visibility: hidden;
   pointer-events: none;
   max-height: 0;
-  /* Starting point for the height transition */
+
   opacity: 0;
   transition:
     max-height 0.5s ease-in-out,
     opacity 0.3s ease-in-out,
     visibility 0.5s;
-
-  // display: none;
-  // opacity: 0;
-  // transition:
-  //   display 0.5s,
-  //   heigth 1s,
-  //   opacity 0.5s;
-  // transition-behavior: allow-discrete;
 }
 
 .primary-navigation[data-visible="true"] {
@@ -340,7 +277,6 @@ ul {
   }
 
   a {
-    text-decoration: none;
     color: currentColor;
 
     &:hover {
@@ -364,6 +300,10 @@ ul {
     font-weight: 800;
     margin-bottom: 0.75rem;
     text-transform: uppercase;
+  }
+
+  a:has(:not(.link-block__title)) {
+    font-weight: 400;
   }
 }
 
@@ -412,10 +352,6 @@ ul {
   }
 }
 
-// .nav-wrapper:has(.primary-navigation[data-visible="true"]) {
-//   height: auto;
-// }
-
 .hover {
   cursor: pointer;
 }
@@ -432,6 +368,7 @@ summary a {
   gap: 0.5rem;
   margin-bottom: 0.25rem;
   align-items: center;
+  font-weight: 400;
 
   &:hover {
     color: var(--clr-primary);
@@ -492,10 +429,11 @@ details[open] summary::after {
 
 .stage-nav a {
   display: grid;
-  grid-template-columns: 2ch minmax(150px, auto) 30px;
+  grid-template-columns: auto minmax(150px, auto) 30px;
   gap: 0.75rem;
   align-items: baseline;
   margin-bottom: 0.5rem;
+  font-weight: 400;
 
   &:hover {
     color: var(--clr-primary);

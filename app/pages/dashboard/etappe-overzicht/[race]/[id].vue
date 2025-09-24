@@ -25,10 +25,10 @@ onMounted(() => {
         <NuxtLink
           v-if="currentRace"
           :to="{
-            name: 'dashboard-race-id-klassement',
+            name: 'dashboard-klassement-race',
             params: {
               race: slugify(currentRace.name),
-              id: currentRace.id,
+
             },
           }"
           class="btn btn-secondary"

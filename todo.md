@@ -8,16 +8,17 @@
 - [ ] Mogelijkheid om shortlist te maken
 - [ ] Pagina titels toevoegen
 - [X] Als speler is ingelogd, direct naar dashboard gaan
-- [ ] Toast aanmaken voor meldingen
-  - [ ] Na invoeren van je team
-  - [ ] Na updaten van account voorkeuren
+- [X] Toast aanmaken voor meldingen
+  - [X] Na invoeren van je team
+  - [X] Na updaten van account voorkeuren
   - [ ] Na updaten van account gegevens
 
 
 ## Pages
 
 ### Dashboard
-
+- [ ] Overzicht van aankomende etappes
+- [ ] 
 
 ### Races
 
@@ -27,7 +28,7 @@
 - [ ] Klassement
   - [ ] Klassement team
 
-- [ ] Klassiekers etappe overzichten uitslagen aanpassen
+- [X] Klassiekers etappe overzichten uitslagen aanpassen
   - Nu nog als ronde overzicht. Etappe moet naam van klassieker krijgen en details/summery moet 'Klassiekers worden'
 - [ ] Goed checken voor ploegentijdrit
 

@@ -46,7 +46,7 @@ const showTeam = ref(false);
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 1rem 2rem;
 
   h4 {
     grid-column: -1 / 1;

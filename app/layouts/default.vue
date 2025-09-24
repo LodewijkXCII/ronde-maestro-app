@@ -14,5 +14,6 @@ onMounted(async () => {
 <template>
   <AppNavBar />
   <NuxtPage />
+  <AppToast />
   <AppFooter />
 </template>

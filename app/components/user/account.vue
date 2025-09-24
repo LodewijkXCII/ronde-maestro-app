@@ -29,7 +29,7 @@ const authStore = useAuthStore();
   }
 }
 
-.input-group > input,
+.input-group > input:has(form),
 select,
 textarea,
 fieldset {

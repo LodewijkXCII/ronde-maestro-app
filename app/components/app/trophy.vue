@@ -50,17 +50,4 @@ defineProps<{
     color: gold;
   }
 }
-
-/* // .victories {
-//   border-radius: 50%;
-//   aspect-ratio: 1/1;
-//   width: 30px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-
-//   &:hover {
-//     cursor: help;
-//   }
-// } */
 </style>

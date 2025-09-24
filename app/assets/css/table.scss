@@ -39,14 +39,12 @@
       background-color: var(--clr-background);
     }
 
-    &:hover:not(.table-header) {
+    &:hover:not(.table-header), &:focus-visible:not(.table-header), &:focus:not(.table-header) {
       cursor: pointer;
       background-color: var(--clr-primary);
       color: var(--clr-primary-content);
-      .table-grow,
-      .table-action {
-        text-decoration: underline;
-      }
+      outline: 3px solid var(--clr-primary-dark);
+      outline-offset: -3px;
     }
 
     &:last-of-type {

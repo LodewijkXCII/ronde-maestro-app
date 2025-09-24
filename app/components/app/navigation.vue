@@ -68,6 +68,7 @@ const { currentRace } = storeToRefs(sideBarStore);
       </li>
       <li v-if="currentRace">
         <NuxtLink
+          v-if="!sideBarStore.isClassicSeason"
           :to="{
             name: 'dashboard-etappe-overzicht-race-id',
             params: {
@@ -77,6 +78,14 @@ const { currentRace } = storeToRefs(sideBarStore);
           }"
         >
           {{ currentRace.name }}
+        </NuxtLink>
+        <NuxtLink
+          v-else
+          :to="{
+            name: 'dashboard-etappe-overzicht',
+          }"
+        >
+          Etappe overzicht
         </NuxtLink>
       </li>
       <li v-if="currentRoute">
@@ -133,6 +142,5 @@ ul.breadcrumb-list li a {
 /* Add a color on mouse-over */
 ul.breadcrumb-list li a:hover {
   color: #01447e;
-  text-decoration: underline;
 }
 </style>

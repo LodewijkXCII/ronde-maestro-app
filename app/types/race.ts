@@ -3,6 +3,14 @@ import type { SelectCountry } from "./common";
 export type SelectRaceWithRelations = Race & {
   stages: Stage[];
 };
+export type ClassicsRaces = {
+  name: string;
+  startDate: Date;
+  finishDate: Date;
+  races: Race[] | null;
+  year: number;
+  seasonTimeId: number | null;
+};
 
 export type Race = {
   id: number;

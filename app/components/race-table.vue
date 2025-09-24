@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import type { SelectRaceWithRelations } from "~/types/race";
+import type { ClassicsRaces, SelectRaceWithRelations } from "~/types/race";
 
-defineProps<{
-  race: SelectRaceWithRelations;
+const props = defineProps<{
+  grandTour?: SelectRaceWithRelations;
+  classicsRaces?: ClassicsRaces;
 }>();
+
+const sideBarStore = useSideBarStore();
+const race = computed(() => {
+  if (props.grandTour) {
+    return props.grandTour;
+  }
+  if (props.classicsRaces) {
+    return props.classicsRaces;
+  }
+  return undefined;
+});
 </script>
 
 <template>
-  <article class="race">
-    <h3>Etappes voor {{ race.name }}</h3>
+  <article v-if="race" class="race">
+    <h3>Etappes voor {{ race.name }} {{ race.year }}</h3>
     <p>
       {{ new Date(race.startDate).toLocaleDateString("nl-NL", {
         day: '2-digit',
@@ -34,12 +46,12 @@ defineProps<{
         <div class="table-action" />
       </li>
       <li
-        v-for="stage in race.stages"
+        v-for="stage in sideBarStore.allStages"
         :key="stage.id"
         class="table-row"
         @click="goToStage(stage.id)"
       >
-        <EtappeRow :stage="stage" :race-name="race.name" />
+        <EtappeRow :stage="stage" :race-name="getRaceName(stage.raceId)" />
       </li>
     </ul>
   </article>

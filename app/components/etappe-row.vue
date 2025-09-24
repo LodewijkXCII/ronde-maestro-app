@@ -7,6 +7,7 @@ defineProps<{
 }>();
 
 const config = useRuntimeConfig();
+const sideBarStore = useSideBarStore();
 </script>
 
 <template>
@@ -20,8 +21,14 @@ const config = useRuntimeConfig();
     }) }}
   </div>
   <div class="table-grow table-start-finish">
-    {{ stage.startCity }} - {{ stage.finishCity }}
+    <template v-if="!sideBarStore.isClassicSeason">
+      {{ stage.startCity }} - {{ stage.finishCity }}
+    </template>
+    <template v-else>
+      {{ raceName }}
+    </template>
   </div>
+
   <div class="table-type">
     <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name">
     {{ stage.distance }} km
@@ -60,7 +67,7 @@ const config = useRuntimeConfig();
           },
       }"
     >
-      <Icon name="tabler:pencil" size="24" style="color:var(--clr-primary)" />
+      <Icon name="tabler:pencil" size="24" style="color:var(--clr-primary-dark)" />
       Selecteer renners
     </NuxtLink>
   </div>

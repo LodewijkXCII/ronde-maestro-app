@@ -13,7 +13,12 @@ onMounted(() => {
     <div class="wrapper-sm">
       <h2>Etappe overzicht</h2>
 
-      <RaceTable v-for="race in sideBarStore.upcomingRace" :key="race.id" :race />
+      <template v-if="sideBarStore.isClassicSeason && sideBarStore.classicsRaces">
+        <RaceTable :classics-races="sideBarStore.classicsRaces" />
+      </template>
+      <template v-else>
+        <RaceTable v-for="race in sideBarStore.upcomingRace" :key="race.id" :grand-tour="race" />
+      </template>
     </div>
   </main>
 </template>

@@ -73,9 +73,12 @@ onMounted(() => {
 <style>
 .user-dashboard {
   display: grid;
-  grid-template-columns: 1fr 3fr;
   gap: 2rem;
   margin-top: 2rem;
+
+  @media (width > 600px) {
+    grid-template-columns: 1fr 3fr;
+  }
 }
 
 aside ul {

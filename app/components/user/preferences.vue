@@ -8,6 +8,7 @@ import { userPrefSchema } from "~/lib/user-schema";
 const config = useRuntimeConfig();
 
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const submitError = ref("");
 const loading = ref(false);
@@ -39,6 +40,12 @@ const onSubmit = handleSubmit(async (values) => {
       submitError.value = "Er is iest mis gegaan";
     }
 
+    const toastBody: ToastBody = {
+      title: "Voorkeuren opgeslagen",
+      description: "Je voorkeuren zijn succesvol opgeslagen",
+      responseStatus: "success",
+    };
+    toastStore.showToast(toastBody);
     submitted.value = true;
   }
   catch (e: any) {
