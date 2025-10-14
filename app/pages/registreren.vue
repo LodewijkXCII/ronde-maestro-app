@@ -10,16 +10,16 @@ import { useAuthStore } from "~/stores/auth";
 const loading = ref(false);
 const submitted = ref(false);
 const submitError = ref("");
-
+const verifcationEmail = ref("");
 const authStore = useAuthStore();
 
-const { errors, handleSubmit, setErrors, defineField } = useForm({
+const { errors, handleSubmit, setErrors, defineField, resetForm } = useForm({
   validationSchema: toTypedSchema(schema),
 });
 
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
-const [userName, userNameAttrs] = defineField("userName");
+const [userName, userNameAttrs] = defineField("name");
 const [confirm, confirmAttrs] = defineField("confirm");
 
 const onSubmit = handleSubmit(async (values) => {
@@ -29,10 +29,13 @@ const onSubmit = handleSubmit(async (values) => {
     await authStore.registreren({
       email: values.email.trim(),
       password: values.password,
-      userName: values.userName.trim(),
+      userName: values.name.trim(),
     });
 
     submitted.value = true;
+    verifcationEmail.value = values.email.trim();
+
+    resetForm();
   }
   catch (e) {
     const error = e as FetchError;
@@ -67,6 +70,14 @@ const onSubmit = handleSubmit(async (values) => {
           </span>
         </div>
 
+        <Verification
+          v-if="authStore.showVerificationButton"
+          title="Registeren gelukt!"
+          message="Je hebt een email ontvangen om je account te verifiëren. Klik op link in je email om mee te kunnen doen aan RondeMaestro. Geen email ontvangen? Gebruik onderstaande knop om een nieuwe link aan te vragen."
+          :email="verifcationEmail"
+          role="success"
+        />
+
         <form @submit="onSubmit">
           <div class="input-group">
             <label for="userName" class="input">Gebruikersnaam:</label>
@@ -75,14 +86,14 @@ const onSubmit = handleSubmit(async (values) => {
               v-bind="userNameAttrs"
               type="text"
               class="input__text"
-              :class="{ input__error: errors.userName }"
+              :class="{ input__error: errors.name }"
               placeholder="Naam"
               required
               name="userName"
               autocomplete="username"
             >
-            <div v-if="errors?.userName" class="input-error">
-              {{ errors.userName }}
+            <div v-if="errors?.name" class="input-error">
+              {{ errors.name }}
             </div>
           </div>
           <div class="input-group">

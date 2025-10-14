@@ -38,7 +38,6 @@ const onSubmit = handleSubmit(async (values) => {
   }
   catch (e) {
     const error = e as FetchError;
-
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
@@ -62,12 +61,19 @@ const onSubmit = handleSubmit(async (values) => {
             {{ submitError }}
           </span>
         </div>
-        <div v-if="authStore.errorMessage" role="alert" class="alert alert-error">
+        <div v-if="authStore.errorMessage === 'Email nie verifieerd'" role="alert" class="alert alert-error">
           <Icon name="tabler:alert-square-rounded" />
           <span>
             {{ authStore.errorMessage }}
           </span>
         </div>
+        <Verification
+          v-if="authStore.showVerificationButton"
+          :title="authStore.errorMessage"
+          role="alert"
+          message="Je hebt een email ontvangen om je account te verifiëren. Klik op link in je email om mee te kunnen doen aan RondeMaestro. Geen email ontvangen? Gebruik onderstaande knop om een nieuwe link aan te vragen."
+        />
+
         <form @submit="onSubmit">
           <div class="input-group">
             <label for="email" class="input">Email:</label>

@@ -8,6 +8,7 @@ export type UserWithId = Omit<User, "id"> & {
 
 export const useAuthStore = defineStore("useAuthstore", () => {
   const config = useRuntimeConfig();
+  const clientBaseUrl = config.public.clientBase;
 
   const authClient = createAuthClient({
     baseURL: `${config.public.apiBase}/auth`,
@@ -16,11 +17,17 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     },
   });
 
+  function getAbsoluteCallbackURL(path: string): string {
+    // Concatenate the dynamic base URL with the desired relative path
+    return `${clientBaseUrl}${path}`;
+  }
+
   const {
     getSession,
     signIn,
     signOut,
     signUp,
+    sendVerificationEmail,
   } = authClient;
 
   const errorCodes = {
@@ -35,6 +42,10 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: {
       en: "User already exists. Use another email.",
       nl: "E-mailadres al in gebruik.",
+    },
+    EMAIL_NOT_VERIFIED: {
+      en: "Email not verified",
+      nl: "Email niet verifieerd",
     },
     // Add other custom error codes here
   };
@@ -57,6 +68,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   const user = computed(() => session.value?.data?.user);
   const loading = computed(() => session.value?.isPending);
   const errorMessage = ref("");
+  const showVerificationComponent = ref(false);
 
   async function inloggen(body: { email: string; password: string }) {
     const { csrf } = useCsrf();
@@ -66,11 +78,13 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     await signIn.email({
       email: body.email,
       password: body.password,
-      callbackURL: "/dashboard",
+      callbackURL: getAbsoluteCallbackURL("/dashboard"),
       fetchOptions: {
         headers,
         onError(ctx) {
           if (ctx.error.status === 403) {
+            showVerificationComponent.value = true;
+            navigateTo("/inloggen");
             // eslint-disable-next-line no-alert
             window.alert("Please verify your email address");
           }
@@ -92,29 +106,27 @@ export const useAuthStore = defineStore("useAuthstore", () => {
       email: body.email,
       password: body.password,
       name: body.userName,
-      callbackURL: "/dashboard",
+      callbackURL: getAbsoluteCallbackURL("/dashboard"),
       fetchOptions: {
         headers,
         onError(ctx) {
           errorMessage.value = getErrorMessage(ctx.error.code, "nl");
         },
         onSuccess() {
-          inloggen({ email: body.email, password: body.password });
+          // Todo send to other page for verification button
+          // inloggen({ email: body.email, password: body.password });
+          showVerificationComponent.value = true;
         },
       },
     });
   }
 
-  // async function resendVerification(email: string) {
-  //   // const { csrf } = useCsrf();
-  //   // const headers = new Headers();
-  //   // headers.append("csrf-token", csrf);
-
-  //   await sendVerificationEmail({
-  //     email,
-  //     callbackURL: "/inloggen",
-  //   });
-  // }
+  async function resendVerification(email: string) {
+    await sendVerificationEmail({
+      email,
+      callbackURL: getAbsoluteCallbackURL("/dashboard"),
+    });
+  }
 
   async function uitloggen() {
     const { csrf } = useCsrf();
@@ -140,5 +152,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     uitloggen,
     registreren,
     errorMessage,
+    resendVerification,
+    showVerificationButton: showVerificationComponent,
   };
 });

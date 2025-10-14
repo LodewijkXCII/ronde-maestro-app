@@ -18,6 +18,9 @@ export default defineNuxtConfig({
     public: {
       // eslint-disable-next-line node/no-process-env
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      // Add a client URL for callbacks:
+      // eslint-disable-next-line node/no-process-env
+      clientBase: process.env.NUXT_PUBLIC_CLIENT_BASE || "http://localhost:3000",
       // eslint-disable-next-line node/no-process-env
       s3BucketURL: process.env.NUXT_PUBLIC_S3 || "https://ronde-maestro-v2.s3.eu-central-1.amazonaws.com",
     },
