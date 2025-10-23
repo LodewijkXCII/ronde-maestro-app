@@ -123,7 +123,7 @@ onMounted(async () => {
         </div>
         <div class="input-group">
           <input
-            id="result-email"
+            id="startlist-email"
 
             v-model="startlist"
             type="radio"

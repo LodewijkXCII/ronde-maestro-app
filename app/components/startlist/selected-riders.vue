@@ -66,7 +66,6 @@ async function handleSubmit() {
       credentials: "include",
     });
 
-    // TODO set as toast
     submitMessage.value = "Je team is ingevuld!";
 
     const toastBody: ToastBody = {

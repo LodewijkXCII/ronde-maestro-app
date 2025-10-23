@@ -16,7 +16,7 @@ const authStore = useAuthStore();
 
     <UserInfo />
 
-    <!-- <UserPassword /> -->
+    <UserPassword />
   </section>
 </template>
 

@@ -141,6 +141,19 @@ a.btn,
     }
   }
 
+  &-link {
+    color: var(--clr-text);
+    background: transparent;
+    font-weight: 400;
+
+     &:hover,
+    :focus-within {
+      outline: none;
+      
+      font-weight: 800;
+    }
+  }
+
   &-sm {
     --_button-outline: 1px solid;
     font-size: var(--fs-200);
@@ -320,4 +333,34 @@ span.points {
   ul {
     margin-left: 3rem;
   }
+}
+
+[popover] {
+  position: fixed;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  border: solid;
+  padding: 0.25em;
+  overflow: auto;
+  color: inherit;
+}
+
+:popover-open {
+  background-color: var(--clr-background);
+  padding: 2rem;
+  border: 4px solid var(--clr-primary);
+  border-radius: var(--border-radius);
+  max-width: 55ch; 
+  position: absolute;
+  inset: unset;
+  margin: auto;
+  box-shadow: var(--shadow);
+
+}
+
+::backdrop {
+  backdrop-filter: blur(3px);
+  background: hsl(from var(--clr-primary) h s l / 0.5);
 }

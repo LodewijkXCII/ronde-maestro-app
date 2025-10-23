@@ -8,38 +8,39 @@ import * as z from "zod";
 import getFetchErrorMessage from "~/utils/get-fetch-error-message";
 
 const schema = z.object({
-  email: z.string().email("Onjuist emailadres").nonempty(),
-  password: z.string().nonempty(),
+  password: z.string().nonempty().min(8, "Het wachtwoord moet uit minimaal 8 karakters bestaan."),
 });
 
 const loading = ref(false);
 const submitted = ref(false);
 const submitError = ref("");
+const token = ref("");
 
 const authStore = useAuthStore();
+const route = useRoute();
 
 const { errors, handleSubmit, setErrors, defineField } = useForm({
   validationSchema: toTypedSchema(schema),
 });
 
-const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 
 const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    await authStore.inloggen({
-      email: values.email,
-      password: values.password,
-    });
+
+    const { data } = await authStore.resetPassword(values.password, token.value);
+
+    if (data && data.status === true) {
+      navigateTo("/inloggen");
+    }
 
     submitted.value = true;
   }
   catch (e) {
     const error = e as FetchError;
 
-    console.log(error, e);
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
@@ -49,13 +50,25 @@ const onSubmit = handleSubmit(async (values) => {
     loading.value = false;
   }
 });
+onMounted(() => {
+  if (!route.query.token) {
+    submitError.value = "Er is geen token gevonden. Probeer het opnieuw.";
+  }
+  else {
+    token.value = route.query.token as string || "";
+  }
+});
 </script>
 
 <template>
   <main>
     <div class="wrapper">
       <div class="login-form">
-        <h2>Inloggen</h2>
+        <h2>Wachtwoord vergeten?</h2>
+
+        <p>
+          Vul hieronder je nieuwe wachtwoord in.
+        </p>
 
         <div v-if="submitError" role="alert" class="alert alert-error">
           <Icon name="tabler:alert-square-rounded" />
@@ -78,57 +91,33 @@ const onSubmit = handleSubmit(async (values) => {
 
         <form>
           <div class="input-group">
-            <label for="email" class="input">Email:</label>
-            <input
-              v-model="email"
-              v-bind="emailAttrs"
-              type="email"
-              class="input__text"
-              :class="{ input__error: errors.email }"
-              placeholder="Email"
-              required
-              name="email"
-              autocomplete="email"
-            >
-            <div v-if="errors?.email" class="input-error">
-              {{ errors.email }}
-            </div>
-          </div>
-          <div class="input-group">
-            <label for="password" class="input">Wachtwoord:</label>
+            <label for="password" class="input">Nieuw wachtwoord:</label>
             <input
               v-model="password"
               v-bind="passwordAttrs"
+              :disabled="!token"
               type="password"
               class="input__text"
               :class="{ input__error: errors.password }"
               placeholder="Wachtwoord"
               name="password"
-              autocomplete="current-password"
+              autocomplete="new-password"
+              required
             >
             <div v-if="errors?.password" class="input-error">
               {{ errors.password }}
             </div>
           </div>
+
           <div class="btn-group">
             <button :disabled="loading" class="btn btn-primary" @click="onSubmit">
-              Login
+              Update wachwoord
               <Loading v-if="loading" />
-            </button>
-            <button popovertarget="password-forget" class="btn btn-link" type="button">
-              Wachtwoord vergeten?
             </button>
           </div>
         </form>
-
-        <p>
-          Nog geen account bij RondeMaestro? <NuxtLink to="/registreren">
-            Registeer je dan snel!
-          </Nuxtlink>
-        </p>
       </div>
     </div>
-    <UserPasswordReset id="password-forget" popover />
   </main>
 </template>
 

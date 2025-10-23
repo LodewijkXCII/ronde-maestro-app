@@ -66,6 +66,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   }
 
   const user = computed(() => session.value?.data?.user);
+  
   const loading = computed(() => session.value?.isPending);
   const errorMessage = ref("");
   const showVerificationComponent = ref(false);
@@ -85,9 +86,8 @@ export const useAuthStore = defineStore("useAuthstore", () => {
           if (ctx.error.status === 403) {
             showVerificationComponent.value = true;
             navigateTo("/inloggen");
-            // eslint-disable-next-line no-alert
-            window.alert("Please verify your email address");
           }
+
           errorMessage.value = getErrorMessage(ctx.error.code, "nl");
         },
         onSuccess() {
@@ -128,6 +128,39 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     });
   }
 
+  async function changePassword({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+    return await authClient.changePassword({
+      newPassword, // required
+      currentPassword, // required
+      revokeOtherSessions: true,
+    });
+  }
+
+  async function resetPassword(newPassword: string, token: string) {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+
+    return await authClient.resetPassword({
+      newPassword, // required
+      token, // required
+    });
+  }
+
+  async function resetPasswordRequest(email: string) {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+
+    return await authClient.requestPasswordReset({
+      email,
+      redirectTo: getAbsoluteCallbackURL("/wachtwoord-vergeten"),
+    });
+  }
+
   async function uitloggen() {
     const { csrf } = useCsrf();
     const headers = new Headers();
@@ -153,6 +186,9 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     registreren,
     errorMessage,
     resendVerification,
+    changePassword,
+    resetPassword,
+    resetPasswordRequest,
     showVerificationButton: showVerificationComponent,
   };
 });

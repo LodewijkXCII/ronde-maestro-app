@@ -140,6 +140,11 @@ ul {
   .text-section {
     padding-inline: 1rem;
   }
+
+  &:has(.login-form, .register-form) {
+    min-height: 70vh;
+    place-content: center;
+  }
 }
 
 .wrapper-lg {
@@ -175,11 +180,11 @@ p {
 a {
   color: var(--clr-primary);
   box-shadow: none;
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-color: var(--clr-primary);
   
   &:visited {
-    color: inherit;
-    font-weight: 400;
+    font-weight: 600;
   }
 
   &:hover {

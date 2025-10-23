@@ -38,7 +38,6 @@ const isNavbarActive = computed({
   },
 });
 
-// TODO ADD WATCH OF THE ROUTE TO CLOSE NAVBAR
 watch(route, () => {
   if (showNavbar.value) {
     closeNavbar();
