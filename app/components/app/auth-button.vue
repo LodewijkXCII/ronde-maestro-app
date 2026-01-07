@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-defineProps<{
-  showNavbarContent: boolean;
-}>();
 const authStore = useAuthStore();
 </script>
 

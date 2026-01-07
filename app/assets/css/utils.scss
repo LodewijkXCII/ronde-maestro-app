@@ -46,7 +46,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: hsla(from var(--clr-primary) h s l 0.5);
+      background: hsl(from var(--clr-primary) h s l 0.5);
       color: var(--clr-primary-content);
       outline: var(--_button-outline) var(--clr-primary);
     }

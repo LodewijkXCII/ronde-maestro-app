@@ -99,7 +99,7 @@ watch(currentRace, (newRace) => {
 <template>
   <main>
     <div class="wrapper-lg wrapper-nobg">
-      <h1>Dashboard</h1>
+      <h1>Hoi {{ authStore.user?.name }}</h1>
       <p>Welkom terug! Hier vind je een overzicht van je teams en de laatste resultaten.</p>
 
       <!-- <div v-if="errorMessage" role="alert" class="alert alert-warning">

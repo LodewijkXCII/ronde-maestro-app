@@ -57,6 +57,11 @@ const isDark = computed({
     grid-column-start: 1;
     grid-row-start: 1;
   }
+  &:hover {
+    background: var(--clr-primary-mute);
+    outline: 1px solid var(--clr-primary);
+    transition: all 0.3s ease;
+  }
 }
 
 .swap-icon {
@@ -68,14 +73,10 @@ const isDark = computed({
   transform: rotate(45deg);
   pointer-events: none;
 
-  &:hover {
-    color: var(--clr-primary);
+  &.active {
+    opacity: 1;
+    transform: rotate(0deg);
+    pointer-events: auto;
   }
-}
-
-.swap-icon.active {
-  opacity: 1;
-  transform: rotate(0deg);
-  pointer-events: auto;
 }
 </style>

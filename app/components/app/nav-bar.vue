@@ -31,10 +31,10 @@ onBeforeUnmount(() => {
 
 const isNavbarActive = computed({
   get() {
-    return showNavbar.value === false;
+    return showNavbar.value;
   },
-  set() {
-    showNavbar.value = !showNavbar.value;
+  set(val) {
+    showNavbar.value = val;
   },
 });
 
@@ -49,36 +49,80 @@ watch(route, () => {
   <div ref="navbarRef" class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
-        <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo" @click="closeNavbar">
+        <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo">
           <AppLogo />
         </NuxtLink>
       </div>
-      <nav class="nav-middle primary-navigation" :data-visible="showNavbar">
-        <div class="link-block">
-          <div v-if="authStore.session" class="link-block__title">
-            <NuxtLink to="/dashboard" @click="closeNavbar">
+      <nav v-if="authStore.session" class="nav-middle primary-navigation" :data-visible="showNavbar">
+        <ul>
+          <li class="nav-link">
+            <NuxtLink to="/dashboard">
               Dashboard
             </NuxtLink>
-          </div>
-          <ul>
-            <li>
-              <NuxtLink to="/kalender" @click="closeNavbar">
-                Kalender
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/spelregels" @click="closeNavbar">
-                Spelregels
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
-        <div v-if="authStore.session" class="link-block">
-          <div class="link-block__title">
-            <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }" @click="closeNavbar">
+          </li>
+          <li class="nav-link">
+            <details>
+              <summary>Renners selecteren <Icon name="tabler:chevron-right" size="16" /></summary>
+
+              <NavList
+                v-if="!sideBarStore.isClassicSeason"
+                :grand-tour="sideBarStore.upcomingRace[0]"
+                comp-location="overzicht"
+              />
+
+              <NavList
+                v-else-if="sideBarStore.classicsRaces"
+                :classics-races="sideBarStore.classicsRaces"
+                comp-location="uitslag"
+              />
+            </details>
+          </li>
+          <li class="nav-link">
+            <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }">
               Etappe overzicht
             </NuxtLink>
-          </div>
+          </li>
+          <li class="nav-link">
+            <details>
+              <summary>Uitslagen <Icon name="tabler:chevron-right" size="16" /></summary>
+
+              <div v-if="!sideBarStore.isClassicSeason" class="race-list">
+                <NavList
+                  :grand-tour="sideBarStore.upcomingRace[0]"
+                  :on-closed="closeNavbar"
+                  comp-location="uitslag"
+                />
+              </div>
+              <div v-else-if="sideBarStore.classicsRaces">
+                <NavList
+                  :classics-races="sideBarStore.classicsRaces"
+                  :on-closed="closeNavbar"
+                  comp-location="uitslag"
+                />
+              </div>
+            </details>
+          </li>
+          <li class="nav-link">
+            <NuxtLink
+              :to="{
+                name: 'dashboard-klassement-race',
+                params: {
+                  race: !sideBarStore.isClassicSeason ? slugify(sideBarStore.upcomingRace[0].name) : 'klassiekers',
+                },
+              }"
+            >
+              Klassement
+            </NuxtLink>
+          </li>
+          <li class="nav-link">
+            <NuxtLink :to="{ name: 'dashboard-ploegenspel' }">
+              Ploegenspel
+            </NuxtLink>
+          </li>
+        </ul>
+
+        <!-- <div class="link-block">
+          <div class="link-block__title" />
           <div v-if="!sideBarStore.isClassicSeason" class="race-list">
             <NavList
               v-for="race in sideBarStore.upcomingRace"
@@ -96,30 +140,12 @@ watch(route, () => {
             />
           </div>
         </div>
-        <div v-if="authStore.session" class="link-block">
+        <div class="link-block">
           <div class="link-block__title">
             Uitslagen
           </div>
-          <div class="race-list">
-            <div v-if="!sideBarStore.isClassicSeason" class="race-list">
-              <NavList
-                v-for="race in sideBarStore.upcomingRace"
-                :key="race.id"
-                :grand-tour="race"
-                :on-closed="closeNavbar"
-                comp-location="uitslag"
-              />
-            </div>
-            <div v-else-if="sideBarStore.classicsRaces">
-              <NavList
-                :classics-races="sideBarStore.classicsRaces"
-                :on-closed="closeNavbar"
-                comp-location="uitslag"
-              />
-            </div>
-          </div>
         </div>
-        <div v-if="authStore.session" class="link-block">
+        <div class="link-block">
           <div class="link-block__title">
             Klassement
           </div>
@@ -156,70 +182,65 @@ watch(route, () => {
               </li>
             </template>
           </ul>
-        </div>
+        </div> -->
       </nav>
 
       <div class="nav-right">
-        <AppAuthButton :show-navbar-content="showNavbar" />
+        <AppAuthButton />
         <AppThemeToggle />
 
-        <label class="swap" aria-label="Toggle menu">
-          <input v-model="isNavbarActive" type="checkbox">
+        <span class="mobile-nav-toggle">
+          <label class="swap" aria-label="Toggle menu">
+            <input v-model="isNavbarActive" type="checkbox">
 
-          <Icon
-            class="swap-icon"
-            :class="{ active: isMounted && isNavbarActive }"
-            name="tabler:align-justified"
-            size="24"
-            color="currentColor"
-          />
-          <Icon
-            class="swap-icon"
-            :class="{ active: isMounted && !isNavbarActive }"
-            name="tabler:x"
-            size="24"
-            color="currentColor"
-          />
-
-          <span class="visually-hidden">Menu</span>
-        </label>
+            <Icon
+              class="swap-icon"
+              :class="{ active: isMounted && isNavbarActive }"
+              name="tabler:x"
+              size="24"
+              color="currentColor"
+            />
+            <Icon
+              class="swap-icon"
+              :class="{ active: isMounted && !isNavbarActive }"
+              name="tabler:align-justified"
+              size="24"
+              color="currentColor"
+            />
+          </label>
+        </span>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+<style lang="scss">
+.mobile-nav-toggle {
+  display: none;
+}
 
-  li {
-    padding: 0;
-    margin: 0;
-  }
+.mobile-user-list {
+  display: none;
 }
 
 .nav-wrapper {
   padding: 1rem;
-  background: var(--clr-background-mute);
+  background: hsla(from var(--clr-background-mute) h s l / 80%);
+  backdrop-filter: blur(4px);
   margin-bottom: 1rem;
   width: 100%;
-  position: absolute;
+  position: sticky;
   z-index: 1000;
   top: 0;
   min-height: var(--navbar-height);
   box-shadow: var(--box-shadow);
-}
-
-.nav-wrapper:has(.primary-navigation[data-visible="true"]) {
-  position: absolute;
+  border-bottom: 2px solid var(--clr-primary-mute);
 }
 
 .navbar {
   display: grid;
+  align-items: center;
   gap: 1rem;
-  justify-content: space-between;
   border-top: 1px solid var(--clr-primary);
   padding-top: 1rem;
   grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
@@ -241,6 +262,67 @@ ul {
   }
 }
 
+.nav-link {
+  a {
+    color: var(--clr-text);
+    text-decoration: none;
+
+    &:hover {
+      font-weight: inherit;
+    }
+  }
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  border-radius: var(--border-radius);
+
+  &:hover {
+    cursor: pointer;
+    background: var(--clr-secondary);
+    transition: background 0.3s ease-in-out;
+  }
+  &:has(.router-link-active.router-link-exact-active) {
+    background: var(--clr-primary-mute);
+    color: var(--clr-primary-content);
+    border: 1px solid var(--clr-primary);
+  }
+
+  .stage-list {
+    position: absolute;
+    display: grid;
+    gap: 0;
+    background: var(--clr-background-mute);
+    top: 90%;
+    padding: 0;
+    border-radius: var(--border-radius);
+    outline: 2px solid var(--clr-secondary);
+
+    .stage-list--item {
+      min-width: fit-content;
+      white-space: nowrap;
+      padding: 0.75rem;
+
+      &:first-of-type {
+        padding-top: 1rem;
+      }
+      &:last-of-type {
+        padding-bottom: 1rem;
+      }
+
+      &:hover {
+        background: var(--clr-secondary);
+      }
+      a {
+        display: grid;
+        grid-template-columns: 3ch 1fr;
+      }
+
+      &:has(a.router-link-exact-active) {
+        background: var(--clr-primary-dark);
+      }
+    }
+  }
+}
+
 .primary-navigation {
   display: flex;
 
@@ -248,63 +330,12 @@ ul {
   grid-row-gap: 1rem;
   overflow: hidden;
 
-  visibility: hidden;
-  pointer-events: none;
-  max-height: 0;
-
-  opacity: 0;
-  transition:
-    max-height 0.5s ease-in-out,
-    opacity 0.3s ease-in-out,
-    visibility 0.5s;
-}
-
-.primary-navigation[data-visible="true"] {
-  max-height: 200vh;
-  /* A value that is larger than the content's height */
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-
-  // display: flex;
-  // opacity: 1;
-  // flex-direction: row;
-  // grid-column-gap: 3rem;
-  // grid-row-gap: 1rem;
-
-  @starting-style {
-    opacity: 0;
-  }
-
-  a {
-    color: currentColor;
-    text-decoration: none;
-
-    &:hover {
-      color: var(--clr-primary);
-      font-weight: 800;
-    }
-  }
-
-  .router-link-active {
-    color: var(--clr-primary);
-    box-shadow: none;
-    font-weight: 600;
-  }
-}
-
-.link-block {
-  min-width: 25ch;
-  max-width: 35ch;
-
-  &__title {
-    font-weight: 800;
-    margin-bottom: 0.75rem;
-    text-transform: uppercase;
-  }
-
-  a:has(:not(.link-block__title)) {
-    font-weight: 400;
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.75rem;
   }
 }
 
@@ -317,6 +348,7 @@ ul {
     grid-template-columns: minmax(0, auto) minmax(0, auto);
     grid-template-rows: minmax(0, auto) 1fr;
     grid-template-areas: "left right" "middle middle";
+    align-items: start;
 
     .nav-right {
       gap: 0.25rem 0.5rem;
@@ -325,7 +357,15 @@ ul {
   }
 
   .navbar:has(.primary-navigation[data-visible="true"]) {
-    min-height: 100dvh;
+    min-height: 100svh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--clr-background-mute);
+    padding: 1rem;
+    padding-top: 2rem;
+    border: none;
 
     .user-container {
       position: absolute;
@@ -336,20 +376,34 @@ ul {
     }
   }
 
+  .primary-navigation {
+    display: none; /* Hidden by default on mobile */
+    flex-direction: column;
+    width: 100%;
+    /* Add these to make it overlay or push content if desired */
+    padding: 1rem 0;
+  }
+
+  /* This is the critical fix: override the display: none when data-visible is true */
   .primary-navigation[data-visible="true"] {
     display: flex;
-    flex-flow: column;
     grid-area: middle;
+    opacity: 1;
   }
 
-  .link-block {
-    max-width: 100%;
+  .primary-navigation ul {
+    flex-direction: column; /* Stack links vertically on mobile */
+    width: 100%;
   }
 
-  .primary-navigation {
-    /* Reset styles for desktop */
-    display: none;
-    opacity: 0;
+  .mobile-nav-toggle {
+    display: block;
+  }
+
+  .nav-link .stage-list {
+    position: inherit;
+    outline: none;
+    border-radius: 0;
   }
 }
 
@@ -357,75 +411,17 @@ ul {
   cursor: pointer;
 }
 
-.race-list {
-  &:not(:last-child) {
-    margin-bottom: 1em;
-  }
-}
-
-summary a {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-  align-items: center;
-  font-weight: 400;
-
-  &:hover {
-    color: var(--clr-primary);
-    font-weight: 800;
-  }
-
-  img {
-    max-width: 75px;
-    height: 50px;
-    object-fit: contain;
-  }
-}
-
-details {
-  margin-block: 0.5rem;
-  padding-block: 0.5rem;
-}
-
 summary {
-  /* Pin the custom marker to the container */
-  position: relative;
-  /* Register summary as an anchor element */
-  anchor-name: --summary;
-
-  &::marker {
-    content: "";
-  }
-
-  &::before,
-  &::after {
-    /* Custom marker dimensions */
-    content: "";
-    border-block-start: 3px solid var(--clr-primary);
-    height: 0;
-    width: 1rem;
-
-    /* Positions the lines */
-    inset-block-start: 50%;
-    inset-inline-end: 0;
-
-    /* Anchor the shape to the summary */
-    position: absolute;
-    position-anchor: --summary;
-    position-area: top end;
-  }
-
-  /* Rotate just the ::after line to create a "+"" shape */
-  &::after {
-    transform: rotate(90deg);
-    transform-origin: 50%;
-  }
+  list-style: none;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
 }
 
 /* Rotate the line when open */
-details[open] summary::after {
-  transform: rotate(0deg);
+details[open] .iconify {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease-in-out;
 }
 
 .stage-nav a {
@@ -451,13 +447,5 @@ details[open] summary::after {
     width: 100px;
     height: auto;
   }
-}
-
-.mobile-nav-toggle {
-  display: none;
-}
-
-.mobile-user-list {
-  display: none;
 }
 </style>
