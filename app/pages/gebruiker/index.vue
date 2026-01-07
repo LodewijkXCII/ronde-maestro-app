@@ -1,37 +1,10 @@
 <script setup lang="ts">
-import type { Component } from "vue";
-
 import { UserAccount, UserPreferences } from "#components";
 
 const authStore = useAuthStore();
-const router = useRouter();
-const route = useRoute();
-const activeComponent = ref<Component>(markRaw(UserAccount));
+
 const errorMessage = ref("");
 const loading = ref(false);
-
-const menuItems = ref([
-  { name: "Account gegevens", slug: slugify("Account gegevens"), component: markRaw(UserAccount) },
-  { name: "Voorkeuren", slug: slugify("Voorkeuren"), component: markRaw(UserPreferences) },
-]);
-
-function changeComponent(componentName: Component) {
-  activeComponent.value = componentName;
-
-  const queryString = menuItems.value.find(comp => comp.component === componentName);
-  if (queryString) {
-    router.push({ query: { component: queryString.slug } });
-  }
-}
-
-onMounted(() => {
-  if (route.query && menuItems.value.some(item => item.slug === route.query.component)) {
-    const queryComponent = menuItems.value.find(comp => comp.slug === route.query.component);
-    if (queryComponent) {
-      changeComponent(queryComponent?.component);
-    }
-  }
-});
 </script>
 
 <template>
@@ -43,62 +16,164 @@ onMounted(() => {
         {{ errorMessage }}
       </h2>
     </div>
-    <div v-else-if="authStore.user" class="wrapper">
-      <h1>Hallo, {{ authStore.user.name }}</h1>
+    <div v-else-if="authStore.user" class="wrapper-lg wrapper-nobg">
+      <div class="user-welcome">
+        <div>
+          <h1>Hallo, {{ authStore.user.name }}</h1>
+          <p>Beheer hier je profiel, wachtwoord en voorkeuren</p>
+        </div>
+        <button class="btn btn-alert" @click="authStore.uitloggen">
+          <Icon name="tabler:logout" size="24" />
+          Uitloggen
+        </button>
+      </div>
 
       <div class="user-dashboard">
-        <aside>
-          <h3>Overzicht</h3>
-          <ul>
-            <li
-              v-for="item in menuItems"
-              :key="item.component.toString()"
-              :class="{ active: activeComponent === item.component }"
-              @click="changeComponent(item.component)"
-            >
-              {{ item.name }}
-            </li>
-            <li @click="authStore.uitloggen()">
-              Uitloggen
-            </li>
-          </ul>
-        </aside>
+        <div class="user-dashboard--profile">
+          <div class="user-dashboard--profile__user-info">
+            <Icon name="tabler:user" size="32" />
+            <div>
+              <h3>Profiel overzicht</h3>
+              <p>Je account in één oogopslag</p>
+            </div>
+          </div>
+          <div class="profile-list">
+            <div class="profile-list--item">
+              <span>Gerbruikersnaam</span>
+              <p>{{ authStore.user.name }}</p>
+            </div>
+            <div class="profile-list--item">
+              <span>Teams</span>
+              <p>4</p>
+            </div>
+            <div class="profile-list--item">
+              <span>Beste positie</span>
+              <p>#2</p>
+            </div>
+            <div class="profile-list--item">
+              <span>Lid sinds</span>
+              <p>
+                {{
+                  new Date(authStore.user.createdAt).toLocaleDateString("nl-NL", {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <component :is="activeComponent" />
+        <div class="user-block">
+          <UserAccount />
+        </div>
+        <div class="user-block">
+          <UserPassword />
+        </div>
+        <div class="user-block">
+          <UserPreferences />
+        </div>
+        <div class="user-block">
+          <UserNewTeam />
+        </div>
+
+        <div class="user-block alert-error" role="alert">
+          <h3>Gevarenzone</h3>
+          <p>Verwijder je account, alle gegevens en resultaten zullen verwijderd worden bij RondeMaestro. Deze actie kan niet terug gedraaid worden!</p>
+
+          <button class="btn btn-danger" @click="authStore.deleteUser">
+            Verwijder account
+          </button>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <style>
+  .user-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-top: 2rem;
+}
 .user-dashboard {
-  display: grid;
   gap: 2rem;
   margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 1rem;
+}
 
-  @media (width > 600px) {
-    grid-template-columns: 1fr 3fr;
+.user-dashboard--profile {
+  grid-column: -1 / 1;
+  background: var(--clr-primary-mute);
+  border: 1px solid var(--clr-primary);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+}
+.user-dashboard--profile__user-info {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  h3,
+  p {
+    margin-bottom: 0;
   }
 }
 
-aside ul {
-  padding-right: 1rem;
-  margin-top: 1rem;
+.profile-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
-  li {
-    padding-block: 0.75rem;
-    padding-left: 0.5rem;
+  > * {
+    background: var(--clr-background-app);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    border: 1px solid var(--clr-primary);
 
-    &:hover {
-      background: var(--clr-primary-mute);
-      cursor: pointer;
+    > span {
+      text-transform: uppercase;
+      font-weight: 500;
+      font-size: var(--fs-300);
     }
 
-    &.active {
+    > p {
+      margin-bottom: 0;
       font-weight: 800;
-      border-left: 2px solid var(--clr-primary);
-      padding-left: 1rem;
     }
   }
+}
+
+.user-block {
+  background: var(--clr-background-mute);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  border: 1px solid var(--clr-background);
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--clr-primary);
+    box-shadow: var(--box-shadow);
+    transition: 500ms ease-in;
+  }
+
+  &.alert-error {
+    background-color: hsl(from var(--clr-error) h 27 73);
+    border-color: var(--clr-error);
+    color: var(--clr-text);
+
+    > h3 {
+      color: var(--clr-error);
+    }
+  }
+}
+
+.user-block.alert-error {
+  grid-column: -1/1;
 }
 </style>

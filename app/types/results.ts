@@ -37,7 +37,6 @@ export type ResultResponse = {
   cyclist: ResultCyclistByStage[];
   users: ResultUsersByStage[];
   entry: EntryWithResult[];
-
 };
 
 export type TotalPointsUser = {

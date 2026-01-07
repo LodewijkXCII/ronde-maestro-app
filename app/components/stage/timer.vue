@@ -91,6 +91,10 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
       color: var(--clr-primary);
       border-radius: var(--border-radius);
     }
+
+    h3 {
+      margin-bottom: 0;
+    }
   }
 }
 </style>

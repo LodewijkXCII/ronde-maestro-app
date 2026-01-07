@@ -133,21 +133,44 @@ onBeforeRouteLeave(() => {
 
     <p>{{ selectedRidersComponents.length }} van {{ selectableRiders }} renners geselecteerd</p>
 
+    <AppProgressBar :selected-count="selectedRidersComponents.length" :max-select-riders="selectableRiders" />
+
     <div v-if="errorMessage" role="alert" class="alert alert-error">
       <Icon name="tabler:alert-square-rounded" />
       <span>
         {{ errorMessage }}
       </span>
     </div>
+
+    <div class="selected-riders-container">
+      <CyclistCardMedium
+        v-for="cyclist in selectedRidersComponents"
+        :key="cyclist.id"
+        :cyclist="cyclist"
+        :race-details="cyclist.startlistDetails"
+        @click="addToSelection(cyclist)"
+      >
+        <template #actionSlot>
+          <div class="cyclistCard--actions">
+            <Icon
+              name="tabler:circle-minus"
+              size="24"
+            />
+          </div>
+        </template>
+      </CyclistCardMedium>
+    </div>
+
     <div v-if="submitMessage" role="alert" class="alert alert-success">
       <Icon name="tabler:alert-square-rounded" />
       <span>
         {{ submitMessage }}
       </span>
     </div>
+
     <div class="btn-group">
       <button
-        class="btn btn-primary"
+        class="btn btn-primary btn-full-width"
         :disabled="!selectedRidersStore.formDirty
           || selectedRidersComponents.length === 0
           || selectedRidersComponents.length > selectableRiders
@@ -158,34 +181,39 @@ onBeforeRouteLeave(() => {
         <Icon v-else name="tabler:send" />
         Verzenden
       </button>
-      <button class="btn btn-alert" @click="selectedRidersStore.clearSelection">
+      <button class="btn btn-alert btn-full-width" @click="selectedRidersStore.clearSelection">
         <Icon name="tabler:trash-x" />
         Wis selectie
       </button>
     </div>
-
-    <CyclistCardMedium
-      v-for="cyclist in selectedRidersComponents"
-      :key="cyclist.id"
-      :cyclist="cyclist"
-      :race-details="cyclist.startlistDetails"
-      @click="addToSelection(cyclist)"
-    >
-      <template #actionSlot>
-        <div class="cyclistCard--actions">
-          <Icon
-            name="tabler:circle-minus"
-            size="24"
-            style="color: var(--clr-alert)"
-          />
-        </div>
-      </template>
-    </CyclistCardMedium>
+  </div>
+  <div v-if="submitMessage" role="alert" class="alert alert-success">
+    <Icon name="tabler:alert-square-rounded" />
+    <span>
+      {{ submitMessage }}
+    </span>
   </div>
 </template>
 
-<style>
-.selected-riders > .selected:nth-of-type(n + 10) {
+<style scoped>
+.selected-riders {
+  background: var(--clr-background-mute);
+  padding: 1.25rem 1rem;
+  border-radius: var(--border-radius);
+  height: fit-content;
+
+  > .btn-group {
+    margin-top: 1rem;
+  }
+}
+
+.selected-riders-container {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.selected-riders-container > .selected:nth-of-type(n + 9) {
   background-color: var(--clr-error);
 
   &:hover {

@@ -13,7 +13,6 @@ a.btn,
   user-select: none;
 
   outline: var(--_button-outline) var(--background-mute);
-
   background: var(--clr-background);
 
   color: var(--clr-text);
@@ -47,8 +46,8 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: transparent;
-      color: var(--clr-text);
+      background: hsla(from var(--clr-primary) h s l 0.5);
+      color: var(--clr-primary-content);
       outline: var(--_button-outline) var(--clr-primary);
     }
 
@@ -68,7 +67,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: transparent;
+      background: hsl(from var(--clr-secondary) h s l / 0.5);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-secondary);
     }
@@ -83,7 +82,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: transparent;
+      background: hsl(from var(--clr-error) h s l / 0.5);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-error);
     }
@@ -98,7 +97,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: transparent;
+      background: hsl(from var(--clr-alert) h s l / 0.5);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-alert);
     }
@@ -175,9 +174,36 @@ a.btn,
   gap: 0.5rem;
 }
 
+.btn-group-switch {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  background: var(--clr-secondary);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--clr-primary);
+  font-size: var(--fs-300);
+  
+  
+  .btn:not(.active) {
+    background: var(--clr-primary-mute);
+    color: var(--clr-primary-content);
+  }
+
+  .btn {
+    padding: .25rem .35rem;
+  }
+
+}
+
 .btn-inline {
   display: flex;
   gap: 1rem;
+}
+
+.btn-full-width {
+  display: flex;
+  place-content: center;
+  width: 100%;
 }
 
 .errormessage {
@@ -224,6 +250,11 @@ a.btn,
     border-color: var(--clr-error);
     color: var(--clr-text-error);
   }
+  &-warning {
+    background-color: var(--clr-alert);
+    border-color: var(--clr-alert);
+    color: var(--clr-text-black);
+  }
   &-success {
     background-color: var(--clr-accent-green);
     border-color: var(--clr-accent-green);
@@ -242,6 +273,7 @@ a.btn,
 
   &-race {
     display: flex;
+    place-content: center;
   }
 
   &-placeholder {
@@ -253,8 +285,8 @@ a.btn,
       place-items: center;
       height: 100%;
       text-transform: uppercase;
-      font-size: var(--fs-500);
     }
+    
   }
 }
 
@@ -265,28 +297,57 @@ a.btn,
   padding: 0.5rem 0.75rem;
   height: var(--rider-card-height);
   max-width: var(--rider-card-width);
-  margin: 0.5rem 0;
+  // margin: 0.5rem 0;
   font-size: 0.9rem;
 
-  &:first-of-type {
-    margin-top: 1rem;
-  }
+  // &:first-of-type {
+  //   // margin-top: 1rem;
+  // }
 }
 
-.stage-box {
+.stage-box, .points-box {
   background: var(--clr-background-mute);
   padding: 1rem;
   border-radius: var(--border-radius);
   min-width: 90%;
+  
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
   margin-bottom: 1em;
+
+  p {
+    margin: 0;
+  }
+
+  &--heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   &--body {
     justify-self: start;
   }
 }
+
+.stage-box {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.points-box {
+  justify-content: space-between;
+  background: var(--clr-primary-mute);
+  border: 2px solid var(--clr-primary);
+  margin-top: 2rem;
+
+  span {
+    font-size: var(--fs-400) !important;
+    font-weight: 800;
+    text-transform: none;
+  }
+}
+
+
 
 .points > span,
 span.points {
@@ -360,7 +421,39 @@ span.points {
 
 }
 
-::backdrop {
+::backdrop:has(form) {
   backdrop-filter: blur(3px);
   background: hsl(from var(--clr-primary) h s l / 0.5);
+}
+
+.badge {
+  display: inline-flex;
+  gap: 0.15rem;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: var(--clr-secondary);
+  border: 1px solid hsl(from var(--clr-secondary) 190 s 80%);
+  color: var(--clr-secondary-content);
+  border-radius: 500px;
+  font-size: var(--fs-200);
+  user-select: none;
+
+  img {
+    max-width: 15px;
+  }
+}
+
+.badged {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-header {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  h3 {
+    margin-bottom: 0;
+  }
 }

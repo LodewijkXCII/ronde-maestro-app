@@ -49,12 +49,15 @@ const config = useRuntimeConfig();
 
 <style lang="scss">
 .stage-section {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / span 2;
+
   &--race {
     display: grid;
     grid-template-columns: auto minmax(auto, 75px);
     gap: 0.75rem 0.25rem;
     justify-content: space-between;
-    align-items: center;
 
     h3 {
       font-weight: 700;
@@ -88,27 +91,5 @@ const config = useRuntimeConfig();
     width: 100%;
     object-fit: cover;
   }
-}
-
-.badge {
-  display: inline-flex;
-  gap: 0.15rem;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  background: var(--clr-primary);
-  border: 2px solid var(--clr-primary-dark);
-  color: var(--clr-primary-content);
-  border-radius: 500px;
-  font-size: var(--fs-200);
-  user-select: none;
-
-  img {
-    max-width: 15px;
-  }
-}
-
-.badged {
-  display: flex;
-  gap: 0.5rem;
 }
 </style>

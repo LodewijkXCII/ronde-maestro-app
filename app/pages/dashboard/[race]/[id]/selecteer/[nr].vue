@@ -121,7 +121,7 @@ watch(
 .cyclistOverview {
   display: grid;
   grid-template-columns: repeat(4, var(--rider-card-width));
-  grid-template-rows: auto minmax(0, 350px) auto;
+  grid-template-rows: auto minmax(0, 215px) auto;
   grid-template-areas:
     "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
@@ -158,7 +158,7 @@ watch(
 
   &--teams {
     display: grid;
-    gap: 0 1rem;
+    gap: 1rem;
     grid-template-columns: repeat(3, var(--rider-card-width));
   }
 }

@@ -7,7 +7,8 @@ const props = defineProps<{
   cyclists: CyclistWithRaceDetails[];
   isAllTeamsShown: boolean;
 }>();
-const emit = defineEmits(["toggleTeamState"]);
+
+defineEmits(["toggleTeamState"]);
 
 const selectedRidersStore = useSelectedRidersStore();
 const sideBarStore = useSideBarStore();
@@ -40,18 +41,18 @@ const cyclistsToShow = computed<CyclistWithRaceDetails[]>(() => {
   return props.cyclists;
 });
 
-const showTeam = ref(false);
+// const showTeam = ref(false);
 
-const isActive = computed(() => {
-  return props.isAllTeamsShown || showTeam.value;
-});
+// const isActive = computed(() => {
+//   return props.isAllTeamsShown || showTeam.value;
+// });
 
-function toggleTeam() {
-  if (props.isAllTeamsShown) {
-    emit("toggleTeamState");
-  }
-  showTeam.value = !showTeam.value;
-}
+// function toggleTeam() {
+//   if (props.isAllTeamsShown) {
+//     emit("toggleTeamState");
+//   }
+//   showTeam.value = !showTeam.value;
+// }
 
 function addToSelection(cyclist: CyclistWithRaceDetails) {
   selectedRidersStore.handleCyclist(cyclist.id);
@@ -65,8 +66,9 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
       Er is geen team gevonden!
     </span>
   </div>
-  <div v-else>
-    <div class="team-info" :class="{ active: isActive }" @click="toggleTeam">
+
+  <details v-else class="team-selection">
+    <summary class="team-info">
       <div class="team-info--info">
         <div class="avatar">
           <img v-if="currentTeam.image !== '/' || !currentTeam.image" :src="`${config.public.s3BucketURL}/${currentTeam.image}`" :alt="currentTeam.name">
@@ -75,42 +77,91 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
         <h4>{{ currentTeam.name }}</h4>
       </div>
       <div class="team-info--action">
-        <Icon v-if="showTeam" name="tabler:circle-chevron-down" size="24" />
-        <Icon v-else name="tabler:circle-chevron-right" size="24" />
+        <Icon name="tabler:circle-chevron-right" size="24" />
+      </div>
+    </summary>
+    <div class="team-selection--active">
+      <div class="animation-wrapper">
+        <CyclistCardMedium
+          v-for="cyclist in cyclistsToShow"
+          :key="cyclist.id"
+          :cyclist="cyclist"
+          :race-details="cyclist.startlistDetails"
+          show-specialies
+
+          @click="addToSelection(cyclist)"
+        >
+          <template #actionSlot>
+            <div class="cyclistCard--actions">
+              <Icon
+                v-if="riderSelected(cyclist.id)"
+                name="tabler:circle-minus"
+                size="24"
+                style="color: var(--clr-error)"
+              />
+              <Icon
+                v-else
+                name="tabler:circle-plus"
+                size="24"
+                style="color: var(--clr-accent-green)"
+              />
+            </div>
+          </template>
+        </CyclistCardMedium>
       </div>
     </div>
-    <div v-if="isActive">
-      <CyclistCardMedium
-        v-for="cyclist in cyclistsToShow"
-        :key="cyclist.id"
-        :cyclist="cyclist"
-        :race-details="cyclist.startlistDetails"
-        show-specialies
-
-        @click="addToSelection(cyclist)"
-      >
-        <template #actionSlot>
-          <div class="cyclistCard--actions">
-            <Icon
-              v-if="riderSelected(cyclist.id)"
-              name="tabler:circle-minus"
-              size="24"
-              style="color: var(--clr-alert)"
-            />
-            <Icon
-              v-else
-              name="tabler:circle-plus"
-              size="24"
-              style="color: var(--clr-accent-green)"
-            />
-          </div>
-        </template>
-      </CyclistCardMedium>
-    </div>
-  </div>
+  </details>
 </template>
 
 <style lang="scss">
+.team-selection {
+  background: var(--clr-background-mute);
+  height: fit-content;
+  border-radius: var(--border-radius);
+  overflow: hidden; /* Ensures the border-radius clips the sliding content */
+}
+
+.team-info--action .iconify {
+  transition: transform 0.3s ease-in-out;
+}
+
+.team-selection[open] {
+  box-shadow: var(--box-shadow);
+  outline: 1px solid var(--clr-primary);
+
+  .team-info--action .iconify {
+    transform: rotate(90deg);
+  }
+
+  .team-selection--active {
+    grid-template-rows: 1fr;
+    padding: 0.5rem; /* Only show padding when open to prevent "jump" */
+
+    .animation-wrapper {
+      opacity: 1;
+    }
+  }
+}
+
+.team-selection--active {
+  display: grid;
+  grid-template-rows: 0fr; /* Start collapsed */
+  transition:
+    grid-template-rows 0.4s ease-out,
+    padding 0.4s ease;
+  overflow: hidden;
+  padding: 0 0.5rem; /* Collapsed padding */
+
+  .animation-wrapper {
+    min-height: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
 .team-info {
   background: var(--clr-primary);
   color: var(--clr-text-white);
@@ -119,7 +170,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
   gap: 0.5rem;
   justify-content: space-between;
   place-items: center;
-  margin-bottom: 0.25rem;
+  padding: 0.75rem;
 
   &--info {
     display: flex;
@@ -131,16 +182,23 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
   &:focus-visible,
   &:focus-within {
     cursor: pointer;
+    filter: brightness(1.1);
   }
 
   .avatar {
     --_avatar-width: 50px;
   }
 
-  &.active {
-    outline: 2px solid var(--clr-primary);
-    background: var(--clr-primary-dark);
-    color: var(--clr-text);
-  }
+  // &:has(.team-selection[open]) {
+  //   border: 2px solid var(--clr-primary);
+  //   border-bottom: 0;
+  //   background: var(--clr-primary-dark);
+  //   color: var(--clr-text);
+  //   border-radius: var(--border-radius) var(--border-radius) 0 0;
+  // }
+}
+
+.cyclistCard:not(.selected) {
+  background-color: var(--clr-background-app);
 }
 </style>

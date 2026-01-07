@@ -1,3 +1,5 @@
+import { addDays, endOfDay, isAfter, isBefore, isWithinInterval, startOfDay } from "date-fns";
+
 import type { ClassicsRaces, SelectRaceWithRelations, Stage } from "~/types/race";
 
 import getParamId from "~/utils/param-extractor";
@@ -15,7 +17,7 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
   } = useFetch<SelectRaceWithRelations[]>(`${config.public.apiBase}/races/next-race`, {
     method: "get",
     credentials: "include",
-    immediate: false,
+    immediate: true,
     lazy: true,
     onResponseError({ response }) {
       if (response.status === 401) {
@@ -25,25 +27,44 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
   });
 
   const currentRace = computed<SelectRaceWithRelations | null>(() => {
+    if (!upcomingRace.value || upcomingRace.value.length === 0) {
+      return null;
+    }
     const routeRaceId = getParamId(route.params.id);
-    if (upcomingRace.value && routeRaceId) {
+    if (routeRaceId) {
       return upcomingRace.value.find(race => race.id === routeRaceId) || null;
     }
-    return null;
+
+    const today = new Date();
+
+    const activeRace = upcomingRace.value.find((race) => {
+      return isWithinInterval(today, {
+        start: startOfDay(new Date(race.startDate)),
+        end: endOfDay(new Date(race.finishDate)),
+      });
+    });
+
+    if (activeRace) {
+      return activeRace;
+    }
+
+    const nextWeek = addDays(today, 7);
+    const upcomingSoon = upcomingRace.value.find((race) => {
+      const startDate = new Date(race.startDate);
+      return isAfter(startDate, today) && isBefore(startDate, nextWeek);
+    });
+
+    return upcomingSoon || null;
   });
 
   const upComingStage = computed<Stage | null>(() => {
-    if (!upcomingRace || !upcomingRace.value) {
+    if (!upcomingRace.value || upcomingRace.value.length === 0) {
       return null;
     }
 
-    const nextStage = upcomingRace.value[0]?.stages.find(stage => stage.done === false && stageUnderway(stage.date));
+    const nextStage = upcomingRace.value[0]?.stages.find(stage => stage.done === false && !stageUnderway(stage.date));
 
-    if (!nextStage) {
-      return null;
-    }
-
-    return nextStage;
+    return nextStage || null;
   });
 
   const currentStage = ref<Stage | null>(null);

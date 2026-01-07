@@ -188,7 +188,7 @@ watch(route, () => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ul {
   list-style-type: none;
   padding: 0;
@@ -229,6 +229,7 @@ ul {
     display: flex;
     gap: 1rem;
     grid-area: left;
+    align-items: center;
   }
 
   .nav-right {
@@ -277,6 +278,7 @@ ul {
 
   a {
     color: currentColor;
+    text-decoration: none;
 
     &:hover {
       color: var(--clr-primary);

@@ -52,6 +52,7 @@ onUnmounted(() => {
   bottom: 3rem;
   right: 3rem;
   background: var(--clr-secondary);
+  color: var(--clr-text-black);
   border-radius: 999px;
   padding: 1rem;
   font-weight: 800;

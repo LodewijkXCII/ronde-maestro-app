@@ -8,8 +8,13 @@ const errorMessage = ref("");
 const loading = ref(false);
 const submitSucces = ref(false);
 
-const { errors, handleSubmit, setErrors, defineField } = useForm({
+const { errors, handleSubmit, setErrors, defineField, meta } = useForm({
   validationSchema: toTypedSchema(passwordSchema),
+  initialValues: {
+    oldPassword: "",
+    password: "",
+    confirm: "",
+  },
 });
 
 const [oldPassword, oldPasswordAttrs] = defineField("oldPassword");
@@ -40,45 +45,40 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
+  <div v-if="authStore.errorMessage" role="alert" class="alert alert-error">
+    <Icon name="tabler:alert-square-rounded" />
+    <span>
+      {{ authStore.errorMessage }}
+    </span>
+  </div>
+
+  <div
+    v-if="errorMessage"
+    role="alert"
+    class="alert"
+    :class="{ 'alert-success': submitSucces }"
+  >
+    {{ errorMessage }}
+  </div>
+
+  <div class="icon-header">
+    <Icon name="tabler:lock-password" />
+    <h3>Wachtwoord</h3>
+  </div>
+  <p>Wijzig je wachtwoord</p>
+
   <div class="form-group">
-    <button
-      class="btn"
-      :class=" !changePassword ? 'btn-secondary' : 'btn-alert'"
-      :disabled="loading"
-      @click="changePassword = !changePassword"
-    >
-      <template v-if="!changePassword">
-        <Loading v-if="loading" />
-        <Icon v-else name="tabler:lock" />
-        <Icon v-if="submitSucces" name="tabler:check" />
-        Wijzig wachtwoord
-      </template>
-      <template v-else>
-        <Icon name="tabler:lock-open" />
-        Annuleer
-      </template>
-    </button>
-
-    <div
-      v-if="errorMessage"
-      role="alert"
-      class="alert"
-      :class="{ 'alert-success': submitSucces }"
-    >
-      {{ errorMessage }}
-    </div>
-
     <form @submit="onSubmit">
       <div class="input-group">
-        <label for="password" class="input">Oud wachtwoord:</label>
+        <label for="password" class="input">Huidig wachtwoord:</label>
         <input
           v-model="oldPassword"
           v-bind="oldPasswordAttrs"
-          :disabled="!changePassword"
+
           type="password"
           class="input__text"
           :class="{ input__error: errors.password }"
-          placeholder="Wachtwoord"
+
           name="password"
           autocomplete="current-password"
           required
@@ -92,11 +92,11 @@ const onSubmit = handleSubmit(async (values) => {
         <input
           v-model="password"
           v-bind="passwordAttrs"
-          :disabled="!changePassword"
+
           type="password"
           class="input__text"
           :class="{ input__error: errors.password }"
-          placeholder="Wachtwoord"
+
           name="password"
           autocomplete="new-password"
           required
@@ -110,11 +110,11 @@ const onSubmit = handleSubmit(async (values) => {
         <input
           v-model="confirm"
           v-bind="confirmAttrs"
-          :disabled="!changePassword"
+
           type="password"
           class="input__text"
           :class="{ input__error: errors.confirm }"
-          placeholder="Wachtwoord"
+
           name="confirm"
           autocomplete="new-password"
           required
@@ -123,7 +123,8 @@ const onSubmit = handleSubmit(async (values) => {
           {{ errors.confirm }}
         </div>
       </div>
-      <button class="btn btn-primary" :disabled="!changePassword">
+
+      <button class="btn btn-primary" :disabled="!meta.valid">
         Opslaan
       </button>
     </form>

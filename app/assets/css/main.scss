@@ -8,14 +8,15 @@
   --clr-text: hsl(0, 4%, 15%);
   --clr-text-black: hsl(0, 7%, 3%);
   --clr-text-white: hsl(20, 6%, 90%);
-  --clr-background: hsl(20, 6%, 90%);
+  --clr-background: hsl(30, 8%, 85%);
   --clr-background-mute: hsl(220, 13%, 95%);
-  --clr-background-app: hsl(0, 0%, 83%);
+  --clr-background-app: hsl(20, 6%, 90%);
   --clr-primary: hsl(212, 29%, 47%);
   --clr-primary-dark: hsla(213, 28%, 37%, 0.6);
   --clr-primary-mute: hsla(212, 29%, 47%, 25%);
   --clr-primary-content: var(--clr-text-white);
   --clr-secondary: hsl(183, 59%, 52%);
+  --clr-secondary-content: var(--clr-text-black);
   --clr-error: hsl(354, 65%, 59%);
   --clr-text-error: var(--clr-text-white);
   --clr-alert: hsl(30, 62%, 69%);
@@ -82,6 +83,7 @@ picture,
 svg,
 video {
   max-width: 100%;
+  height: auto;
   display: block;
   object-fit: contain;
 }
@@ -147,9 +149,16 @@ ul {
   }
 }
 
+.wrapper-nobg {
+  background: var(--clr-background-app);
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .wrapper-lg {
   /* 3* rider card width  + 1rem gap per colum*/
-  width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 3);
+  width: min(100% - 3rem, 1366px);
 }
 .wrapper-sm {
   /* 2* rider card width  + 1rem gap per colum*/
@@ -207,7 +216,7 @@ h3 {
 h1 {
   font-size: var(--fs-700);
   color: currentColor;
-  margin-bottom: 0.75rem;
+  font-weight: 800;
 }
 
 h2 {

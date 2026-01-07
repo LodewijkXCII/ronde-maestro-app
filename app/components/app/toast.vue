@@ -3,6 +3,8 @@ import { ref, watch } from "vue";
 
 const props = withDefaults(defineProps<{
   timeout?: number;
+  // link?: string;
+  // linkText?: string;
 }>(), {
   timeout: 5000,
 });
@@ -78,7 +80,9 @@ defineExpose({
           {{ toastStore.title }}
         </h4>
         <p class="toast-description">
-          {{ toastStore.description }}
+          {{ toastStore.description }} <NuxtLink v-if="toastStore.toastLink" :to="toastStore.toastLink">
+            <span v-if="toastStore.toastLinkText">{{ toastStore.toastLinkText }}</span>
+          </NuxtLink>
         </p>
       </div>
       <div class="close-icon" @click="removeToast">

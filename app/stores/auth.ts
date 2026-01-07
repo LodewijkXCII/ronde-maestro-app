@@ -2,12 +2,16 @@ import type { User } from "better-auth";
 
 import { createAuthClient } from "better-auth/vue";
 
+import type { UserPref } from "~/lib/user-schema";
+
 export type UserWithId = Omit<User, "id"> & {
   id: number;
 };
 
 export const useAuthStore = defineStore("useAuthstore", () => {
   const config = useRuntimeConfig();
+  const toastStore = useToastStore();
+
   const clientBaseUrl = config.public.clientBase;
 
   const authClient = createAuthClient({
@@ -62,11 +66,13 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
     if (sessionData.data?.session) {
       session.value = sessionData;
+
+      await getUserPreference(session.value.data.user.id);
     }
   }
 
   const user = computed(() => session.value?.data?.user);
-  
+
   const loading = computed(() => session.value?.isPending);
   const errorMessage = ref("");
   const showVerificationComponent = ref(false);
@@ -119,6 +125,74 @@ export const useAuthStore = defineStore("useAuthstore", () => {
         },
       },
     });
+  }
+
+  async function getUserPreference(userId: string): Promise<UserPref> {
+    const userData = localStorage.getItem("userPrefs");
+
+    if (userData) {
+      const extractedData = JSON.parse(userData);
+
+      if (extractedData.needsUpdate === false || extractedData.updated === true) {
+        return {
+          startlistNotif: extractedData.startlistNotif,
+          resultNotif: extractedData.resultNotif,
+          reminderNotif: extractedData.reminderNotif,
+        };
+      }
+    }
+
+    try {
+      const preferences = await $fetch<UserPref & { createdAt: string; updatedAt: string }>(`${config.public.apiBase}/users/preferences/${userId}`, {
+        method: "get",
+        credentials: "include",
+      });
+
+      let toastBody: ToastBody;
+
+      if (!preferences) {
+        toastBody = {
+          title: "Geen voorkeuren gevonden",
+          description: "Je krijgt op dit moment geen enkele email notificatie! Het is te adviseren om dit aan te passen.",
+          responseStatus: "warning",
+
+        };
+        toastStore.showToast({ ...toastBody, link: "/gebruiker", linkText: "Pas gegevens aan" });
+      }
+
+      if (preferences.createdAt === preferences.updatedAt) {
+        toastBody = {
+          title: "Update je meldingsvoorkeuren!",
+          description: "Je krijgt op dit moment geen enkele email notificatie! Het is te adviseren om dit aan te passen.",
+          responseStatus: "warning",
+
+        };
+        toastStore.showToast({ ...toastBody, link: "/gebruiker", linkText: "Pas gegevens aan" });
+      }
+
+      const userPrefsStorage: UserPref & { updated: boolean; needsUpdate: boolean } = {
+        needsUpdate: preferences.createdAt === preferences.updatedAt,
+        updated: false,
+        ...preferences,
+      };
+
+      localStorage.setItem("userPrefs", JSON.stringify(userPrefsStorage));
+
+      return { startlistNotif: preferences.startlistNotif, resultNotif: preferences.resultNotif, reminderNotif: preferences.reminderNotif };
+    }
+    catch (error: any) {
+      toastStore.showToast({
+        title: "Er is een fout opgetreden",
+        description: error.message,
+        responseStatus: "warning",
+      });
+
+      return {
+        startlistNotif: "none",
+        resultNotif: "none",
+        reminderNotif: "none",
+      };
+    }
   }
 
   async function resendVerification(email: string) {
@@ -176,6 +250,23 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     });
   }
 
+  async function deleteUser() {
+    if (!user.value) {
+      console.error("No user found");
+    }
+
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+
+    headers.append("csrf-token", csrf);
+
+    await authClient.deleteUser({
+      callbackURL: "/", // you can provide a callback URL to redirect after deletion
+    });
+
+    navigateTo("/");
+  }
+
   return {
     init,
     session,
@@ -190,5 +281,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     resetPassword,
     resetPasswordRequest,
     showVerificationButton: showVerificationComponent,
+    getUserPreference,
+    deleteUser,
   };
 });

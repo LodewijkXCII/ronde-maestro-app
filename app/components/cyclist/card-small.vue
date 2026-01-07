@@ -19,8 +19,12 @@ const config = useRuntimeConfig();
       <span v-else>-</span>
     </div>
 
-    <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
-      <img v-if="cyclist.image !== '/' || !cyclist.image" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">
+    <div class="avatar" :class="{ 'avatar-placeholder': !cyclist.image || cyclist.image === '/' }">
+      <img
+        v-if="cyclist.image && cyclist.image !== '/'"
+        :src="`${config.public.s3BucketURL}/${cyclist.image}`"
+        :alt="cyclist.lastName"
+      >
       <span v-else>
         {{ cyclist.firstName.charAt(0) }}{{ cyclist.lastName.charAt(0) }}
       </span>
@@ -57,9 +61,9 @@ const config = useRuntimeConfig();
   max-width: var(--rider-card-width);
   border-radius: var(--border-radius);
 
-  &:first-of-type {
-    margin-top: 1rem;
-  }
+  // &:first-of-type {
+  //   margin-top: 1rem;
+  // }
 
   &--cyclist {
     p {

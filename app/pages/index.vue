@@ -135,19 +135,20 @@ onMounted(() => {
   padding-top: 3rem;
   background-color: var(--clr-primary-mute);
   color: var(--clr-primary-content);
-
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
   position: relative;
 
   &::after {
     content: "RondeMaestro";
 
     position: absolute;
-    bottom: 0;
+    bottom: -15px;
     left: 0;
     font-weight: 900;
     font-size: var(--fs-900);
     font-family: var(--ff-heading);
-    color: rgba(217, 217, 217, 0.25);
+    color: hsl(from var(--clr-text-black) h s l / 0.05);
     line-height: 0.7;
     text-align: left;
     width: 100%;
