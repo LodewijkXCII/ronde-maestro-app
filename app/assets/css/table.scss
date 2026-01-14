@@ -17,6 +17,9 @@
   &:where(.standings-table) {
     --_grid-columns: 5ch minmax(10ch, auto) 7ch 7ch;
   }
+  &:where(.users-table) {
+    --_grid-columns: 1fr 15ch 7ch
+  }
 
   &-header {
     background-color: var(--clr-primary);
@@ -45,6 +48,10 @@
       color: var(--clr-primary-content);
       outline: 3px solid var(--clr-primary-dark);
       outline-offset: -3px;
+    }
+
+    &:hover:where(.users-table) {
+      cursor: initial;
     }
 
     &:last-of-type {

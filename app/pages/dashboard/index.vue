@@ -14,7 +14,7 @@ const resultIsGC = ref(false);
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
-const { upComingStage, currentRace, upcomingRace, loading: storeLoading } = storeToRefs(sideBarStore);
+const { upComingStage, currentRace, upcomingRace, allStages, loading: storeLoading } = storeToRefs(sideBarStore);
 const latestResult = ref<ResultResponse>();
 
 async function getUpcomingStage() {
@@ -44,7 +44,7 @@ async function getUpcomingStage() {
 }
 
 async function getLatestResult() {
-  const lastDoneStage = currentRace.value?.stages.findLast(stage => stage.done);
+  const lastDoneStage = allStages.value?.findLast(stage => stage.done);
 
   if (!lastDoneStage) {
     console.error("Geen voltooide etappe gevonden voor deze race.");
@@ -100,9 +100,9 @@ watch(currentRace, (newRace) => {
   <main>
     <div class="wrapper-lg wrapper-nobg">
       <h1>Hoi {{ authStore.user?.name }}</h1>
-      <p>Welkom terug! Hier vind je een overzicht van je teams en de laatste resultaten.</p>
+      <p>Welkom terug! Hier vind je een overzicht van je ploegen en de laatste resultaten.</p>
 
-      <!-- <div v-if="errorMessage" role="alert" class="alert alert-warning">
+      <!-- <div v-if="errorMessage || errorMessage.length > 0" role="alert" class="alert alert-warning">
         <Icon name="tabler:alert-square-rounded" />
         <span>
           {{ errorMessage }} <NuxtLink v-if="!currentRace" to="/kalender">Bekijk kalender</NuxtLink>
@@ -110,21 +110,32 @@ watch(currentRace, (newRace) => {
       </div> -->
 
       <div
-        v-if="upcomingRace && upcomingRace.length"
+        v-if="currentRace"
         class="dashboard-cover"
       >
         <Loading v-if="storeLoading" />
 
-        <template v-else-if="upcomingRace && upcomingRace.length">
+        <template v-else-if="currentRace">
           <img
 
             class="dasboard-cover--image"
-            :src="`${config.public.s3BucketURL}/${upcomingRace[0]?.coverImage}`"
+            :src="`${config.public.s3BucketURL}/${currentRace?.coverImage}`"
           >
           <div class="dashboard-cover--text">
             <div class="dashboard-cover--text__inner">
-              <h2>De {{ upcomingRace[0]?.name }} bij RondeMaestro</h2>
-              <div v-if="upComingStage">
+              <h2>De {{ sideBarStore.isClassicSeason ? 'klassiekers' : currentRace?.name }} bij RondeMaestro</h2>
+              <div v-if="sideBarStore.isClassicSeason">
+                <p>
+                  {{ new Date(currentRace.startDate).toLocaleDateString("nl-NL", {
+                    day: '2-digit',
+                    month: 'short',
+                  }) }} • {{ currentRace?.name }} • {{ currentRace?.stages[0]?.stageType.name }}
+                </p>
+                <button class="btn btn-primary" @click="goToStage(currentRace?.stages[0]?.id || null)">
+                  Selecteer je renners
+                </button>
+              </div>
+              <div v-else-if="upComingStage">
                 <span>Eerstvolgende etappe:</span>
                 <p>Etappe {{ upComingStage.stageNr }} • {{ upComingStage.startCity }} - {{ upComingStage.finishCity }} • {{ upComingStage.stageType.name }}</p>
                 <button class="btn btn-primary" @click="goToStage(upComingStage.id)">
@@ -136,6 +147,8 @@ watch(currentRace, (newRace) => {
         </template>
       </div>
 
+      <DashboardTeams />
+
       <div class="dashboard-cards">
         <div v-if="upComingStage" class="dashboard-card dashboard-selected-riders">
           <div>
@@ -143,8 +156,14 @@ watch(currentRace, (newRace) => {
               <Icon name="tabler:users" />
               <h3>Geselecteerde renners</h3>
             </div>
-            <p>
+            <p v-if="!sideBarStore.isClassicSeason">
               Voor etappe {{ upComingStage?.stageNr }} van {{ new Date(upComingStage.date).toLocaleDateString("nl-NL", {
+                day: '2-digit',
+                month: 'short',
+              }) }}
+            </p>
+            <p v-else>
+              Voor {{ currentRace?.name }} van {{ new Date(upComingStage.date).toLocaleDateString("nl-NL", {
                 day: '2-digit',
                 month: 'short',
               }) }}
@@ -182,8 +201,14 @@ watch(currentRace, (newRace) => {
               <Icon name="tabler:trophy" />
               <h3>Laatste uitslag</h3>
             </div>
-            <p>
+            <p v-if="!sideBarStore.isClassicSeason">
               Voor de etappe van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
+                day: '2-digit',
+                month: 'short',
+              }) }}
+            </p>
+            <p v-else>
+              Voor {{ latestResult.stage.race.name }} van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
                 day: '2-digit',
                 month: 'short',
               }) }}
@@ -385,7 +410,8 @@ watch(currentRace, (newRace) => {
   }
 }
 
-.dashboard-card {
+.dashboard-card,
+.team-card {
   padding: 1.5rem;
   border-radius: var(--border-radius);
   outline: 1px solid var(--clr-background-mute);
@@ -395,6 +421,19 @@ watch(currentRace, (newRace) => {
   &:hover {
     box-shadow: var(--box-shadow);
     outline: 1px solid var(--clr-primary);
+  }
+
+  .card-info {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    max-width: 40ch;
+    margin: auto;
+    height: 100%;
+
+    .iconify {
+      color: var(--clr-primary-mute);
+    }
   }
 }
 
@@ -428,61 +467,6 @@ watch(currentRace, (newRace) => {
   }
 }
 
-.standings-list {
-  display: grid;
-  gap: 0.5rem;
-
-  .standings-user {
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    padding: 0.5rem;
-
-    background: var(--clr-background-mute);
-    border-radius: var(--border-radius);
-
-    &.current-user {
-      background: var(--clr-primary-mute);
-      font-weight: 800;
-    }
-
-    &--info {
-      display: flex;
-      gap: 0.5rem;
-      flex: 1;
-
-      &__position {
-        aspect-ratio: 1/1;
-        display: flex;
-        place-content: center;
-      }
-    }
-    &:nth-child(1) {
-      .standings-user--info__position {
-        border: 1px solid hsl(51, 100%, 50%);
-        background: hsl(51 100% 40% / 0.5);
-        border-radius: 5000px;
-        font-weight: 800;
-      }
-    }
-    &:nth-child(2) {
-      .standings-user--info__position {
-        border: 1px solid hsl(0, 0%, 75%);
-        background: hsl(0 0% 75% / 0.5);
-        border-radius: 5000px;
-        font-weight: 800;
-      }
-    }
-    &:nth-child(3) {
-      .standings-user--info__position {
-        border: 1px solid hsl(32, 95%, 44%);
-        background: hsla(32, 95%, 44%, 0.5);
-        border-radius: 5000px;
-        font-weight: 800;
-      }
-    }
-  }
-}
 .selected-stage {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(auto, 150px));

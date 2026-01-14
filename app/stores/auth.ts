@@ -3,6 +3,7 @@ import type { User } from "better-auth";
 import { createAuthClient } from "better-auth/vue";
 
 import type { UserPref } from "~/lib/user-schema";
+import type { UserPoule } from "~/types/teams";
 
 export type UserWithId = Omit<User, "id"> & {
   id: number;
@@ -11,6 +12,7 @@ export type UserWithId = Omit<User, "id"> & {
 export const useAuthStore = defineStore("useAuthstore", () => {
   const config = useRuntimeConfig();
   const toastStore = useToastStore();
+  const sideBarStore = useSideBarStore();
 
   const clientBaseUrl = config.public.clientBase;
 
@@ -60,6 +62,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
   const router = useRouter();
   const session = ref<Awaited<ReturnType<typeof authClient.getSession>> | null>(null);
+  const userPoules = ref<UserPoule[]>([]);
 
   async function init() {
     const sessionData = await getSession();
@@ -68,6 +71,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
       session.value = sessionData;
 
       await getUserPreference(session.value.data.user.id);
+      await getUserTeamInfo(session.value.data.user.id);
     }
   }
 
@@ -195,6 +199,27 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     }
   }
 
+  async function getUserTeamInfo(userId: string): Promise<UserPoule[] | undefined> {
+    if (!sideBarStore.upcomingRace && !sideBarStore.currentRace) {
+      await sideBarStore.refreshUpcomingRace();
+    }
+
+    try {
+      const poules = await $fetch<UserPoule[]>(`${config.public.apiBase}/users/poules/${userId}`, {
+        method: "get",
+        query: { seasonTimeId: sideBarStore.currentRace?.seasonTimeId },
+        credentials: "include",
+      });
+
+      if (poules) {
+        return userPoules.value = poules;
+      }
+    }
+    catch (error: any) {
+      console.error(error);
+    }
+  }
+
   async function resendVerification(email: string) {
     await sendVerificationEmail({
       email,
@@ -270,6 +295,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   return {
     init,
     session,
+    userPoules,
     user,
     loading,
     inloggen,

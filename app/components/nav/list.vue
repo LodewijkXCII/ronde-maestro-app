@@ -44,7 +44,7 @@ const sideBarStore = useSideBarStore();
             <span>{{ new Date(stage.date).toLocaleDateString("nl-NL", {
               day: '2-digit',
               month: 'short',
-            }) }}</span>
+            }) }}. </span>
             {{ getRaceName(stage.raceId) }}
           </template>
         </NuxtLink>
@@ -70,7 +70,7 @@ const sideBarStore = useSideBarStore();
             <span>{{ new Date(stage.date).toLocaleDateString("nl-NL", {
               day: '2-digit',
               month: 'short',
-            }) }}</span>
+            }) }}. </span>
             {{ getRaceName(stage.raceId) }}
           </template>
         </NuxtLink>

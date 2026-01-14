@@ -46,7 +46,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: hsl(from var(--clr-primary) h s l 0.5);
+      background: hsl(from var(--clr-primary) h s l / 50%);
       color: var(--clr-primary-content);
       outline: var(--_button-outline) var(--clr-primary);
     }
@@ -67,7 +67,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: hsl(from var(--clr-secondary) h s l / 0.5);
+      background: hsl(from var(--clr-secondary) h s l / 50%);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-secondary);
     }
@@ -82,7 +82,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: hsl(from var(--clr-error) h s l / 0.5);
+      background: hsl(from var(--clr-error) h s l / 50%);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-error);
     }
@@ -97,7 +97,7 @@ a.btn,
 
     &:hover,
     :focus-within {
-      background: hsl(from var(--clr-alert) h s l / 0.5);
+      background: hsl(from var(--clr-alert) h s l / 50%);
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-alert);
     }
@@ -184,14 +184,21 @@ a.btn,
   font-size: var(--fs-300);
   
   
-  .btn:not(.active) {
-    background: var(--clr-primary-mute);
-    color: var(--clr-primary-content);
-  }
-
   .btn {
     padding: .25rem .35rem;
+
+    &:hover {
+      background: var(--clr-primary);
+      outline: none;
+
+    }
+
+    &:not(.active) {
+      background: var(--clr-primary-mute);
+      color: var(--clr-primary-content);
+    }
   }
+
 
 }
 
@@ -291,7 +298,7 @@ a.btn,
 }
 
 .cyclistCard,
-.team-info,
+.tableeam-info,
 .cyclist-info-box {
   border-radius: var(--border-radius);
   padding: 0.5rem 0.75rem;
@@ -423,10 +430,11 @@ span.points {
 
 ::backdrop:has(form) {
   backdrop-filter: blur(3px);
-  background: hsl(from var(--clr-primary) h s l / 0.5);
+  background: hsl(from var(--clr-primary) h s l / 50%);
 }
 
 .badge {
+  height: fit-content;
   display: inline-flex;
   gap: 0.15rem;
   align-items: center;
@@ -455,5 +463,162 @@ span.points {
 
   h3 {
     margin-bottom: 0;
+  }
+
+  .end-icon {
+    margin-left: auto;
+  }
+}
+
+.profile-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+  > * {
+    background: var(--clr-background-app);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    border: 1px solid var(--clr-primary);
+
+    > span {
+      text-transform: uppercase;
+      font-weight: 500;
+      font-size: var(--fs-300);
+    }
+
+    > p {
+      margin-bottom: 0;
+      font-weight: 800;
+    }
+
+    > h4 {
+      font-size: var(--fs-600);
+      color: var(--clr-primary);
+    }
+  }
+}
+.profile-list--item p{
+  font-size: var(--fs-300);
+}
+
+.standings-list {
+  display: grid;
+  gap: 0.5rem;
+
+  .standings-user {
+    display: flex;
+    gap: .5rem;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 0.75rem;
+    padding-block: 1rem;
+
+
+    background: var(--clr-background-mute);
+    border-radius: var(--border-radius);
+
+    transition: all .2s ease-in;
+
+    &.hover:hover {
+      background-color: var(--clr-primary-mute);
+      cursor: pointer;
+
+      > .standings-user--action {
+        opacity: 1;
+      }
+    }
+
+    &.current-user, &.selected-user {
+      background: var(--clr-primary-mute);
+      font-weight: 800;
+    }
+    &.selected-user {
+      color: var(--clr-primary);
+    }
+
+    &--info {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1;
+
+      &__position {
+        aspect-ratio: 1;
+        width: 30px;
+        display: flex;
+        place-content: center;
+      }
+    }
+
+    &--action {
+      opacity: 0;
+
+    }
+    .standings-user--info__position {
+      color: var(--clr-text);
+    }
+    &:nth-child(1) {
+      .standings-user--info__position {
+        border: 1px solid hsl(51, 100%, 50%);
+        background: hsl(51 100% 40% / 50%);
+        border-radius: 5000px;
+        font-weight: 800;
+      }
+    }
+    &:nth-child(2) {
+      .standings-user--info__position {
+        border: 1px solid hsl(0, 0%, 75%);
+        background: hsl(0 0% 75% / 50%);
+        border-radius: 5000px;
+        font-weight: 800;
+      }
+    }
+    &:nth-child(3) {
+      .standings-user--info__position {
+        border: 1px solid hsl(32, 95%, 44%);
+        background: hsla(32, 95%, 44%, 0.5);
+        border-radius: 5000px;
+        font-weight: 800;
+      }
+    }
+  }
+}
+
+.selection-list {
+  display: grid;
+  gap: .5rem;
+}
+
+
+
+.user-result-item {
+  display: flex;
+  gap: 1rem;
+
+  :first-child {
+    border: 1px solid var(--clr-primary);
+    background: var(--clr-primary-mute);
+    border-radius: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &:nth-of-type(1) > :first-child {
+    border: 1px solid gold;
+    background: hsl(51 100% 40% / 0.5);
+  }
+  &:nth-of-type(2) > :first-child {
+    border: 1px solid gold;
+    background: hsl(51 100% 40% / 0.5);
+  }
+  &:nth-of-type(3) > :first-child {
+    border: 1px solid gold;
+    background: hsl(51 100% 40% / 0.5);
+  }
+
+  & > *:last-of-type {
+    margin-left: auto;
   }
 }

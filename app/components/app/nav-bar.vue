@@ -53,7 +53,7 @@ watch(route, () => {
           <AppLogo />
         </NuxtLink>
       </div>
-      <nav v-if="authStore.session" class="nav-middle primary-navigation" :data-visible="showNavbar">
+      <nav v-if="authStore.session && sideBarStore.upcomingRace" class="nav-middle primary-navigation" :data-visible="showNavbar">
         <ul>
           <li class="nav-link">
             <NuxtLink to="/dashboard">
@@ -66,14 +66,14 @@ watch(route, () => {
 
               <NavList
                 v-if="!sideBarStore.isClassicSeason"
-                :grand-tour="sideBarStore.upcomingRace[0]"
+                :grand-tour="sideBarStore.currentRace || undefined"
                 comp-location="overzicht"
               />
 
               <NavList
                 v-else-if="sideBarStore.classicsRaces"
                 :classics-races="sideBarStore.classicsRaces"
-                comp-location="uitslag"
+                comp-location="overzicht"
               />
             </details>
           </li>
@@ -88,7 +88,7 @@ watch(route, () => {
 
               <div v-if="!sideBarStore.isClassicSeason" class="race-list">
                 <NavList
-                  :grand-tour="sideBarStore.upcomingRace[0]"
+                  :grand-tour="sideBarStore.currentRace || undefined"
                   :on-closed="closeNavbar"
                   comp-location="uitslag"
                 />
@@ -107,7 +107,7 @@ watch(route, () => {
               :to="{
                 name: 'dashboard-klassement-race',
                 params: {
-                  race: !sideBarStore.isClassicSeason ? slugify(sideBarStore.upcomingRace[0].name) : 'klassiekers',
+                  race: !sideBarStore.isClassicSeason ? slugify(sideBarStore.currentRace?.name || null) : 'klassiekers',
                 },
               }"
             >
@@ -282,7 +282,7 @@ watch(route, () => {
   }
   &:has(.router-link-active.router-link-exact-active) {
     background: var(--clr-primary-mute);
-    color: var(--clr-primary-content);
+    color: var(--clr-text);
     border: 1px solid var(--clr-primary);
   }
 
@@ -313,7 +313,8 @@ watch(route, () => {
       }
       a {
         display: grid;
-        grid-template-columns: 3ch 1fr;
+        grid-template-columns: minmax(3ch, auto) 1fr;
+        gap: 0.5rem;
       }
 
       &:has(a.router-link-exact-active) {

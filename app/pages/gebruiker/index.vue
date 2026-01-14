@@ -44,7 +44,7 @@ const loading = ref(false);
             </div>
             <div class="profile-list--item">
               <span>Teams</span>
-              <p>4</p>
+              <p>{{ authStore.userPoules.length }}</p>
             </div>
             <div class="profile-list--item">
               <span>Beste positie</span>
@@ -92,7 +92,7 @@ const loading = ref(false);
 </template>
 
 <style>
-  .user-welcome {
+.user-welcome {
   display: flex;
   justify-content: space-between;
   align-items: start;
@@ -122,30 +122,6 @@ const loading = ref(false);
   h3,
   p {
     margin-bottom: 0;
-  }
-}
-
-.profile-list {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
-  > * {
-    background: var(--clr-background-app);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    border: 1px solid var(--clr-primary);
-
-    > span {
-      text-transform: uppercase;
-      font-weight: 500;
-      font-size: var(--fs-300);
-    }
-
-    > p {
-      margin-bottom: 0;
-      font-weight: 800;
-    }
   }
 }
 

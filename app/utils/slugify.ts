@@ -1,4 +1,4 @@
-export function slugify(str: string) {
+export function slugify(str: string | null) {
   return String(str)
     .normalize("NFKD") // split accented characters into their base characters and diacritical marks
     .replace(/[\u0300-\u036F]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.

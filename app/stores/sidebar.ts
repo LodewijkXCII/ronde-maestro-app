@@ -58,11 +58,11 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
   });
 
   const upComingStage = computed<Stage | null>(() => {
-    if (!upcomingRace.value || upcomingRace.value.length === 0) {
+    if (!currentRace.value) {
       return null;
     }
 
-    const nextStage = upcomingRace.value[0]?.stages.find(stage => stage.done === false && !stageUnderway(stage.date));
+    const nextStage = currentRace.value.stages.find(stage => stage.done === false && !stageUnderway(stage.date));
 
     return nextStage || null;
   });

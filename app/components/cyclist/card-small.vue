@@ -15,7 +15,7 @@ const config = useRuntimeConfig();
 <template>
   <div class="cyclistMiniCard">
     <div class="cyclistMiniCard--position">
-      <span v-if="result">{{ result.position }}.</span>
+      <span v-if="result && result.position > 0">{{ result.position }}.</span>
       <span v-else>-</span>
     </div>
 

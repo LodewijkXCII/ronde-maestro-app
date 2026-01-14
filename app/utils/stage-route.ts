@@ -1,6 +1,6 @@
 import type { SelectRaceWithRelations, Stage } from "~/types/race";
 
-export async function goToStage(stageId: number) {
+export async function goToStage(stageId: number | null) {
   const sideBarStore = useSideBarStore();
   const races = sideBarStore.upcomingRace;
 
