@@ -6,9 +6,7 @@ const props = defineProps<{
   classics?: ClassicsRaces | null;
 }>();
 
-// Emit the ID to the parent component when it changes
-const emit = defineEmits(["update:stageId"]);
-
+const modelValue = defineModel<number>("stageId");
 const selectedStageId = ref<number>();
 
 const completedStages = computed<{ id: number; label: string }[]>(() => {
@@ -40,23 +38,6 @@ function changeSelectedStage(selector: number) {
     selectedStageId.value = newStageIndex.id;
   }
 }
-
-watch(completedStages, (newOptions) => {
-  if (newOptions && newOptions.length > 0 && !selectedStageId.value) {
-    const lastId = newOptions.findLast(s => s)?.id;
-    if (lastId !== undefined) {
-      selectedStageId.value = lastId;
-    }
-  }
-}, { immediate: true });
-
-watch(selectedStageId, (newId) => {
-  emit("update:stageId", newId);
-});
-
-onMounted(() => {
-  emit("update:stageId", selectedStageId.value);
-});
 </script>
 
 <template>
@@ -68,7 +49,7 @@ onMounted(() => {
     >
       <Icon name="tabler:chevron-left" size="24" />
     </button>
-    <select v-model="selectedStageId">
+    <select v-model="modelValue">
       <option
         v-for="option in completedStages"
         :key="option.id"

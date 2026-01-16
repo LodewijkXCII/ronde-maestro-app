@@ -54,3 +54,8 @@ export type RaceTotalPoints = {
     winner: boolean;
   })[];
 };
+
+export type ResultPerStage = {
+  stage: Stage;
+  results: (TotalPointsUser & { winner: boolean })[];
+};

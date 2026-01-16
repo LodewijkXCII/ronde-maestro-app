@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { watch } from "vue";
 
+// TODO CHECK TO CLOSE Dropdowns after clicking an route chenge
+
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
 const route = useRoute();

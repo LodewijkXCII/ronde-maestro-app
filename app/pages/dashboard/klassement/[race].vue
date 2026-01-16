@@ -2,10 +2,10 @@
 import type { FetchError } from "ofetch";
 
 import type { Stage } from "~/types/race";
-import type { RaceTotalPoints, TotalPointsUser } from "~/types/results";
+import type { RaceTotalPoints, ResultPerStage } from "~/types/results";
 
-const config = useRuntimeConfig();
 const sideBarStore = useSideBarStore();
+const raceStore = useRaceStore();
 const authUser = useAuthStore().user;
 const route = useRoute();
 const router = useRouter();
@@ -19,11 +19,6 @@ const selectedStage = ref<number | null>(null);
 const currentRace = computed(() => {
   return sideBarStore.currentRace;
 });
-
-type ResultPerStage = {
-  stage: Stage;
-  results: (TotalPointsUser & { winner: boolean })[];
-};
 
 const resultPerStage = ref<ResultPerStage[]>([]);
 const selectedStageResult = ref<ResultPerStage>();
@@ -74,34 +69,22 @@ function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] | 
 }
 
 async function getRaceData() {
-  if (!sideBarStore.upcomingRace) {
-    await sideBarStore.refreshUpcomingRace();
+  if (!raceStore.raceResult) {
+    await raceStore.fetchRaceData();
   }
 
-  if (currentRace.value || sideBarStore.isClassicSeason) {
-    try {
-      loading.value = true;
+  try {
+    loading.value = true;
 
-      const searchQuery = sideBarStore.isClassicSeason ? `0?seasonTimeId=${sideBarStore.classicsRaces?.seasonTimeId}` : `${currentRace.value?.id}`;
-      const response = await $fetch<RaceTotalPoints[]>(`${config.public.apiBase}/results/race/${searchQuery}`, {
-        method: "get",
-        credentials: "include",
-      });
-
-      if (response) {
-        raceResult.value = response;
-        combineResultsAndStages(response);
-
-        selectStageFromQuery();
-      }
-    }
-    catch (e) {
-      const error = e as FetchError;
-      errorMessage.value = getFetchErrorMessage(error);
-    }
-    finally {
-      loading.value = false;
-    }
+    combineResultsAndStages(raceStore.raceResult);
+    selectStageFromQuery();
+  }
+  catch (e) {
+    const error = e as FetchError;
+    errorMessage.value = getFetchErrorMessage(error);
+  }
+  finally {
+    loading.value = false;
   }
 }
 

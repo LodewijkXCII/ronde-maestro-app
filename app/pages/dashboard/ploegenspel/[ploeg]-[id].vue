@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import type { ResultResponse, ResultUsersByStage } from "~/types/results";
+import type { ResultUsersByStage } from "~/types/results";
 import type { UserPouleWithResults } from "~/types/teams";
 
 import getParamId from "~/utils/param-extractor";
@@ -12,6 +12,7 @@ const config = useRuntimeConfig();
 
 const authStore = useAuthStore();
 const sideBarStore = useSideBarStore();
+const raceStore = useRaceStore();
 
 const errorMessage = ref<string>();
 const loading = ref(false);
@@ -54,7 +55,6 @@ const pouleGCStandings = computed(() => {
 });
 
 const pouleStageStandings = ref<ResultUsersByStage[]>([]);
-const selectedStage = ref<number>();
 const comparedUser = ref<string>();
 
 const totalTeamScore = computed(() => {
@@ -81,7 +81,7 @@ const currentTotalScore = computed(() => {
     return source.reduce((acc, user) => acc + (+user.points || 0), 0);
   }
 
-  return 0; // The final "safety" return to satisfy ESLint
+  return 0;
 });
 
 const userLatestStageStats = computed(() => {
@@ -150,44 +150,27 @@ const userBestStageStats = computed(() => {
 });
 
 const displayedStandings = computed(() => {
-  const data = resultIsGC.value ? pouleGCStandings.value : pouleStageStandings.value;
+  // 1. Determine the source based on the toggle
+  if (resultIsGC.value) {
+    return pouleGCStandings.value;
+  }
 
-  if (!data)
+  // 2. For "Etappe" mode, use the reactive data from the raceStore
+  const stageUsers = raceStore.resultData?.users;
+  if (!stageUsers || !ploegData.value)
     return [];
 
-  // Normalize the data so the template always finds 'name'
-  return data.map(user => ({
-    userId: user.userId,
-    name: user.name, // Fallback if property names differ
-    points: user.points,
-  }));
+  // 3. Filter the global stage results to only include users in THIS poule
+  const pouleUserIds = new Set(ploegData.value.users.map(u => u.user.id));
+
+  return stageUsers
+    .filter(user => pouleUserIds.has(user.userId))
+    .map(user => ({
+      userId: user.userId,
+      name: user.name,
+      points: user.points,
+    }));
 });
-
-async function loadResultData(stageId: number) {
-  try {
-    errorMessage.value = "";
-    pouleStageStandings.value = [];
-    loadStagedata.value = true;
-    selectedStage.value = stageId;
-
-    const { users } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${stageId}`, {
-      method: "get",
-      query: { pouleId: getParamId(route.params.id) },
-      credentials: "include",
-    });
-    if (users) {
-      pouleStageStandings.value = users;
-    }
-  }
-
-  catch (e) {
-    const error = e as FetchError;
-    errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
-    loadStagedata.value = false;
-  }
-}
 
 async function getTeamData() {
   loading.value = true;
@@ -241,6 +224,20 @@ watch(
   },
   { immediate: true },
 );
+
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    raceStore.currentPouleId = getParamId(newId) || null;
+  }
+  else {
+    raceStore.currentPouleId = null;
+  }
+}, { immediate: true });
+
+// Clean up when leaving the page so other views don't use this Poule ID
+onUnmounted(() => {
+  raceStore.currentPouleId = null;
+});
 </script>
 
 <template>
@@ -337,13 +334,13 @@ watch(
           <div v-if="!resultIsGC">
             <AppStageSelector
               v-if="sideBarStore.isClassicSeason"
+              v-model:stage-id="raceStore.searchStageId"
               :classics="sideBarStore.classicsRaces"
-              @update:stage-id="loadResultData"
             />
             <AppStageSelector
               v-else
+              v-model:stage-id="raceStore.searchStageId"
               :stages="sideBarStore.allStages"
-              @update:stage-id="loadResultData"
             />
           </div>
           <p>Ploeg score: {{ currentTotalScore }} pnt</p>
@@ -371,9 +368,9 @@ watch(
 
         <SelectionCompare
           v-if="!resultIsGC"
-          :user-selection="pouleStageStandings.find(user => user.userId === authStore.user.id)"
-          :compare-user-selection="pouleStageStandings.find(user => user.userId === comparedUser)"
-          :stage-id="selectedStage"
+          :user-selection="raceStore.resultData?.users.find(user => user.userId === authStore.user.id)"
+          :compare-user-selection="raceStore.resultData?.users.find(user => user.userId === comparedUser)"
+          :stage-id="raceStore.searchStageId"
           @close="comparedUser = undefined"
         />
 

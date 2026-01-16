@@ -57,16 +57,6 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     return upcomingSoon || null;
   });
 
-  const upComingStage = computed<Stage | null>(() => {
-    if (!currentRace.value) {
-      return null;
-    }
-
-    const nextStage = currentRace.value.stages.find(stage => stage.done === false && !stageUnderway(stage.date));
-
-    return nextStage || null;
-  });
-
   const currentStage = ref<Stage | null>(null);
 
   const loading = computed(() => upcomingRaceStatus.value === "pending");
@@ -114,6 +104,25 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     return [];
   });
 
+  const upcomingStage = computed<Stage | null>(() => {
+    if (!isClassicSeason.value) {
+      if (!currentRace.value?.stages?.length)
+        return null;
+
+      // Find the first one not done, OR return the last one if all are done
+      return currentRace.value.stages.find(stage => !stage.done)
+        || currentRace.value.stages[currentRace.value.stages.length - 1];
+    }
+    else {
+      if (!allStages.value?.length)
+        return null;
+
+      // Find the first one not done, OR return the last one if all are done
+      return allStages.value.find(stage => !stage.done)
+        || allStages.value[allStages.value.length - 1];
+    }
+  });
+
   return {
     loading,
     isClassicSeason,
@@ -123,7 +132,7 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     refreshUpcomingRace,
     currentRace,
     currentStage,
-    upComingStage,
+    upComingStage: upcomingStage,
     allStages,
   };
 });

@@ -1,3 +1,8 @@
+<!--
+  TODO UPCOMPING RACE IS NU ALLE RACES IN BIJV KLASSIEKERS
+  hierdoor zijn de gegevens niet juist bij Geselecteerde renners. Hier wordt nog gebruik gemaakt van eerst volgende race.
+  Hierdoor kan het zijn dat geslecteerde renners wel van nieuwe rit zijn, maar info nog niet.
+-->
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
@@ -14,8 +19,29 @@ const resultIsGC = ref(false);
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
+const raceStore = useRaceStore();
 const { upComingStage, currentRace, upcomingRace, allStages, loading: storeLoading } = storeToRefs(sideBarStore);
 const latestResult = ref<ResultResponse>();
+
+const displayedStandings = computed(() => {
+  // If GC: use the raceResult from store
+  // If Etappe: use the resultData (which reacts to searchStageId) from store
+  const data = resultIsGC.value
+    ? raceStore.raceResult
+    : raceStore.resultData?.users; // Changed from latestResult.value?.users
+
+  if (!data)
+    return [];
+
+  return data.map((user) => {
+    const pointsValue = "totalPoints" in user ? user.totalPoints : user.points;
+    return {
+      userId: user.userId,
+      name: user.name,
+      points: pointsValue,
+    };
+  });
+});
 
 async function getUpcomingStage() {
   if (!upComingStage.value) {
@@ -85,13 +111,17 @@ onMounted(async () => {
   if (!upcomingRace.value || upcomingRace.value.length === 0) {
     await sideBarStore.refreshUpcomingRace();
   }
+
+  if (!raceStore.raceResult) {
+    await raceStore.refreshRaceResult();
+  }
 });
 
 // Watch for the race data to arrive, then trigger local API calls
-watch(currentRace, (newRace) => {
+watch(currentRace, async (newRace) => {
   if (newRace) {
-    getUpcomingStage();
-    getLatestResult();
+    await getUpcomingStage();
+    await getLatestResult();
   }
 }, { immediate: true });
 </script>
@@ -132,14 +162,14 @@ watch(currentRace, (newRace) => {
                   }) }} • {{ currentRace?.name }} • {{ currentRace?.stages[0]?.stageType.name }}
                 </p>
                 <button class="btn btn-primary" @click="goToStage(currentRace?.stages[0]?.id || null)">
-                  Selecteer je renners
+                  {{ currentRace?.stages[0]?.done ? 'Bekijk de uitslag' : "Selecteer je renners" }}
                 </button>
               </div>
               <div v-else-if="upComingStage">
                 <span>Eerstvolgende etappe:</span>
                 <p>Etappe {{ upComingStage.stageNr }} • {{ upComingStage.startCity }} - {{ upComingStage.finishCity }} • {{ upComingStage.stageType.name }}</p>
                 <button class="btn btn-primary" @click="goToStage(upComingStage.id)">
-                  Selecteer je renners
+                  {{ upComingStage.done ? 'Bekijk de uistlag' : "Selecteer je renners" }}
                 </button>
               </div>
             </div>
@@ -169,7 +199,7 @@ watch(currentRace, (newRace) => {
               }) }}
             </p>
           </div>
-          <Loading v-if="entriesLoading || storeLoading" />
+          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
           <div v-if="userEntries.length > 0 && !entriesLoading" class="selected-riders">
             <CyclistCardMedium
               v-for="entry in userEntries"
@@ -179,7 +209,7 @@ watch(currentRace, (newRace) => {
               :cyclist="entry.cyclist"
             />
 
-            <button class="btn btn-primary btn-full-width" @click="goToStage(upComingStage.id)">
+            <button v-if="!stageUnderway(upComingStage.date)" class="btn btn-primary btn-full-width" @click="goToStage(upComingStage.id)">
               Pas je team aan
               <Icon name="tabler:arrow-right" />
             </button>
@@ -214,8 +244,7 @@ watch(currentRace, (newRace) => {
               }) }}
             </p>
           </div>
-          <Loading v-if="resultsLoading || storeLoading" />
-
+          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
           <template v-if="!resultsLoading">
             <div class="stage-box">
               <div class="stage-box--heading">
@@ -271,6 +300,19 @@ watch(currentRace, (newRace) => {
               </button>
             </div>
           </div>
+
+          <div v-if="!resultIsGC">
+            <AppStageSelector
+              v-if="sideBarStore.isClassicSeason"
+              v-model:stage-id="raceStore.searchStageId"
+              :classics="sideBarStore.classicsRaces"
+            />
+            <AppStageSelector
+              v-else
+              v-model:stage-id="raceStore.searchStageId"
+              :stages="sideBarStore.allStages"
+            />
+          </div>
           <p v-if="!resultIsGC">
             Voor de etappe van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
               day: '2-digit',
@@ -281,9 +323,9 @@ watch(currentRace, (newRace) => {
             Algemeen klassement
           </p>
 
-          <div class="standings-list">
+          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />          <div v-else class="standings-list">
             <div
-              v-for="(user, index) in latestResult.users"
+              v-for="(user, index) in displayedStandings"
               :key="user.userId"
               class="standings-user"
               :class="{ 'current-user': user.userId === authStore.user.id }"
@@ -411,7 +453,8 @@ watch(currentRace, (newRace) => {
 }
 
 .dashboard-card,
-.team-card {
+.team-card,
+.poule-card {
   padding: 1.5rem;
   border-radius: var(--border-radius);
   outline: 1px solid var(--clr-background-mute);

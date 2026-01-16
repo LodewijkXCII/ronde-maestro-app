@@ -42,7 +42,7 @@ const config = useRuntimeConfig();
         {{ cyclist.team.name }}
       </p>
     </div>
-    <!-- FIXME IF NEEDED USE AS SLOT -->
+
     <div v-if="result?.points" class="points">
       <span>{{ result?.points }}</span> ptn
     </div>
