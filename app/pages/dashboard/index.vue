@@ -225,6 +225,7 @@ watch(currentRace, async (newRace) => {
             </button>
           </div>
         </div>
+
         <div v-if="latestResult" class="dashboard-card dashboard-latest-result">
           <div>
             <div class="icon-header">
@@ -277,9 +278,15 @@ watch(currentRace, async (newRace) => {
             Er is nog geen uitslag beschikbaar.
           </p>
         </div>
+
         <div v-else class="dashboard-card dashboard-latest-result">
+          <div class="icon-header">
+            <Icon name="tabler:trophy" />
+            <h3>Laatste uitslag</h3>
+          </div>
+
           <div v-if="upcomingRace">
-            <h3>Er is nog geen uitslag voor {{ upcomingRace[0]?.name }}</h3>
+            <p>Er is nog geen uitslag voor {{ upcomingRace[0]?.name }}</p>
           </div>
         </div>
         <div v-if="latestResult && upcomingRace" class="dashboard-card dashboard-standings">
@@ -352,6 +359,17 @@ watch(currentRace, async (newRace) => {
               Volledig klassement
               <Icon name="tabler:arrow-right" />
             </NuxtLink>
+          </div>
+        </div>
+        <div v-else class="dashboard-card">
+          <div class="icon-header">
+            <Icon name="tabler:list-numbers" />
+            <h3>
+              Klassement
+            </h3>
+          </div>
+          <div>
+            <p>Er is nog geen klassement, deze zal komen na de eerste uitslag.</p>
           </div>
         </div>
       </div>

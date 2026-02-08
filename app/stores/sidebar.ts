@@ -1,4 +1,4 @@
-import { addDays, endOfDay, isAfter, isBefore, isWithinInterval, startOfDay } from "date-fns";
+import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
 
 import type { ClassicsRaces, SelectRaceWithRelations, Stage } from "~/types/race";
 
@@ -48,13 +48,15 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
       return activeRace;
     }
 
-    const nextWeek = addDays(today, 7);
-    const upcomingSoon = upcomingRace.value.find((race) => {
-      const startDate = new Date(race.startDate);
-      return isAfter(startDate, today) && isBefore(startDate, nextWeek);
-    });
+    return upcomingRace.value[0] || null;
 
-    return upcomingSoon || null;
+    // const nextWeek = addDays(today, 7);
+    // const upcomingSoon = upcomingRace.value.find((race) => {
+    //   const startDate = new Date(race.startDate);
+    //   return isAfter(startDate, today) && isBefore(startDate, nextWeek);
+    // });
+
+    // return upcomingSoon || null;
   });
 
   const currentStage = ref<Stage | null>(null);
