@@ -68,7 +68,7 @@ const { userPoules } = storeToRefs(authStore);
     background: var(--clr-primary-mute);
     border-radius: var(--border-radius);
     border: 1px solid var(--clr-primary);
-    width: fit-content;
+    width: 300px;
     padding: 1rem;
     scroll-snap-align: start;
 
@@ -81,7 +81,8 @@ const { userPoules } = storeToRefs(authStore);
       gap: 1rem;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+      font-size: var(--fs-500);
     }
   }
 }

@@ -1,6 +1,7 @@
 import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
 
 import type { ClassicsRaces, SelectRaceWithRelations, Stage } from "~/types/race";
+import type { UserPoule } from "~/types/teams";
 
 import getParamId from "~/utils/param-extractor";
 
@@ -24,6 +25,17 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
         navigateTo("/inloggen");
       }
     },
+  });
+
+  const {
+    data: pouleData,
+    status: pouleDataDataStatus,
+    refresh: refreshPouleData,
+  } = useFetch<UserPoule[]>(() => `${config.public.apiBase}/poules`, {
+    method: "get",
+    credentials: "include",
+    lazy: true,
+    immediate: false,
   });
 
   const currentRace = computed<SelectRaceWithRelations | null>(() => {
@@ -92,7 +104,7 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
 
   const allStages = computed(() => {
     if (classicsRaces.value && classicsRaces.value.races && classicsRaces.value.races.length) {
-    // Type guard to ensure that the array contains SelectRaceWithRelations
+      // Type guard to ensure that the array contains SelectRaceWithRelations
       const racesWithStages = classicsRaces.value.races as SelectRaceWithRelations[];
       // Use reduce to flatten the stages from all races into a single array
       return racesWithStages.reduce((allStages, race) => {
@@ -113,7 +125,7 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
 
       // Find the first one not done, OR return the last one if all are done
       return currentRace.value.stages.find(stage => !stage.done)
-        || currentRace.value.stages[currentRace.value.stages.length - 1];
+        || currentRace.value.stages[currentRace.value.stages.length - 1] || null;
     }
     else {
       if (!allStages.value?.length)
@@ -121,7 +133,7 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
 
       // Find the first one not done, OR return the last one if all are done
       return allStages.value.find(stage => !stage.done)
-        || allStages.value[allStages.value.length - 1];
+        || allStages.value[allStages.value.length - 1] || null;
     }
   });
 
@@ -132,6 +144,9 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     upcomingRace,
     upcomingRaceStatus,
     refreshUpcomingRace,
+    pouleData,
+    pouleDataDataStatus,
+    refreshPouleData,
     currentRace,
     currentStage,
     upComingStage: upcomingStage,

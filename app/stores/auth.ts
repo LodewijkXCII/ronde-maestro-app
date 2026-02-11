@@ -62,6 +62,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
   const router = useRouter();
   const session = ref<Awaited<ReturnType<typeof authClient.getSession>> | null>(null);
+  // TODO CHANGE TO $USEFETCH REQUEST WITH REFRESH POSIBILITIES
   const userPoules = ref<UserPoule[]>([]);
 
   async function init() {

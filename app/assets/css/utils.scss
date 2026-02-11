@@ -2,12 +2,11 @@ a.btn,
 .btn {
   --_button-outline: 3px solid;
 
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
   border-radius: var(--border-radius);
-  font-weight: 900;
   text-decoration: none;
   border: none;
   user-select: none;
@@ -144,6 +143,7 @@ a.btn,
     color: var(--clr-text);
     background: transparent;
     font-weight: 400;
+    padding: 0;
 
      &:hover,
     :focus-within {
@@ -434,9 +434,8 @@ span.points {
 }
 
 .badge {
-  height: fit-content;
+  height: 100%;
   display: inline-flex;
-  gap: 0.15rem;
   align-items: center;
   padding: 0.25rem 0.75rem;
   background: var(--clr-secondary);
@@ -444,12 +443,23 @@ span.points {
   color: var(--clr-secondary-content);
   border-radius: 500px;
   font-size: var(--fs-200);
+  font-weight: 100;
+  text-transform: uppercase;
   user-select: none;
 
   img {
     max-width: 15px;
   }
 }
+
+.badge-green {
+    background: var(--clr-accent-green);
+    border: 1px solid hsl(from var(--clr-accent-green) 190 s 80%);
+  }
+.badge-alert {
+    background: var(--clr-alert);
+    border: 1px solid hsl(from var(--clr-alert) 190 s 80%);
+  }
 
 .badged {
   display: flex;

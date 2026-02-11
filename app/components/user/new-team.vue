@@ -68,7 +68,6 @@ const onSubmit = handleSubmit(async (values) => {
     <Icon name="tabler:users" />
     <h3>Nieuwe ploeg starten</h3>
   </div>
-  <p>Om goed tegen je vrienden te kunnen spelen.</p>
 
   <div class="form-group">
     <form @submit="onSubmit">
@@ -80,7 +79,7 @@ const onSubmit = handleSubmit(async (values) => {
           type="text"
           class="input__text"
           :class="{ input__error: errors.name }"
-          placeholder="RondeMaestro"
+          placeholder="Bijv. RondeMaestro..."
           required
           name="name"
           autocomplete="name"
@@ -95,15 +94,16 @@ const onSubmit = handleSubmit(async (values) => {
           v-bind="openAttrs"
           type="checkbox"
           :class="{ input__error: errors.open }"
-          required
           name="open"
         >
-        <label for="open" class="input">Publiekelijk</label>
-        <p>Mag iedereen bij deze ploeg of niet?</p>
+        <label for="open" class="input">
+          Openbaar?
+        </label>
         <div v-if="errors?.open" class="input-error">
           {{ errors.open }}
         </div>
       </div>
+      <p class="input-subtext"> Bij een openbare ploeg kunnen alle deelnemers zich toevoegen. Wanneer een ploeg niet openbaar is, is er een wachtwoord of uitnodigingslink nodig om deel te nemen.</p>
 
       <div v-if="!open" class="input-group">
         <label for="password" class="input">Wachtwoord:</label>

@@ -35,6 +35,9 @@ const errorMessage = ref("");
             </div>
           </div>
           <div class="poule-card">
+            <PoulesOverview />
+          </div>
+          <div class="poule-card">
             <UserNewTeam />
           </div>
         </aside>
@@ -51,6 +54,11 @@ const errorMessage = ref("");
 
   .poule-card {
     height: fit-content;
+  }
+
+  aside {
+    display: grid;
+    gap: 1rem;
   }
 }
 </style>
