@@ -206,9 +206,13 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     }
 
     try {
+      const queryParams = sideBarStore.isClassicSeason
+        ? { seasonTimeId: sideBarStore.classicsRaces?.seasonTimeId }
+        : { raceId: sideBarStore.currentRace?.id };
+
       const poules = await $fetch<UserPoule[]>(`${config.public.apiBase}/users/poules/${userId}`, {
         method: "get",
-        query: { seasonTimeId: sideBarStore.currentRace?.seasonTimeId },
+        query: { ...queryParams },
         credentials: "include",
       });
 

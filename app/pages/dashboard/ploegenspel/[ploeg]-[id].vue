@@ -187,13 +187,13 @@ async function getTeamData() {
   }
 
   try {
-    const queryParams = sideBarStore.isClassicSeason
-      ? { seasonTimeId: sideBarStore.classicsRaces?.seasonTimeId }
-      : { raceId: sideBarStore.currentRace?.id };
+    // const queryParams = sideBarStore.isClassicSeason
+    //   ? { seasonTimeId: sideBarStore.classicsRaces?.seasonTimeId }
+    //   : { raceId: sideBarStore.currentRace?.id };
 
     const response = await $fetch<UserPouleWithResults>(`${config.public.apiBase}/poules/${ploegId}`, {
       method: "get",
-      params: queryParams,
+      // params: queryParams,
       credentials: "include",
     });
     if (response) {
@@ -251,7 +251,7 @@ onUnmounted(() => {
         </span>
       </div>
 
-      <div v-if="ploegData && currentUserResults" class="team-container">
+      <div v-if="ploegData" class="team-container">
         <div class="team-heading">
           <div class="team-heading--info">
             <div class="team-heading--info__title">
@@ -374,7 +374,7 @@ onUnmounted(() => {
           @close="comparedUser = undefined"
         />
 
-        <div v-if="ploegData.adminUserId === currentUserResults.userId" class="team-card team-users">
+        <div v-if="currentUserResults && ploegData.adminUserId === currentUserResults.userId" class="team-card team-users">
           <div class="icon-header">
             <Icon name="tabler:users" />
             <h3>Ploeg beheer</h3>
