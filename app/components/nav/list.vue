@@ -5,6 +5,7 @@ const props = defineProps<{
   grandTour?: SelectRaceWithRelations;
   classicsRaces?: ClassicsRaces;
   compLocation: "overzicht" | "uitslag";
+  onClosed?: () => void;
 }>();
 
 const race = computed(() => {
@@ -18,6 +19,12 @@ const race = computed(() => {
 });
 
 const sideBarStore = useSideBarStore();
+
+function handleClick() {
+  if (props.onClosed) {
+    props.onClosed();
+  }
+}
 </script>
 
 <template>
@@ -25,7 +32,6 @@ const sideBarStore = useSideBarStore();
     <template v-for="stage in sideBarStore.allStages" :key="stage.id">
       <li v-if="stage.done && compLocation === 'uitslag'" class="stage-list--item">
         <NuxtLink
-
           :to="{
             name: 'dashboard-race-id-uitslagen-nr',
             params:
@@ -35,6 +41,7 @@ const sideBarStore = useSideBarStore();
                 nr: stage.stageNr,
               },
           }"
+          @click="handleClick"
         >
           <template v-if="!sideBarStore.isClassicSeason">
             <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
@@ -61,6 +68,7 @@ const sideBarStore = useSideBarStore();
                 nr: stage.stageNr,
               },
           }"
+          @click="handleClick"
         >
           <template v-if="!sideBarStore.isClassicSeason">
             <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{

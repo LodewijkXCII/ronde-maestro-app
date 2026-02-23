@@ -17,6 +17,7 @@ fieldset {
   .input-group {
     margin-block: 0.25rem;
     padding-left: 1rem;
+    
   }
 
   legend {
@@ -61,6 +62,7 @@ fieldset {
 .input-group {
   width: 100%;
   margin: 0.75rem 0;
+  padding-block: .25rem;
   position: relative;
   user-select: none;
   display: grid;
@@ -74,13 +76,15 @@ fieldset {
     display: flex;
     gap: 1ch;
     place-items: center;
+    background-color: var(--clr-background-app);
+    margin: 0;
   }
 
   &:has([type="radio"]:checked) {
     background-color: var(--clr-primary-mute);
     border-color: var(--clr-primary);
     font-weight: 800;
-    border: 3px dotted
+
   }
 
   .input__error {

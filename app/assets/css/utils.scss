@@ -434,7 +434,6 @@ span.points {
 }
 
 .badge {
-  height: 100%;
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.75rem;
@@ -475,7 +474,7 @@ span.points {
     margin-bottom: 0;
   }
 
-  .end-icon {
+  .end-icon, .btn {
     margin-left: auto;
   }
 }

@@ -102,7 +102,7 @@ const loading = ref(false);
   gap: 2rem;
   margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(425px, 1fr));
   gap: 1rem;
 }
 

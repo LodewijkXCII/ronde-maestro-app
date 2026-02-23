@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue";
-
-// TODO CHECK TO CLOSE Dropdowns after clicking an route chenge
+import { onMounted } from "vue";
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
@@ -9,16 +7,20 @@ const route = useRoute();
 
 const isMounted = ref(false);
 const showNavbar = ref(false);
-const navbarRef = ref<HTMLElement | null>(null);
+
+const selectCyclistRef = ref<HTMLElement | null>(null);
+const selectResultRef = ref<HTMLElement | null>(null);
 
 function closeNavbar() {
   showNavbar.value = false;
+  if (selectResultRef.value && selectCyclistRef.value) {
+    selectCyclistRef.value.removeAttribute("open");
+    selectResultRef.value.removeAttribute("open");
+  }
 }
 
-function handleClickOutside(e: Event) {
-  if (navbarRef.value && !navbarRef.value.contains(e.target as Node)) {
-    closeNavbar();
-  }
+function handleClickOutside() {
+  closeNavbar();
 }
 
 onMounted(() => {
@@ -41,14 +43,12 @@ const isNavbarActive = computed({
 });
 
 watch(route, () => {
-  if (showNavbar.value) {
-    closeNavbar();
-  }
+  closeNavbar();
 });
 </script>
 
 <template>
-  <div ref="navbarRef" class="nav-wrapper">
+  <div class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
         <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo">
@@ -56,25 +56,27 @@ watch(route, () => {
         </NuxtLink>
       </div>
       <nav v-if="authStore.session && sideBarStore.upcomingRace" class="nav-middle primary-navigation" :data-visible="showNavbar">
-        <ul>
+        <ul @click="closeNavbar">
           <li class="nav-link">
             <NuxtLink to="/dashboard">
               Dashboard
             </NuxtLink>
           </li>
           <li class="nav-link">
-            <details>
-              <summary>Renners selecteren <Icon name="tabler:chevron-right" size="16" /></summary>
+            <details ref="selectCyclistRef">
+              <summary>Renners selecteren <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
 
               <NavList
                 v-if="!sideBarStore.isClassicSeason"
                 :grand-tour="sideBarStore.currentRace || undefined"
+                :on-closed="closeNavbar"
                 comp-location="overzicht"
               />
 
               <NavList
                 v-else-if="sideBarStore.classicsRaces"
                 :classics-races="sideBarStore.classicsRaces"
+                :on-closed="closeNavbar"
                 comp-location="overzicht"
               />
             </details>
@@ -85,7 +87,7 @@ watch(route, () => {
             </NuxtLink>
           </li>
           <li class="nav-link">
-            <details>
+            <details ref="selectResultRef">
               <summary>Uitslagen <Icon name="tabler:chevron-right" size="16" /></summary>
 
               <div v-if="!sideBarStore.isClassicSeason" class="race-list">
@@ -122,69 +124,6 @@ watch(route, () => {
             </NuxtLink>
           </li>
         </ul>
-
-        <!-- <div class="link-block">
-          <div class="link-block__title" />
-          <div v-if="!sideBarStore.isClassicSeason" class="race-list">
-            <NavList
-              v-for="race in sideBarStore.upcomingRace"
-              :key="race.id"
-              :grand-tour="race"
-              :on-closed="closeNavbar"
-              comp-location="overzicht"
-            />
-          </div>
-          <div v-else-if="sideBarStore.classicsRaces">
-            <NavList
-              :classics-races="sideBarStore.classicsRaces"
-              :on-closed="closeNavbar"
-              comp-location="overzicht"
-            />
-          </div>
-        </div>
-        <div class="link-block">
-          <div class="link-block__title">
-            Uitslagen
-          </div>
-        </div>
-        <div class="link-block">
-          <div class="link-block__title">
-            Klassement
-          </div>
-          <ul>
-            <template v-if="!sideBarStore.isClassicSeason">
-              <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
-                <NuxtLink
-                  :to="{
-                    name: 'dashboard-klassement-race',
-                    params: {
-                      race: slugify(race.name),
-                    },
-                  }"
-                  @click="closeNavbar"
-                >
-                  {{ race.name }}
-                </NuxtLink>
-              </li>
-            </template>
-
-            <template v-else>
-              <li>
-                <NuxtLink
-                  :to="{
-                    name: 'dashboard-klassement-race',
-                    params: {
-                      race: 'klassiekers',
-                    },
-                  }"
-                  @click="closeNavbar"
-                >
-                  Klassiekers
-                </NuxtLink>
-              </li>
-            </template>
-          </ul>
-        </div> -->
       </nav>
 
       <div class="nav-right">
@@ -422,7 +361,7 @@ summary {
 }
 
 /* Rotate the line when open */
-details[open] .iconify {
+details[open] .nav-icon {
   transform: rotate(90deg);
   transition: transform 0.3s ease-in-out;
 }
@@ -440,7 +379,7 @@ details[open] .iconify {
     font-weight: 800;
   }
 
-  span.iconify {
+  span.nav-icon {
     justify-self: end;
   }
 }

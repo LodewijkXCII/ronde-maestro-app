@@ -20,6 +20,10 @@ const loadStagedata = ref(false);
 const ploegData = ref<UserPouleWithResults>();
 const resultIsGC = ref(false);
 
+const userIsAdmin = computed(() => {
+  return ploegData.value?.adminUserId === authStore.user.id;
+});
+
 const currentUserResults = computed(() => {
   return ploegData.value?.resultByUser.find(user => user.userId === authStore.user.id);
 });
@@ -374,10 +378,15 @@ onUnmounted(() => {
           @close="comparedUser = undefined"
         />
 
-        <div v-if="currentUserResults && ploegData.adminUserId === currentUserResults.userId" class="team-card team-users">
-          <div class="icon-header">
-            <Icon name="tabler:users" />
-            <h3>Ploeg beheer</h3>
+        <div v-if="userIsAdmin" class="team-card team-users">
+          <div>
+            <div class="icon-header">
+              <Icon name="tabler:users" />
+              <h3>Ploeg beheer</h3>
+              <button class="btn btn-danger .end-icon">
+                Ploeg verwijderen
+              </button>
+            </div>
           </div>
 
           <div>

@@ -21,9 +21,9 @@ const config = useRuntimeConfig();
               month: 'short',
             }) }}. - {{ stage.startCity }} - {{ stage.finishCity }}
           </p>
-          <div v-if="stage" class="stage-section--stage__type badge">
-            <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name" class="stage-type-image"><span>{{ stage.stageType.name }}</span>
-          </div>
+        </div>
+        <div v-if="stage" class="stage-section--stage__type badge">
+          <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name" class="stage-type-image"><span>{{ stage.stageType.name }}</span>
         </div>
         <p v-else>
           {{ new Date(race.startDate).toLocaleDateString("nl-NL", {
@@ -85,7 +85,6 @@ const config = useRuntimeConfig();
   width: 100%;
   max-height: 180px;
   overflow: hidden;
-  border: 1px dotted pink;
 
   img {
     width: 100%;

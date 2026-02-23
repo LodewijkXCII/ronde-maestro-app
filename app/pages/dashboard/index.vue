@@ -65,7 +65,7 @@ async function getUpcomingStage() {
     errorMessage.value = getFetchErrorMessage(error);
   }
   finally {
-    entriesLoading.value = false; // Stop loader  }
+    entriesLoading.value = false;
   }
 }
 
@@ -78,7 +78,7 @@ async function getLatestResult() {
   }
 
   try {
-    resultsLoading.value = true; // Start loader
+    resultsLoading.value = true;
     console.error(`Fetching results for stage: ${lastDoneStage.id}`);
     const data = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${lastDoneStage.id}`, {
       method: "get",

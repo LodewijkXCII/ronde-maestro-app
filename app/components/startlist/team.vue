@@ -77,7 +77,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
         <h4>{{ currentTeam.name }}</h4>
       </div>
       <div class="team-info--action">
-        <Icon name="tabler:circle-chevron-right" size="24" />
+        <Icon name="tabler:circle-chevron-right" size="24" class="action-icon" />
       </div>
     </summary>
     <div class="team-selection--active">
@@ -121,7 +121,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
   overflow: hidden; /* Ensures the border-radius clips the sliding content */
 }
 
-.team-info--action .iconify {
+.team-info--action .action-icon {
   transition: transform 0.3s ease-in-out;
 }
 
@@ -129,7 +129,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
   box-shadow: var(--box-shadow);
   outline: 1px solid var(--clr-primary);
 
-  .team-info--action .iconify {
+  .team-info--action .action-icon {
     transform: rotate(90deg);
   }
 
