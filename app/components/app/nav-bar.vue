@@ -10,12 +10,16 @@ const showNavbar = ref(false);
 
 const selectCyclistRef = ref<HTMLElement | null>(null);
 const selectResultRef = ref<HTMLElement | null>(null);
+const selectTeamsRef = ref<HTMLElement | null>(null);
 
 function closeNavbar() {
   showNavbar.value = false;
   if (selectResultRef.value && selectCyclistRef.value) {
     selectCyclistRef.value.removeAttribute("open");
     selectResultRef.value.removeAttribute("open");
+    if (selectTeamsRef.value) {
+      selectTeamsRef.value.removeAttribute("open");
+    }
   }
 }
 
@@ -119,9 +123,37 @@ watch(route, () => {
             </NuxtLink>
           </li>
           <li class="nav-link">
-            <NuxtLink :to="{ name: 'dashboard-ploegenspel' }">
+            <NuxtLink v-if="!authStore.userPoules.length" :to="{ name: 'dashboard-ploegenspel' }">
               Ploegenspel
             </NuxtLink>
+            <details ref="selectTeamsRef">
+              <summary>Ploegenspel <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
+
+              <ul class="stage-list">
+                <li class="stage-list--item">
+                  <NuxtLink
+                    :to="{
+                      name: 'dashboard-ploegenspel',
+                    }"
+                  >
+                    Klassement
+                  </NuxtLink>
+                </li>
+                <li v-for="team in authStore.userPoules" :key="team.id" class="stage-list--item">
+                  <NuxtLink
+                    :to="{
+                      name: 'dashboard-ploegenspel-ploeg-id',
+                      params: {
+                        ploeg: slugify(team.name),
+                        id: team.id,
+                      },
+                    }"
+                  >
+                    {{ team.name }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </details>
           </li>
         </ul>
       </nav>

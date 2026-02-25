@@ -314,5 +314,6 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     showVerificationButton: showVerificationComponent,
     getUserPreference,
     deleteUser,
+    getUserTeamInfo,
   };
 });

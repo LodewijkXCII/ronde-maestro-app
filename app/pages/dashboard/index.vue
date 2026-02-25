@@ -496,6 +496,16 @@ watch(currentRace, async (newRace) => {
       color: var(--clr-primary-mute);
     }
   }
+
+  &.alert-error {
+    background-color: hsl(from var(--clr-error) h 27 73);
+    border-color: var(--clr-error);
+    color: var(--clr-text);
+
+    > h3 {
+      color: var(--clr-error);
+    }
+  }
 }
 
 .dashboard-selected-riders {

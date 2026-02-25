@@ -214,6 +214,49 @@ async function getTeamData() {
   }
 }
 
+async function deleteUserInTeam() {
+  loading.value = true;
+  errorMessage.value = "";
+
+  try {
+    await $fetch(`${config.public.apiBase}/poules/${ploegData.value?.id}/user/${authStore.user.id}`, {
+      method: "delete",
+      credentials: "include",
+    });
+
+    await authStore.getUserTeamInfo(authStore.user.id);
+    navigateTo({ name: "dashboard-ploegenspel" });
+  }
+  catch (e) {
+    const error = e as FetchError;
+    errorMessage.value = getFetchErrorMessage(error);
+  }
+  finally {
+    loading.value = false;
+  }
+}
+async function deleteTeam() {
+  loading.value = true;
+  errorMessage.value = "";
+
+  try {
+    await $fetch(`${config.public.apiBase}/poules/${ploegData.value?.id}`, {
+      method: "delete",
+      credentials: "include",
+    });
+
+    await authStore.getUserTeamInfo(authStore.user.id);
+    navigateTo({ name: "dashboard-ploegenspel" });
+  }
+  catch (e) {
+    const error = e as FetchError;
+    errorMessage.value = getFetchErrorMessage(error);
+  }
+  finally {
+    loading.value = false;
+  }
+}
+
 watch(
   () => [
     sideBarStore.currentRace?.id,
@@ -270,13 +313,13 @@ onUnmounted(() => {
             </div>
             <p>{{ ploegData.users.length > 1 ? `${ploegData.users.length} deelnemers` : `${ploegData.users.length} deelnemer` }} {{ }}</p>
           </div>
-          <div class="team-heading--invite">
+          <!-- <div class="team-heading--invite">
             <span>Uitnodigingslink</span>
             <button class="btn btn-alert">
               <Icon name="tabler:link" />
               Kopier link
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- TODO ADD TO COMPONENT -->
@@ -383,7 +426,7 @@ onUnmounted(() => {
             <div class="icon-header">
               <Icon name="tabler:users" />
               <h3>Ploeg beheer</h3>
-              <button class="btn btn-danger .end-icon">
+              <button class="btn btn-danger" @click="deleteTeam">
                 Ploeg verwijderen
               </button>
             </div>
@@ -411,6 +454,11 @@ onUnmounted(() => {
               </li>
             </ul>
           </div>
+        </div>
+        <div class="team-card alert-error">
+          <button class="btn btn-danger" @click="deleteUserInTeam">
+            Uit {{ ploegData.name }} stappen
+          </button>
         </div>
       </div>
     </div>

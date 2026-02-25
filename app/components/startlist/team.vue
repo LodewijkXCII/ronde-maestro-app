@@ -5,7 +5,6 @@ import type { CyclistWithRaceDetails } from "~/types/startlist";
 const props = defineProps<{
   team: Team;
   cyclists: CyclistWithRaceDetails[];
-  isAllTeamsShown: boolean;
 }>();
 
 defineEmits(["toggleTeamState"]);
@@ -16,12 +15,7 @@ const { currentStage } = storeToRefs(sideBarStore);
 
 const config = useRuntimeConfig();
 
-const currentTeam = computed(() => {
-  if (props.team) {
-    return props.team;
-  }
-  return null;
-});
+const currentTeam = computed(() => props.team || null);
 
 const tttCyclist = computed<CyclistWithRaceDetails | null | undefined>(() => {
   if (currentStage.value?.stageType.name === "Ploegentijdrit" && props.cyclists && props.cyclists.length > 0) {
@@ -41,22 +35,17 @@ const cyclistsToShow = computed<CyclistWithRaceDetails[]>(() => {
   return props.cyclists;
 });
 
-// const showTeam = ref(false);
-
-// const isActive = computed(() => {
-//   return props.isAllTeamsShown || showTeam.value;
-// });
-
-// function toggleTeam() {
-//   if (props.isAllTeamsShown) {
-//     emit("toggleTeamState");
-//   }
-//   showTeam.value = !showTeam.value;
-// }
+const detailsRef = ref<HTMLDetailsElement | null>(null);
 
 function addToSelection(cyclist: CyclistWithRaceDetails) {
   selectedRidersStore.handleCyclist(cyclist.id);
 }
+
+watch(() => useStartlistStore().showAllTeams, (newVal) => {
+  if (detailsRef.value) {
+    detailsRef.value.open = newVal;
+  }
+});
 </script>
 
 <template>
@@ -67,7 +56,7 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
     </span>
   </div>
 
-  <details v-else class="team-selection">
+  <details v-else ref="detailsRef" class="team-selection">
     <summary class="team-info">
       <div class="team-info--info">
         <div class="avatar">

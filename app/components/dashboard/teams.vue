@@ -83,6 +83,11 @@ const { userPoules } = storeToRefs(authStore);
       justify-content: space-between;
       margin-bottom: 2rem;
       font-size: var(--fs-500);
+
+      .badge {
+        align-self: start;
+        min-width: fit-content;
+      }
     }
   }
 }

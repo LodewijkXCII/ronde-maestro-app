@@ -1,16 +1,29 @@
-<script setup></script>
+<script setup lang="ts">
+defineProps<{
+  text?: string;
+}>();
+</script>
 
 <template>
-  <div class="loader-body">
-    <div class="loader" />
+  <div class="loader-wrapper">
+    <div class="loader-body">
+      <div class="loader" />
+    </div>
+    {{ text }}
   </div>
 </template>
 
 <style>
+.loader-wrapper {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
 /* HTML: <div class="loader"></div> */
 .loader-body {
-  display: flex;
   justify-content: center;
+  display: flex;
 }
 .loader {
   width: 25px;

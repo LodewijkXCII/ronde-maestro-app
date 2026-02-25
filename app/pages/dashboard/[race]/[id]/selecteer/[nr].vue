@@ -3,21 +3,10 @@ import getParamId from "~/utils/param-extractor";
 
 const sideBarStore = useSideBarStore();
 const startlistStore = useStartlistStore();
-
 const route = useRoute();
 
-const { currentRace } = storeToRefs(sideBarStore);
-const { currentStage } = storeToRefs(sideBarStore);
+const { currentStage, currentRace } = storeToRefs(sideBarStore);
 const compkey = ref(0);
-
-const showAllTeams = ref(false);
-
-function toggleAllTeams() {
-  showAllTeams.value = !showAllTeams.value;
-}
-function handleChildToggle() {
-  showAllTeams.value = false;
-}
 
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   if (!route.params.id) {
@@ -53,10 +42,7 @@ watch(
     }
     setRaceAndStageData(newCurrentRace);
   },
-  {
-    immediate: true,
-    deep: true,
-  },
+  { deep: true },
 );
 </script>
 
@@ -82,7 +68,10 @@ watch(
             :stage-id="currentStage.id"
           />
         </section>
-        <Loading v-if="startlistStore.loading" />
+
+        <div v-if="startlistStore.loading" class="cyclistSelector">
+          <Loading text="Renners zoeken..." />
+        </div>
         <section v-else class="cyclistSelector">
           <h2>Teams en renners</h2>
           <!-- TODO ADD FILTERS -->
@@ -90,10 +79,10 @@ watch(
           <div class="filter-group">
             <div class="toggle-switch">
               <label class="switch">
-                <input type="checkbox" switch @click="toggleAllTeams">
+                <input type="checkbox" switch @click="startlistStore.showAllTeams = !startlistStore.showAllTeams">
                 <div class="slider round" />
               </label>
-              <p>{{ showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
+              <p>{{ startlistStore.showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
             </div>
           </div>
           <!-- Startlist -->
@@ -103,8 +92,6 @@ watch(
               :key="team.id"
               :team="team"
               :cyclists
-              :is-all-teams-shown="showAllTeams"
-              @toggle-team-state="handleChildToggle"
             />
           </div>
         <!-- Selected Riders -->
@@ -128,6 +115,7 @@ watch(
     "startlist startlist startlist select";
   gap: 2rem 1rem;
   justify-content: center;
+  align-items: start;
 
   .startlist {
     grid-area: startlist;
