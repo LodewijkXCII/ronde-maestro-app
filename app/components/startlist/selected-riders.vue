@@ -195,17 +195,20 @@ onBeforeRouteLeave(() => {
   </div>
 </template>
 
-<style scoped>
+<style>
 .selected-riders {
   background: var(--clr-background-mute);
   padding: 1.25rem 1rem;
   border-radius: var(--border-radius);
   height: fit-content;
-  position: sticky;
-  top: calc(var(--navbar-height) + 2rem);
 
   > .btn-group {
     margin-top: 1rem;
+  }
+
+  @media (min-width: 750px) {
+    position: sticky;
+    top: calc(var(--navbar-height) + 2rem);
   }
 }
 
