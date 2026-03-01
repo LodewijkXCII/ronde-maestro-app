@@ -42,7 +42,7 @@ watch(
     }
     setRaceAndStageData(newCurrentRace);
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 </script>
 

@@ -43,6 +43,12 @@ const displayedStandings = computed(() => {
   });
 });
 
+async function getUpcomingRace() {
+  if (currentRace.lenght) {
+
+  }
+}
+
 async function getUpcomingStage() {
   if (!upComingStage.value) {
     return errorMessage.value.push("Er is geen aankomende etappe.");
@@ -79,7 +85,7 @@ async function getLatestResult() {
 
   try {
     resultsLoading.value = true;
-    console.error(`Fetching results for stage: ${lastDoneStage.id}`);
+
     const data = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${lastDoneStage.id}`, {
       method: "get",
       credentials: "include",
@@ -87,7 +93,7 @@ async function getLatestResult() {
 
     if (data) {
       if (data.cyclist) {
-        data.cyclist = data.cyclist.slice(0, 5);
+        data.cyclist = data.cyclist.sort((a, b) => a.position - b.position).slice(0, 5);
       }
 
       if (data.users) {

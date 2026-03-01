@@ -468,7 +468,7 @@ onUnmounted(() => {
 <style lang="scss">
 .team-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(425px, 1fr));
   gap: 1rem;
 }
 .team-heading {

@@ -77,7 +77,7 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
         credentials: "include",
       });
       if (cyclist && users) {
-        cyclistResult.value = cyclist;
+        cyclistResult.value = cyclist.sort((a, b) => a.position - b.position);
         usersResult.value = users;
       }
     }
@@ -167,21 +167,23 @@ watch(
         <div class="cyclist-result">
           <section v-if="findUsersEntry">
             <h3>Geselecteerde renners</h3>
-            <CyclistCardMedium
-              v-for="{ cyclist } in findUsersEntry.entries"
-              :key="cyclist.id"
-              :cyclist
-              :show-specialies="false"
-              show-team-data
-              no-user-select
-              rider-selected="false"
-            >
-              <template #actionSlot>
-                <div v-if="cyclist.results[0]" class="points">
-                  <span>{{ cyclist.results[0]?.points }}</span> pnt
-                </div>
-              </template>
-            </CyclistCardMedium>
+            <div class="cyclist-result-list">
+              <CyclistCardMedium
+                v-for="{ cyclist } in findUsersEntry.entries"
+                :key="cyclist.id"
+                :cyclist
+                :show-specialies="false"
+                show-team-data
+                no-user-select
+                rider-selected="false"
+              >
+                <template #actionSlot>
+                  <div v-if="cyclist.results[0]" class="points">
+                    <span>{{ cyclist.results[0]?.points }}</span> pnt
+                  </div>
+                </template>
+              </CyclistCardMedium>
+            </div>
             <span class="sum-line"><span class="plus">+</span></span>
 
             <div class="cyclist-info-box totalScore">
@@ -193,12 +195,14 @@ watch(
           <!-- CYCLIST RESULT -->
           <section v-if="cyclistResult">
             <h3>Etappe uitslag</h3>
-            <CyclistCardSmall
-              v-for="{ cyclist, position, points } in cyclistResult"
-              :key="cyclist.id"
-              :cyclist="cyclist"
-              :result="{ position, points }"
-            />
+            <div class="cyclist-result-list">
+              <CyclistCardSmall
+                v-for="{ cyclist, position, points } in cyclistResult"
+                :key="cyclist.id"
+                :cyclist="cyclist"
+                :result="{ position, points }"
+              />
+            </div>
           </section>
         </div>
       </section>
@@ -206,17 +210,20 @@ watch(
   </main>
 </template>
 
-<style lang="scss">
+<style>
 .cyclist-result {
   display: grid;
   grid-template-columns: repeat(2, var(--rider-card-width));
   gap: 2rem;
   justify-content: space-between;
-}
-
-@media screen and (max-width: 90em) {
-  .cyclist-result {
+  @media (max-width: 90em) {
     grid-template-columns: auto;
+  }
+
+  .cyclist-result-list {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.5rem;
   }
 }
 

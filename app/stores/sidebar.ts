@@ -1,4 +1,4 @@
-import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
+import { closestTo, differenceInHours, endOfDay, isAfter, isBefore, isWithinInterval, startOfDay } from "date-fns";
 
 import type { ClassicsRaces, SelectRaceWithRelations, Stage } from "~/types/race";
 import type { UserPoule } from "~/types/teams";
@@ -36,39 +36,6 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     credentials: "include",
     lazy: true,
     immediate: false,
-  });
-
-  const currentRace = computed<SelectRaceWithRelations | null>(() => {
-    if (!upcomingRace.value || upcomingRace.value.length === 0) {
-      return null;
-    }
-    const routeRaceId = getParamId(route.params.id);
-    if (routeRaceId) {
-      return upcomingRace.value.find(race => race.id === routeRaceId) || null;
-    }
-
-    const today = new Date();
-
-    const activeRace = upcomingRace.value.find((race) => {
-      return isWithinInterval(today, {
-        start: startOfDay(new Date(race.startDate)),
-        end: endOfDay(new Date(race.finishDate)),
-      });
-    });
-
-    if (activeRace) {
-      return activeRace;
-    }
-
-    return upcomingRace.value[0] || null;
-
-    // const nextWeek = addDays(today, 7);
-    // const upcomingSoon = upcomingRace.value.find((race) => {
-    //   const startDate = new Date(race.startDate);
-    //   return isAfter(startDate, today) && isBefore(startDate, nextWeek);
-    // });
-
-    // return upcomingSoon || null;
   });
 
   const currentStage = ref<Stage | null>(null);
@@ -116,6 +83,54 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     }
 
     return [];
+  });
+
+  const currentRace = computed<SelectRaceWithRelations | null>(() => {
+    if (!upcomingRace.value || upcomingRace.value.length === 0) {
+      return null;
+    }
+    const routeRaceId = getParamId(route.params.id);
+    if (routeRaceId) {
+      return upcomingRace.value.find(race => race.id === routeRaceId) || null;
+    }
+
+    const today = new Date();
+
+    const activeRace = upcomingRace.value.find((race) => {
+      return isWithinInterval(today, {
+        start: startOfDay(new Date(race.startDate)),
+        end: endOfDay(new Date(race.finishDate)),
+      });
+    });
+
+    if (activeRace)
+      return activeRace;
+
+    const sortedRaces = [...upcomingRace.value].sort((a, b) =>
+      new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    );
+
+    const closestDate = closestTo(today, sortedRaces.map(r => new Date(r.startDate)));
+
+    const closestRace = sortedRaces.find(race =>
+      new Date(race.startDate).getTime() === closestDate?.getTime(),
+    );
+
+    if (closestRace && isAfter(new Date(closestRace.startDate), today)) {
+      const lastFinished = [...sortedRaces]
+        .reverse()
+        .find(race => isBefore(new Date(race.startDate), today));
+
+      if (lastFinished) {
+        const hoursSinceLast = differenceInHours(today, new Date(lastFinished.startDate));
+        // If the last race was less than 36 hours ago, keep it as "current"
+        if (hoursSinceLast < 36) {
+          return lastFinished;
+        }
+      }
+    }
+
+    return closestRace || sortedRaces[0] || null;
   });
 
   const upcomingStage = computed<Stage | null>(() => {

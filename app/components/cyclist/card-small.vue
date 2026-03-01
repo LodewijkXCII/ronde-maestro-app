@@ -53,7 +53,7 @@ const config = useRuntimeConfig();
 .cyclistMiniCard {
   --_avatar-width: 35px;
   font-size: 0.9rem;
-  margin: 0.5rem 0;
+  // margin: 0.5rem 0;
   display: grid;
   grid-template-columns: minmax(3ch, auto) var(--_avatar-width) minmax(auto, 40ch) auto;
   gap: 0.5rem;
