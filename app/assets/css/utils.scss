@@ -10,6 +10,7 @@ a.btn,
   text-decoration: none;
   border: none;
   user-select: none;
+  height: fit-content;
 
   outline: var(--_button-outline) var(--background-mute);
   background: var(--clr-background);

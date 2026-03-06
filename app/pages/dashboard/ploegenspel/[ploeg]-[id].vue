@@ -324,11 +324,18 @@ onUnmounted(() => {
 
         <!-- TODO ADD TO COMPONENT -->
         <div class="team-user-info">
-          <div class="icon-header">
-            <Icon name="tabler:user" />
-            <h3>Jouw positie</h3>
+          <div style="display: flex;justify-content: space-between;margin-bottom: 1rem;">
+            <div>
+              <div class="icon-header">
+                <Icon name="tabler:user" />
+                <h3>Jouw positie</h3>
+              </div>
+              <p>Je huidige stand binnen {{ ploegData.name }}</p>
+            </div>
+            <button class="btn btn-danger" @click="deleteUserInTeam">
+              Uit <strong>{{ ploegData.name }}</strong> stappen
+            </button>
           </div>
-          <p>Je huidige stand binnen {{ ploegData.name }}</p>
 
           <div class="profile-list">
             <div class="profile-list--item">
@@ -454,11 +461,6 @@ onUnmounted(() => {
               </li>
             </ul>
           </div>
-        </div>
-        <div class="team-card alert-error">
-          <button class="btn btn-danger" @click="deleteUserInTeam">
-            Uit {{ ploegData.name }} stappen
-          </button>
         </div>
       </div>
     </div>

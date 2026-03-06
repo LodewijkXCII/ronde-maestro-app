@@ -16,7 +16,8 @@ function sortEntries(entries: EntryWithResult[]): EntryWithResult[] {
 </script>
 
 <template>
-  <div class="team-card">
+  <!-- TODO Don't user inline styles -->
+  <div class="team-card" style="grid-column: span 2;">
     <div class="icon-header">
       <Icon name="tabler:user" />
       <h3>Selectie vergelijken</h3>

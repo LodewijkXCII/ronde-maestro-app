@@ -123,10 +123,10 @@ watch(route, () => {
             </NuxtLink>
           </li>
           <li class="nav-link">
-            <NuxtLink v-if="!authStore.userPoules.length" :to="{ name: 'dashboard-ploegenspel' }">
+            <NuxtLink v-if="authStore.userPoules.length <= 0" :to="{ name: 'dashboard-ploegenspel' }">
               Ploegenspel
             </NuxtLink>
-            <details ref="selectTeamsRef">
+            <details v-else ref="selectTeamsRef">
               <summary>Ploegenspel <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
 
               <ul class="stage-list">

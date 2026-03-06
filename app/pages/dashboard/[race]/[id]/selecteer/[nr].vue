@@ -108,7 +108,7 @@ watch(
 .cyclistOverview {
   display: grid;
   grid-template-columns: repeat(4, var(--rider-card-width));
-  grid-template-rows: auto minmax(0, 215px) auto;
+  grid-template-rows: auto minmax(215px, auto) auto;
   grid-template-areas:
     "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
@@ -139,25 +139,8 @@ watch(
   .selected-riders {
     grid-area: select;
   }
-}
 
-.cyclistSelector {
-  grid-area: startlist;
-
-  &--teams {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(3, var(--rider-card-width));
-  }
-}
-
-.breadcrumbs {
-  grid-column: 1 / -1;
-  grid-area: breadcrumbs;
-}
-
-@media (min-width: 20em) and (max-width: 900px) {
-  .cyclistOverview {
+  @media (min-width: 20em) and (max-width: 900px) {
     grid-template-columns: var(--rider-card-width-dynamic);
     grid-template-areas:
       "breadcrumbs"
@@ -174,80 +157,90 @@ watch(
         min-width: 80%;
       }
     }
-  }
 
-  .cyclistSelector {
-    grid-area: startlist;
+    .cyclistSelector {
+      grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: var(--rider-card-width-dynamic);
+      &--teams {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: var(--rider-card-width-dynamic);
+      }
     }
   }
-}
 
-@media (min-width: 900px) and (max-width: 1300px) {
-  .cyclistOverview {
+  @media (min-width: 900px) and (max-width: 1300px) {
     grid-template-columns: repeat(2, var(--rider-card-width));
     grid-template-areas: "breadcrumbs  breadcrumbs" "info  info" "startlist  select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(1, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(1, var(--rider-card-width));
+      }
     }
   }
-}
-@media (min-width: 1300px) and (max-width: 1720px) {
-  .cyclistOverview {
+  @media (min-width: 1300px) and (max-width: 1720px) {
     grid-template-columns: repeat(3, var(--rider-card-width));
     grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(2, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(2, var(--rider-card-width));
+      }
     }
   }
-}
 
-@media (min-width: 1720px) and (max-width: 90em) {
-  .cyclistOverview {
+  @media (min-width: 1720px) and (max-width: 90em) {
     grid-template-columns: repeat(3, var(--rider-card-width));
     grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(2, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(2, var(--rider-card-width));
+      }
     }
   }
-}
 
-@media (min-width: 160em) {
-  .cyclistOverview {
+  @media (min-width: 160em) {
     grid-template-columns: repeat(6, var(--rider-card-width));
     grid-template-areas:
       "breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
       "info info info info info info"
       "startlist startlist startlist startlist startlist select";
-  }
 
-  .cyclistSelector {
-    grid-area: startlist;
+    .cyclistSelector {
+      grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(5, var(--rider-card-width));
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(5, var(--rider-card-width));
+      }
     }
   }
+}
+
+.cyclistSelector {
+  grid-area: startlist;
+
+  &--teams {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, var(--rider-card-width));
+  }
+}
+
+.breadcrumbs {
+  grid-column: 1 / -1;
+  grid-area: breadcrumbs;
 }
 
 .toggle-switch {
