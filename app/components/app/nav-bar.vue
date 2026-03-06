@@ -236,15 +236,17 @@ watch(route, () => {
 }
 
 .nav-link {
-  a {
+  a,
+  summary {
     color: var(--clr-text);
     text-decoration: none;
+    padding: 0.5rem 0.75rem;
 
     &:hover {
       font-weight: inherit;
     }
   }
-  padding: 0.5rem 0.75rem;
+  padding: 0;
   margin: 0;
   border-radius: var(--border-radius);
 
@@ -272,13 +274,13 @@ watch(route, () => {
     .stage-list--item {
       min-width: fit-content;
       white-space: nowrap;
-      padding: 0.75rem;
+      padding: 0;
 
-      &:first-of-type {
-        padding-top: 1rem;
+      &:first-of-type a {
+        margin-top: 0.5rem;
       }
-      &:last-of-type {
-        padding-bottom: 1rem;
+      &:last-of-type a {
+        margin-bottom: 0.5rem;
       }
 
       &:hover {
@@ -310,6 +312,7 @@ watch(route, () => {
     margin: 0;
     display: flex;
     gap: 0.75rem;
+    align-items: center;
   }
 }
 
