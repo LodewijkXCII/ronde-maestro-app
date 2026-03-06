@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { EntryWithResult, ResultUsersByStage } from "~/types/results";
 
-defineProps<{ userSelection: ResultUsersByStage | undefined; compareUserSelection: ResultUsersByStage | undefined; stageId: number | undefined }>();
+const props = defineProps<{ userSelection: ResultUsersByStage | undefined; compareUserSelection: ResultUsersByStage | undefined; stageId: number | undefined }>();
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
@@ -13,11 +13,23 @@ function sortEntries(entries: EntryWithResult[]): EntryWithResult[] {
     return pointsB - pointsA;
   });
 }
+
+function isRiderInOtherSelection(cyclistId: number): boolean | undefined {
+  if (!props.compareUserSelection) {
+    return undefined;
+  }
+  const otherSelectionCyclists = props.compareUserSelection?.entries.map(entry => entry.cyclist.id);
+
+  if (otherSelectionCyclists && otherSelectionCyclists.includes(cyclistId)) {
+    return true;
+  }
+
+  return false;
+}
 </script>
 
 <template>
-  <!-- TODO Don't user inline styles -->
-  <div class="team-card" style="grid-column: span 2;">
+  <div class="team-card team-card-compare">
     <div class="icon-header">
       <Icon name="tabler:user" />
       <h3>Selectie vergelijken</h3>
@@ -39,6 +51,7 @@ function sortEntries(entries: EntryWithResult[]): EntryWithResult[] {
             v-for="{ cyclist } in sortEntries(userSelection?.entries)"
             :key="cyclist.id"
             :cyclist
+            :class="{ compared: isRiderInOtherSelection(cyclist.id) }"
             no-user-select
             show-team-data
           >
@@ -73,6 +86,11 @@ function sortEntries(entries: EntryWithResult[]): EntryWithResult[] {
 </template>
 
 <style>
+.team-card-compare {
+  @media (min-width: 600px) {
+    grid-column: span 2;
+  }
+}
 .selection-compare {
   display: flex;
   gap: 2rem;
@@ -91,6 +109,11 @@ function sortEntries(entries: EntryWithResult[]): EntryWithResult[] {
     .selection-list {
       flex-grow: 1;
     }
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 

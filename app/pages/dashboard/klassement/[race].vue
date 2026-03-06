@@ -12,7 +12,7 @@ const router = useRouter();
 
 const loading = ref(false);
 const errorMessage = ref("");
-const raceResult = ref<RaceTotalPoints[]>([]);
+const { raceResult } = storeToRefs(raceStore);
 
 const selectedStage = ref<number | null>(null);
 
@@ -70,12 +70,13 @@ function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] | 
 
 async function getRaceData() {
   if (!raceStore.raceResult) {
-    await raceStore.fetchRaceData();
+    await raceStore.refreshRaceResult();
   }
-
   try {
     loading.value = true;
-
+    if (!raceStore.raceResult) {
+      return;
+    }
     combineResultsAndStages(raceStore.raceResult);
     selectStageFromQuery();
   }
@@ -132,19 +133,19 @@ watch(selectedStage, (newValue) => {
         </span>
       </div>
 
-      <template v-else-if="(currentRace || sideBarStore.isClassicSeason) && !loading">
+      <template v-else-if="(currentRace || sideBarStore.isClassicSeason) && !loading && raceResult">
         <AppNavigation current-route="Klassement" />
         <StageInfo v-if="!sideBarStore.isClassicSeason && currentRace" :race="currentRace" />
         <RaceInfo v-if="sideBarStore.isClassicSeason && sideBarStore.classicsRaces" :race="sideBarStore.classicsRaces" />
 
         <section>
           <h3>Algemeen klassement</h3>
+
           <ul v-if="raceResult.length" class="table standings-table">
             <li class="table-row table-header">
               <div>#</div>
               <div>Naam</div>
               <div>Punten</div>
-              <div />
             </li>
             <li
               v-for="(user, index) in raceResult"
@@ -155,9 +156,6 @@ watch(selectedStage, (newValue) => {
               <div>{{ index + 1 }}</div>
               <div>{{ user.name }}</div>
               <div>{{ user.totalPoints }}</div>
-              <div class="standings-action">
-                <AppTrophy v-if="user.totalWins" :victory-count="user.totalWins" />
-              </div>
             </li>
           </ul>
         </section>

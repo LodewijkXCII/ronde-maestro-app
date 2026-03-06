@@ -324,7 +324,7 @@ onUnmounted(() => {
 
         <!-- TODO ADD TO COMPONENT -->
         <div class="team-user-info">
-          <div style="display: flex;justify-content: space-between;margin-bottom: 1rem;">
+          <div>
             <div>
               <div class="icon-header">
                 <Icon name="tabler:user" />
@@ -502,6 +502,14 @@ onUnmounted(() => {
   border: 1px solid var(--clr-primary);
   border-radius: var(--border-radius);
   padding: 2rem;
+
+  > div:first-of-type {
+    margin-bottom: 1rem;
+    @media (min-width: 600px) {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }
 
 .team-standings {

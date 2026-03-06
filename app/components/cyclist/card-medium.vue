@@ -124,6 +124,9 @@ const config = useRuntimeConfig();
     background: var(--clr-primary-mute);
     outline: 1px solid var(--clr-primary);
   }
+  &.compared {
+    outline: 1px solid var(--clr-secondary);
+  }
   .points {
     text-align: right;
   }

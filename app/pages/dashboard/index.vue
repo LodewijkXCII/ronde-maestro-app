@@ -43,11 +43,11 @@ const displayedStandings = computed(() => {
   });
 });
 
-async function getUpcomingRace() {
-  if (currentRace.lenght) {
+// async function getUpcomingRace() {
+//   if (currentRace.lenght) {
 
-  }
-}
+//   }
+// }
 
 async function getUpcomingStage() {
   if (!upComingStage.value) {
@@ -459,7 +459,7 @@ watch(currentRace, async (newRace) => {
 
   &-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(365px, 1fr));
     gap: 1rem;
     margin-top: 2rem;
 
