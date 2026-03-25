@@ -10,7 +10,7 @@ onMounted(() => {
 
 <template>
   <main>
-    <div class="wrapper-sm">
+    <div class="wrapper-lg wrapper-nobg">
       <h2>Etappe overzicht</h2>
 
       <template v-if="sideBarStore.isClassicSeason && sideBarStore.classicsRaces">

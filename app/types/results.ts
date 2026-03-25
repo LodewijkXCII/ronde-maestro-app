@@ -19,6 +19,7 @@ export type ResultUsersByStage = {
   points: number;
   entries: EntryWithResult[];
   winner: boolean;
+  position: number;
 };
 export type EntryWithResult = {
   id: number;

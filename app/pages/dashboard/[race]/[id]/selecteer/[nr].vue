@@ -6,6 +6,7 @@ const startlistStore = useStartlistStore();
 const route = useRoute();
 
 const { currentStage, currentRace } = storeToRefs(sideBarStore);
+
 const compkey = ref(0);
 
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
@@ -85,8 +86,15 @@ watch(
               <p>{{ startlistStore.showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
             </div>
           </div>
+
+          <div v-if="!startlistStore.loading && startlistStore.startlistDataStatus === 'success' && !startlistStore.startlistData?.length" role="alert" class="alert alert-warning">
+            <Icon name="tabler:alert-square-rounded" />
+            <span>
+              Er is nog geen startlijst voor deze race. Houd je mail in de gaten wanneer de startlijst defitief is, meestal is dit 24u voor het start van de race.
+            </span>
+          </div>
           <!-- Startlist -->
-          <div v-if="startlistStore.startlistData" class="cyclistSelector--teams">
+          <div else class="cyclistSelector--teams">
             <StartlistTeam
               v-for="{ team, cyclists } in startlistStore.startlistData"
               :key="team.id"

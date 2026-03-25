@@ -19,7 +19,7 @@ const race = computed(() => {
 </script>
 
 <template>
-  <article v-if="race" class="race">
+  <section v-if="race" class="race">
     <h3>Etappes voor {{ race.name }} {{ race.year }}</h3>
     <p>
       {{ new Date(race.startDate).toLocaleDateString("nl-NL", {
@@ -30,8 +30,15 @@ const race = computed(() => {
         month: 'short',
       }) }}
     </p>
-    <ul class="table race-table">
-      <li class="table-row table-header">
+    <ul class="stages-list">
+      <EtappeRow
+        v-for="stage in sideBarStore.allStages"
+        :key="stage.id"
+        :stage="stage"
+        :race-name="getRaceName(stage.raceId)"
+      />
+
+      <!-- <li class="table-row table-header">
         <div class="table-stage-nr">
           #
         </div>
@@ -51,10 +58,9 @@ const race = computed(() => {
         class="table-row"
         @click="goToStage(stage.id)"
       >
-        <EtappeRow :stage="stage" :race-name="getRaceName(stage.raceId)" />
-      </li>
+      </li> -->
     </ul>
-  </article>
+  </section>
 </template>
 
 <style>
@@ -90,5 +96,10 @@ const race = computed(() => {
   .table-start-finish {
     align-self: last baseline;
   }
+}
+
+.stages-list {
+  list-style: none;
+  padding: 0;
 }
 </style>

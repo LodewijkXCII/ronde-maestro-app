@@ -87,6 +87,20 @@ a.btn,
       outline: var(--_button-outline) var(--clr-error);
     }
   }
+  &-success {
+    color: var(--clr-text-white);
+    background: var(--clr-accent-green);
+    transition:
+      background 200ms ease-in,
+      color 200ms ease-in;
+
+    &:hover,
+    :focus-within {
+      background: hsl(from var(--clr-accent-green) h s l / 50%);
+      color: var(--clr-text);
+      outline: var(--_button-outline) var(--clr-accent-green);
+    }
+  }
 
   &-alert {
     color: var(--clr-text-black);
@@ -515,6 +529,7 @@ span.points {
 .standings-list {
   display: grid;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 
   .standings-user {
     display: flex;

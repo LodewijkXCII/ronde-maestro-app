@@ -336,7 +336,8 @@ watch(currentRace, async (newRace) => {
             Algemeen klassement
           </p>
 
-          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />          <div v-else class="standings-list">
+          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
+          <div v-else class="standings-list">
             <div
               v-for="(user, index) in displayedStandings"
               :key="user.userId"
@@ -351,21 +352,21 @@ watch(currentRace, async (newRace) => {
               </div>
               <div>{{ user.points }} ptn</div>
             </div>
-            <NuxtLink
-
-              :to="{
-                name: 'dashboard-klassement-race',
-                params: {
-                  race: sideBarStore.isClassicSeason ? 'klassiekers' : slugify(latestResult.stage.race.name),
-                },
-                query: { race: `${slugify(latestResult.stage.race.name)}` },
-              }"
-              class="btn btn-primary btn-full-width"
-            >
-              Volledig klassement
-              <Icon name="tabler:arrow-right" />
-            </NuxtLink>
           </div>
+          <NuxtLink
+
+            :to="{
+              name: 'dashboard-klassement-race',
+              params: {
+                race: sideBarStore.isClassicSeason ? 'klassiekers' : slugify(latestResult.stage.race.name),
+              },
+              query: { race: `${slugify(latestResult.stage.race.name)}` },
+            }"
+            class="btn btn-primary btn-full-width"
+          >
+            Volledig klassement
+            <Icon name="tabler:arrow-right" />
+          </NuxtLink>
         </div>
         <div v-else class="dashboard-card">
           <div class="icon-header">

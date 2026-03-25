@@ -240,13 +240,13 @@ watch(route, () => {
   summary {
     color: var(--clr-text);
     text-decoration: none;
-    padding: 0.5rem 0.75rem;
 
     &:hover {
       font-weight: inherit;
     }
   }
-  padding: 0;
+
+  padding: 0.5rem 0.75rem;
   margin: 0;
   border-radius: var(--border-radius);
 
@@ -264,17 +264,17 @@ watch(route, () => {
   .stage-list {
     position: absolute;
     display: grid;
-    gap: 0;
     background: var(--clr-background-mute);
     top: 90%;
-    padding: 0;
     border-radius: var(--border-radius);
     outline: 2px solid var(--clr-secondary);
+    padding: 0;
+    gap: 0;
 
     .stage-list--item {
       min-width: fit-content;
       white-space: nowrap;
-      padding: 0;
+      padding: 0.5rem;
 
       &:first-of-type a {
         margin-top: 0.5rem;
