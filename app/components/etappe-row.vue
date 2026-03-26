@@ -12,7 +12,7 @@ const sideBarStore = useSideBarStore();
 
 <template>
   <li class="stage-row">
-    <div class="stage-nr">
+    <div class="stage-nr" :class="{ 'next-stage': stage.id === sideBarStore.upComingStage?.id }">
       <span>
         {{ stage.stageNr }}
       </span>
@@ -33,7 +33,7 @@ const sideBarStore = useSideBarStore();
         <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name">
       </div>
     </div>
-    <div>
+    <div class="actions">
       <NuxtLink
         v-if="stage.done"
         :to="{
@@ -73,7 +73,8 @@ const sideBarStore = useSideBarStore();
 
 <style>
 .stage-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 6ch 1fr auto;
   align-items: center;
   gap: 1rem;
   background: var(--clr-background-mute);
@@ -92,10 +93,13 @@ const sideBarStore = useSideBarStore();
     place-items: center;
     place-content: center;
     margin: 0;
-
     span {
       font-size: var(--fs-500);
       font-weight: 900;
+    }
+
+    &.next-stage {
+      background: var(--clr-secondary);
     }
   }
 
@@ -112,6 +116,21 @@ const sideBarStore = useSideBarStore();
       display: flex;
       gap: 0.5rem;
       font-size: var(--fs-300);
+    }
+  }
+
+  @media (max-width: 60em) {
+    grid-template-columns: 6ch 1fr;
+    padding: 0.75rem;
+
+    span {
+      font-size: var(--fs-400);
+    }
+
+    .actions {
+      grid-column: -1 / 1;
+      justify-self: end;
+      font-size: var(--fs-200);
     }
   }
 }
