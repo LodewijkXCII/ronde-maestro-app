@@ -46,7 +46,7 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .overlay-button {
   position: fixed;
   bottom: 3rem;
@@ -63,10 +63,7 @@ onUnmounted(() => {
   &:hover {
     cursor: pointer;
   }
-}
-
-@media (min-width: 20em) and (max-width: 30em) {
-  .overlay-button {
+  @media (min-width: 20em) and (max-width: 30em) {
     right: 0.75rem;
   }
 }

@@ -32,12 +32,12 @@ a.btn,
     outline: var(--_button-outline) var(--clr-primary);
   }
 
-  &-active {
+  &.btn-active {
     color: var(--clr-text);
     outline: var(--_button-outline) var(--clr-primary);
   }
 
-  &-primary {
+  &.btn-primary {
     background: var(--clr-primary);
     color: var(--clr-text-white);
     transition:
@@ -51,14 +51,14 @@ a.btn,
       outline: var(--_button-outline) var(--clr-primary);
     }
 
-    &-active {
+    .btn-active {
       background: transparent;
       color: var(--clr-text);
       outline: var(--_button-outline) var(--clr-primary);
     }
   }
 
-  &-action {
+  &.btn-action {
     background: var(--clr-secondary);
     color: var(--clr-text-black);
     transition:
@@ -73,7 +73,7 @@ a.btn,
     }
   }
 
-  &-danger {
+  &.btn-danger {
     color: var(--clr-text-white);
     background: var(--clr-error);
     transition:
@@ -87,7 +87,7 @@ a.btn,
       outline: var(--_button-outline) var(--clr-error);
     }
   }
-  &-success {
+  &.btn-success {
     color: var(--clr-text-white);
     background: var(--clr-accent-green);
     transition:
@@ -102,7 +102,7 @@ a.btn,
     }
   }
 
-  &-alert {
+  &.btn-alert {
     color: var(--clr-text-black);
     background: var(--clr-alert);
     transition:
@@ -117,7 +117,7 @@ a.btn,
     }
   }
 
-  &-secondary {
+  &.btn-secondary {
     color: var(--clr-text);
     background: transparent;
     outline: var(--_button-outline) var(--clr-primary-dark);
@@ -138,7 +138,7 @@ a.btn,
     opacity: 0.5;
   }
 
-  &-outline {
+  &.btn-outline {
     color: var(--clr-text);
     background: transparent;
     outline: var(--_button-outline) var(--clr-text);
@@ -154,7 +154,7 @@ a.btn,
     }
   }
 
-  &-link {
+  &.btn-link {
     color: var(--clr-text);
     background: transparent;
     font-weight: 400;
@@ -168,7 +168,7 @@ a.btn,
     }
   }
 
-  &-sm {
+  &.btn-sm {
     --_button-outline: 1px solid;
     font-size: var(--fs-200);
     padding: 0.5rem 0.75rem;
@@ -267,17 +267,17 @@ a.btn,
   border: 3px solid var(--clr-background-mute);
   margin: 0.5rem 0;
 
-  &-error {
+  &.alert-error {
     background-color: var(--clr-error);
     border-color: var(--clr-error);
     color: var(--clr-text-error);
   }
-  &-warning {
+  &.alert-warning {
     background-color: var(--clr-alert);
     border-color: var(--clr-alert);
     color: var(--clr-text-black);
   }
-  &-success {
+  &.alert-success {
     background-color: var(--clr-accent-green);
     border-color: var(--clr-accent-green);
     color: var(--clr-text-black);
@@ -293,12 +293,12 @@ a.btn,
   background: var(--clr-primary-dark);
   border: 1px solid var(--clr-primary);
 
-  &-race {
+  .avatar-race {
     display: flex;
     place-content: center;
   }
 
-  &-placeholder {
+  .avatar-placeholder {
     display: grid;
     place-content: center;
     > * {
@@ -319,12 +319,8 @@ a.btn,
   padding: 0.5rem 0.75rem;
   height: var(--rider-card-height);
   max-width: var(--rider-card-width);
-  // margin: 0.5rem 0;
+  
   font-size: 0.9rem;
-
-  // &:first-of-type {
-  //   // margin-top: 1rem;
-  // }
 }
 
 .stage-box, .points-box {
@@ -340,13 +336,13 @@ a.btn,
     margin: 0;
   }
 
-  &--heading {
+  .points-box--heading, .stage-box--heading{
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  &--body {
+  .points-box--body, .stage-box--body{
     justify-self: start;
   }
 }
@@ -451,29 +447,34 @@ span.points {
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  background: var(--clr-secondary);
-  border: 1px solid hsl(from var(--clr-secondary) 190 s 80%);
-  color: var(--clr-secondary-content);
+  padding: 0.5rem 1rem;
+  background: hsl(from var(--clr-primary) h s l / 75%);
+  border: 1px solid var(--clr-primary);
+  color: var(--clr-primary-content);
   border-radius: 500px;
-  font-size: var(--fs-200);
+  font-size: var(--fs-300);
   font-weight: 100;
-  text-transform: uppercase;
   user-select: none;
 
   img {
     max-width: 15px;
   }
+
+  .badge-sm {
+    font-size: var(--fs-200);
+  }
+
+  .badge-green {
+      background: hsl(from var(--clr-accent-green) h s 80%);
+      border: 1px solid var(--clr-accent-green);
+    }
+  .badge-alert {
+      background: hsl(from var(--clr-alert) h s 80%);
+      border: 1px solid var(--clr-alert);
+      color: var(--clr-text-black);
+    }
 }
 
-.badge-green {
-    background: var(--clr-accent-green);
-    border: 1px solid hsl(from var(--clr-accent-green) 190 s 80%);
-  }
-.badge-alert {
-    background: var(--clr-alert);
-    border: 1px solid hsl(from var(--clr-alert) 190 s 80%);
-  }
 
 .badged {
   display: flex;
@@ -530,6 +531,7 @@ span.points {
   display: grid;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  padding: 0;
 
   .standings-user {
     display: flex;
@@ -538,7 +540,6 @@ span.points {
     align-items: center;
     padding-inline: 0.75rem;
     padding-block: 1rem;
-
 
     background: var(--clr-background-mute);
     border-radius: var(--border-radius);
@@ -562,20 +563,20 @@ span.points {
       color: var(--clr-primary);
     }
 
-    &--info {
+    .standings-user--info {
       display: flex;
       gap: 0.5rem;
       flex: 1;
 
-      &__position {
-        aspect-ratio: 1;
-        width: 30px;
-        display: flex;
-        place-content: center;
-      }
+    }
+    .standings-user--info__position {
+      aspect-ratio: 1;
+      width: 30px;
+      display: flex;
+      place-content: center;
     }
 
-    &--action {
+    .standings-user--action {
       opacity: 0;
 
     }
@@ -620,7 +621,7 @@ span.points {
   display: flex;
   gap: 1rem;
 
-  :first-child {
+  &:first-child {
     border: 1px solid var(--clr-primary);
     background: var(--clr-primary-mute);
     border-radius: 100%;

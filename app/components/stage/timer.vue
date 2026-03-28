@@ -73,7 +73,7 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
   </section>
 </template>
 
-<style lang="scss">
+<style>
 .stage-timer {
   .counter {
     display: grid;

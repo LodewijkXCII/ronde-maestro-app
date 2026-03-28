@@ -12,7 +12,7 @@ const sideBarStore = useSideBarStore();
 
 <template>
   <li class="stage-row">
-    <div class="stage-nr" :class="{ 'next-stage': stage.id === sideBarStore.upComingStage?.id }">
+    <div class="stage-nr" :class="{ 'next-stage': stageUnderway(stage.date) && !stage.done }">
       <span>
         {{ stage.stageNr }}
       </span>
@@ -28,8 +28,8 @@ const sideBarStore = useSideBarStore();
         {{ new Date(stage.date).toLocaleDateString("nl-NL", {
           day: '2-digit',
           month: 'short',
-        }) }} -
-        {{ stage.distance }} km  -
+        }) }} •
+        {{ stage.distance }} km  •
         <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name">
       </div>
     </div>
@@ -67,6 +67,10 @@ const sideBarStore = useSideBarStore();
         <Icon name="tabler:pencil" size="24" />
         Selecteren
       </NuxtLink>
+
+      <div v-if="stageUnderway(stage.date) && !stage.done" class="badge badge-alert">
+        Onderweg
+      </div>
     </div>
   </li>
 </template>
@@ -132,6 +136,11 @@ const sideBarStore = useSideBarStore();
       justify-self: end;
       font-size: var(--fs-200);
     }
+  }
+
+  &:hover {
+    box-shadow: var(--box-shadow);
+    outline: 1px solid var(--clr-primary);
   }
 }
 </style>

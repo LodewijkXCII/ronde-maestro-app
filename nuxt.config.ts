@@ -39,7 +39,7 @@ export default defineNuxtConfig({
   ],
 
   css: [
-    "~/assets/css/main.scss",
+    "~/assets/css/main.css",
   ],
 
   eslint: {

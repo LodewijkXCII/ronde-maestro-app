@@ -29,7 +29,7 @@ const authStore = useAuthStore();
   </NuxtLink>
 </template>
 
-<style lang="scss">
+<style>
 .user-name {
   position: relative;
   display: flex;
@@ -38,12 +38,9 @@ const authStore = useAuthStore();
   padding: 0.25rem 0.5rem;
   color: var(--clr-text);
   text-decoration: none;
-  // background: var(--clr-background);
   height: min-content;
-  // border-radius: 1000px;
 
   &:hover {
-    // background-color: var(--clr-primary);
     color: var(--clr-primary);
     cursor: pointer;
   }

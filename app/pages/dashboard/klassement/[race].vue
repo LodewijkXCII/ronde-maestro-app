@@ -118,7 +118,7 @@ watch(selectedStage, (newValue) => {
 
 <template>
   <main>
-    <div class="wrapper wrapper-sm">
+    <div class="wrapper-lg wrapper-nobg">
       <Loading v-if="sideBarStore.loading || loading" />
       <div v-if="!sideBarStore.loading && (!currentRace && !sideBarStore.isClassicSeason)" role="alert" class="alert alert-error">
         <Icon name="tabler:alert-square-rounded" />
@@ -134,111 +134,27 @@ watch(selectedStage, (newValue) => {
       </div>
 
       <template v-else-if="(currentRace || sideBarStore.isClassicSeason) && !loading && raceResult">
-        <AppNavigation current-route="Klassement" />
-        <StageInfo v-if="!sideBarStore.isClassicSeason && currentRace" :race="currentRace" />
-        <RaceInfo v-if="sideBarStore.isClassicSeason && sideBarStore.classicsRaces" :race="sideBarStore.classicsRaces" />
-
         <section>
-          <h3>Algemeen klassement</h3>
+          <h2>Algemeen klassement</h2>
+          <p>Stand na {{ raceResult[0]?.stages.length }} {{ sideBarStore.isClassicSeason ? 'klassiekers' : 'etappes' }}</p>
 
-          <ul v-if="raceResult.length" class="table standings-table">
-            <li class="table-row table-header">
-              <div>#</div>
-              <div>Naam</div>
-              <div>Punten</div>
-            </li>
+          <ul v-if="raceResult.length" class="standings-list">
             <li
               v-for="(user, index) in raceResult"
               :key="user.userId"
-              class="table-row"
+              class="standings-user"
               :class="{ 'is-user': authUser?.id === user.userId }"
             >
-              <div>{{ index + 1 }}</div>
-              <div>{{ user.name }}</div>
-              <div>{{ user.totalPoints }}</div>
+              <div class="standings-user--info__position">
+                <span>{{ index + 1 }}</span>
+              </div>
+              <div class="standings-user--info">
+                {{ user.name }}
+              </div>
+              <div>{{ user.totalPoints }} ptn</div>
             </li>
           </ul>
         </section>
-
-        <section v-if="resultPerStage">
-          <h3><span v-if="sideBarStore.isClassicSeason">Klassieker</span><span v-else>Etappe</span> klassement</h3>
-          <div class="input-group">
-            <label>Selecteer <span v-if="sideBarStore.isClassicSeason">klassieker</span><span v-else>etappe</span>:</label>
-            <select v-model="selectedStage">
-              <option value="null" disabled selected>
-                Selecteer <span v-if="sideBarStore.isClassicSeason">klassieker</span><span v-else>etappe</span>
-              </option>
-              <option
-                v-for="{ stage } in resultPerStage"
-                :key="stage.id"
-                :value="stage.stageNr"
-              >
-                <template v-if="sideBarStore.isClassicSeason">
-                  {{ getRaceName(stage.raceId) }}
-                </template>
-                <template v-else>
-                  {{ stage.stageNr }}. {{ stage.startCity }} - {{ stage.finishCity }}
-                </template>
-              </option>
-            </select>
-          </div>
-          <div v-if="selectedStage && selectedStageResult && selectedStageResult.results.length">
-            <NuxtLink
-              v-if="currentRace"
-              :to="{
-                name: 'dashboard-race-id-uitslagen-nr',
-                params: {
-                  race: slugify(currentRace.name),
-                  id: currentRace.id,
-                  nr: selectedStage,
-                },
-              }"
-              class="btn btn-secondary"
-            >
-              Ga naar etappe uitslag
-              <Icon name="tabler:arrow-right" />
-            </NuxtLink>
-            <ul class="table standings-table">
-              <li class="table-row table-header">
-                <div>#</div>
-                <div>Naam</div>
-                <div>Punten</div>
-                <div />
-              </li>
-              <li
-                v-for="(user, index) in selectedStageResult.results"
-                :key="user.userId"
-                class="table-row"
-                :class="{ 'is-user': authUser?.id === user.userId }"
-              >
-                <div>{{ index + 1 }}</div>
-                <div>{{ user.name }}</div>
-                <div>{{ user.points }}</div>
-                <div class="standings-action">
-                  <AppTrophy v-if="user.winner" />
-                </div>
-              </li>
-            </ul>
-          </div>
-          <p v-else-if="selectedStage && selectedStageResult && !stageUnderway(selectedStageResult.stage.date)">
-            Je kan nog je renners voor deze etappe invullen. <NuxtLink
-              :to="{
-                name: 'dashboard-race-id-selecteer-nr',
-                params: {
-                  race: slugify(getRaceName(selectedStageResult.stage.raceId)),
-                  id: currentRace?.id ? currentRace.id : 0,
-                  nr: selectedStageResult.stage.stageNr,
-                },
-              }"
-            >
-              Selecteer renners.
-            </NuxtLink>
-          </p>
-          <p v-else-if="selectedStage">
-            De uitslag van deze etappe is nog niet bekend. Kom later terug.
-          </p>
-        </section>
-
         <p v-if="!raceResult.length && !resultPerStage.length">
           Er is nog geen uitslag bekend. Kom later terug.
         </p>
@@ -247,7 +163,7 @@ watch(selectedStage, (newValue) => {
   </main>
 </template>
 
-<style lang="scss">
+<style>
 .standings-action {
   display: flex;
   gap: 0.5rem;

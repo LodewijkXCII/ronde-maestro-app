@@ -21,17 +21,17 @@
     --_grid-columns: 1fr 15ch 7ch
   }
 
-  &-header {
+  .table-header {
     background-color: var(--clr-primary);
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     font-weight: 800;
     color: var(--clr-primary-content);
   }
-  &-row {
+  .table-row {
     list-style-type: none;
     display: grid;
     align-items: center;
-    // place-content: center;
+    /* place-content: center; */
     gap: 1rem;
     min-height: 3em;
     padding: 1rem;
@@ -43,11 +43,9 @@
     }
 
     &:hover:not(.table-header), &:focus-visible:not(.table-header), &:focus:not(.table-header) {
-      cursor: pointer;
-      background-color: var(--clr-primary);
-      color: var(--clr-primary-content);
-      outline: 3px solid var(--clr-primary-dark);
-      outline-offset: -3px;
+      background-color: var(--clr-primary-mute);
+      outline: 1px solid var(--clr-primary-dark);
+      outline-offset: -1px;
     }
 
     &:hover:where(.users-table) {
@@ -63,7 +61,7 @@
     font-weight: 800;
   }
 
-  &-action a {
+  .table-action a {
     text-decoration: none;
     color: inherit;
     display: grid;

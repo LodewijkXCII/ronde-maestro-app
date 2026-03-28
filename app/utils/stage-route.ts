@@ -42,37 +42,4 @@ export async function goToStage(stageId: number | null) {
     name: "dashboard-race-id-selecteer-nr",
     params: { race: raceSlug, id: raceId, nr: stageNr },
   });
-
-  // sideBarStore.upcomingRace.forEach((race) => {
-  //   if (race.stages && Array.isArray(race.stages)) {
-  //     race.stages.forEach(async (stage) => {
-  //       if (stage.id === stageId) {
-  //         if (stage.done) {
-  //           await navigateTo({
-  //             name: "dashboard-race-id-uitslagen-nr",
-  //             params: {
-  //               race: slugify(race.name),
-  //               id: race.id,
-  //               nr: stage.stageNr,
-  //             },
-  //           });
-  //         }
-  //         else if (stageUnderway(stage.date)) {
-  //           await navigateTo("/dashboard");
-  //         }
-
-  //         else {
-  //           await navigateTo({
-  //             name: "dashboard-race-id-selecteer-nr",
-  //             params: {
-  //               race: slugify(race.name),
-  //               id: race.id,
-  //               nr: stage.stageNr,
-  //             },
-  //           });
-  //         }
-  //       }
-  //     });
-  //   }
-  // });
 }

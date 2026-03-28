@@ -1,7 +1,6 @@
-@use "utils.scss";
-@use "input.scss";
-@use "table.scss";
-
+@import url("./utils.css");
+@import url("./input.css");
+@import url("./table.css");
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Roboto:wght@100;400;700;900&display=swap");
 
 :root {
@@ -60,7 +59,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  // outline: 2px solid lime;
 }
 
 * {
@@ -95,15 +93,9 @@ body {
   color: var(--clr-text);
   background: var(--clr-background-app);
   min-height: 100vh;
-
-  // &:has(.primary-navigation[data-visible="true"]) {
-  //   height: 100dvh;
-  //   overflow: hidden;
-  // }
 }
 
 main {
-  // margin-top: calc(var(--navbar-height) + 0.25rem);
   flex-grow: 1;
   display: flex;
   flex-direction: column;

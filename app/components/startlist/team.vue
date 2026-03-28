@@ -102,7 +102,7 @@ watch(() => useStartlistStore().showAllTeams, (newVal) => {
   </details>
 </template>
 
-<style lang="scss">
+<style>
 .team-selection {
   background: var(--clr-background-mute);
   height: fit-content;
@@ -161,7 +161,7 @@ watch(() => useStartlistStore().showAllTeams, (newVal) => {
   place-items: center;
   padding: 0.75rem;
 
-  &--info {
+  .team-info--info {
     display: flex;
     gap: 0.5rem;
     place-items: center;
@@ -177,14 +177,6 @@ watch(() => useStartlistStore().showAllTeams, (newVal) => {
   .avatar {
     --_avatar-width: 50px;
   }
-
-  // &:has(.team-selection[open]) {
-  //   border: 2px solid var(--clr-primary);
-  //   border-bottom: 0;
-  //   background: var(--clr-primary-dark);
-  //   color: var(--clr-text);
-  //   border-radius: var(--border-radius) var(--border-radius) 0 0;
-  // }
 }
 
 .cyclistCard:not(.selected) {

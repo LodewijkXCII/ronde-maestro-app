@@ -10,7 +10,7 @@ const { userPoules } = storeToRefs(authStore);
       <h3>Jouw ploegen</h3>
 
       <div class="badge">
-        {{ userPoules.length }} ploegen
+        {{ userPoules.length }} {{ userPoules.length > 1 ? 'ploegen' : 'ploeg' }}
       </div>
     </div>
 
@@ -22,7 +22,7 @@ const { userPoules } = storeToRefs(authStore);
       <div v-for="team in userPoules" :key="team.id" class="team-card">
         <div class="team-card--title">
           <h4>{{ team.name }}</h4>
-          <div class="badge">
+          <div class="badge badge-sm">
             {{ team.users.length }} {{ team.users.length > 1 ? 'deelnemers' : 'deelnemer' }}
           </div>
         </div>
@@ -47,7 +47,7 @@ const { userPoules } = storeToRefs(authStore);
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .dashboard-teams {
   margin-top: 2rem;
 
@@ -76,7 +76,7 @@ const { userPoules } = storeToRefs(authStore);
       box-shadow: 0px 0 28px -7px var(--clr-secondary);
     }
 
-    &--title {
+    .team-card--title {
       display: flex;
       gap: 1rem;
       align-items: center;

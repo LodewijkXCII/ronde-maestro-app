@@ -467,7 +467,7 @@ onUnmounted(() => {
   </main>
 </template>
 
-<style lang="scss">
+<style>
 .team-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(425px, 1fr));
@@ -479,13 +479,13 @@ onUnmounted(() => {
   justify-content: space-between;
   margin-block: 2rem;
 
-  &--info__title {
+  .team-info--info__title {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
 
-  &--invite {
+  .team-info--invite {
     background: var(--clr-primary-mute);
     border: 1px solid var(--clr-primary);
     border-radius: var(--border-radius);
@@ -513,7 +513,7 @@ onUnmounted(() => {
 }
 
 .team-standings {
-  &--header {
+  .team-standings--header {
     display: flex;
     justify-content: space-between;
   }

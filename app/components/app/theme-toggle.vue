@@ -38,7 +38,7 @@ const isDark = computed({
   </label>
 </template>
 
-<style lang="scss">
+<style>
 .swap {
   position: relative;
   display: inline-grid;

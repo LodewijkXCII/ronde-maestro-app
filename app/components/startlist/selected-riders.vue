@@ -197,7 +197,8 @@ onBeforeRouteLeave(() => {
 
 <style>
 .selected-riders {
-  padding: 1.25rem 1rem;
+  --_padding-size: 1rem;
+  padding: 1.25rem var(--_padding-size);
   border-radius: var(--border-radius);
   height: fit-content;
   background: var(--clr-background-mute);
@@ -219,7 +220,25 @@ onBeforeRouteLeave(() => {
 .selected-riders-container {
   display: grid;
   gap: 0.5rem;
-  margin-top: 0.75rem;
+  margin-block: calc(2 * var(--_padding-size));
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    width: calc(100% + (2 * var(--_padding-size)));
+    height: 2px;
+    background-color: var(--clr-primary-mute);
+    left: calc(var(--_padding-size) * -1);
+  }
+
+  &::before {
+    top: calc(var(--_padding-size) * -1);
+  }
+  &::after {
+    bottom: calc(var(--_padding-size) * -1);
+  }
 }
 
 .selected-riders-container > .selected:nth-of-type(n + 9) {

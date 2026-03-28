@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { ResultUsersByStage } from "~/types/results";
 
-import firstEntry from "~/utils/get-first-date-entry";
-
 defineProps<{
   user: ResultUsersByStage;
   position: number;
@@ -38,7 +36,7 @@ const showTeam = ref(false);
         :result="cyclist.results[0]"
       />
 
-      <p class="entry-date">
+      <!-- <p class="entry-date">
         Ingediend op {{ firstEntry(user.entries)?.toLocaleString("nl-NL", {
           day: '2-digit',
           month: 'short',
@@ -46,7 +44,7 @@ const showTeam = ref(false);
           minute: '2-digit',
           second: '2-digit',
         }) }}
-      </p>
+      </p> -->
     </div>
   </li>
 </template>

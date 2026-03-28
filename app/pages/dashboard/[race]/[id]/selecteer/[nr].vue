@@ -59,7 +59,6 @@ watch(
         </span>
       </div>
       <div class="cyclistOverview">
-        <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" />
         <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
           <StageInfo :race="currentRace" :stage="currentStage" />
           <StageTimer
@@ -118,7 +117,6 @@ watch(
   grid-template-columns: repeat(4, var(--rider-card-width));
   grid-template-rows: auto minmax(215px, auto) auto;
   grid-template-areas:
-    "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
     "startlist startlist startlist select";
   gap: 2rem 1rem;
@@ -151,7 +149,6 @@ watch(
   @media (min-width: 20em) and (max-width: 900px) {
     grid-template-columns: var(--rider-card-width-dynamic);
     grid-template-areas:
-      "breadcrumbs"
       "info"
       "select"
       "startlist";
@@ -179,7 +176,9 @@ watch(
 
   @media (min-width: 900px) and (max-width: 1300px) {
     grid-template-columns: repeat(2, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs  breadcrumbs" "info  info" "startlist  select";
+    grid-template-areas:
+      "info  info"
+      "startlist  select";
 
     .cyclistSelector {
       grid-area: startlist;
@@ -192,7 +191,9 @@ watch(
   }
   @media (min-width: 1300px) and (max-width: 1720px) {
     grid-template-columns: repeat(3, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
+    grid-template-areas:
+      "info info info"
+      "startlist startlist select";
 
     .cyclistSelector {
       grid-area: startlist;
@@ -206,7 +207,9 @@ watch(
 
   @media (min-width: 1720px) and (max-width: 90em) {
     grid-template-columns: repeat(3, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
+    grid-template-areas:
+      "info info info"
+      "startlist startlist select";
 
     .cyclistSelector {
       grid-area: startlist;
@@ -221,7 +224,6 @@ watch(
   @media (min-width: 160em) {
     grid-template-columns: repeat(6, var(--rider-card-width));
     grid-template-areas:
-      "breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
       "info info info info info info"
       "startlist startlist startlist startlist startlist select";
 

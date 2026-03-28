@@ -70,14 +70,14 @@ watch(route, () => {
             <details ref="selectCyclistRef">
               <summary>Renners selecteren <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
 
-              <NavList
+              <AppNavList
                 v-if="!sideBarStore.isClassicSeason"
                 :grand-tour="sideBarStore.currentRace || undefined"
                 :on-closed="closeNavbar"
                 comp-location="overzicht"
               />
 
-              <NavList
+              <AppNavList
                 v-else-if="sideBarStore.classicsRaces"
                 :classics-races="sideBarStore.classicsRaces"
                 :on-closed="closeNavbar"
@@ -95,14 +95,14 @@ watch(route, () => {
               <summary>Uitslagen <Icon name="tabler:chevron-right" size="16" /></summary>
 
               <div v-if="!sideBarStore.isClassicSeason" class="race-list">
-                <NavList
+                <AppNavList
                   :grand-tour="sideBarStore.currentRace || undefined"
                   :on-closed="closeNavbar"
                   comp-location="uitslag"
                 />
               </div>
               <div v-else-if="sideBarStore.classicsRaces">
-                <NavList
+                <AppNavList
                   :classics-races="sideBarStore.classicsRaces"
                   :on-closed="closeNavbar"
                   comp-location="uitslag"
@@ -187,7 +187,7 @@ watch(route, () => {
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .mobile-nav-toggle {
   display: none;
 }

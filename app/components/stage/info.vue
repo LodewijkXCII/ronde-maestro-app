@@ -47,13 +47,13 @@ const config = useRuntimeConfig();
   </article>
 </template>
 
-<style lang="scss">
+<style>
 .stage-section {
   display: grid;
   grid-template-columns: subgrid;
   grid-column: 1 / span 2;
 
-  &--race {
+  .stage-section--race {
     display: grid;
     grid-template-columns: auto minmax(auto, 75px);
     gap: 0.75rem 0.25rem;
@@ -65,12 +65,12 @@ const config = useRuntimeConfig();
     }
 
     p {
-      margin: 0;
+      margin-bottom: 0.75em;
     }
   }
 
-  &--stage {
-    &__info {
+  .stage-section--stage {
+    .stage-section--stage__info {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;

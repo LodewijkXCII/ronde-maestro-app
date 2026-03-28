@@ -45,50 +45,45 @@ const findUsersEntry = computed<ResultUsersByStage | null>(() => {
 });
 
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
-  if (!route.params.id) {
-    return;
-  }
+  errorMessage.value = "";
+  loading.value = true;
 
   const raceId = getParamId(route.params.id);
-  if (!raceId) {
-    return;
+  const stageNr = getParamId(route.params.nr);
+
+  if (!route.params.id || !raceId || !stageNr || !newRace || !newRace.stages) {
+    return errorMessage.value = "Er is geen juiste data gevonden";
   }
 
   startlistStore.activeRaceIdForFetch = raceId;
   await startlistStore.refreshStartlistData();
 
-  if (newRace && newRace.stages) {
-    const stageNr = getParamId(route.params.nr);
-    if (stageNr) {
-      const foundStage = newRace.stages.find(stage => stage.stageNr === stageNr) || null;
-      sideBarStore.currentStage = foundStage;
-    }
-    // GET RESULT DATA
-    if (!currentStage.value?.id) {
-      return;
-    }
+  const foundStage = newRace.stages.find(stage => stage.stageNr === stageNr) || null;
 
-    try {
-      errorMessage.value = "";
-      loading.value = true;
+  sideBarStore.currentStage = foundStage;
 
-      const { cyclist, users } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${currentStage.value?.id}`, {
-        method: "get",
-        credentials: "include",
-      });
-      if (cyclist && users) {
-        cyclistResult.value = cyclist.sort((a, b) => a.position - b.position);
-        usersResult.value = users;
-      }
-    }
+  if (!foundStage || !foundStage.id) {
+    console.warn("No valid stage found for results fetch.");
+    return errorMessage.value = "Geen etappe gevonden met deze gegevens.";
+  }
 
-    catch (e) {
-      const error = e as FetchError;
-      errorMessage.value = getFetchErrorMessage(error);
+  try {
+    const { cyclist, users } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${currentStage.value?.id}`, {
+      method: "get",
+      credentials: "include",
+    });
+    if (cyclist && users) {
+      cyclistResult.value = cyclist.sort((a, b) => a.position - b.position);
+      usersResult.value = users;
     }
-    finally {
-      loading.value = false;
-    }
+  }
+
+  catch (e) {
+    const error = e as FetchError;
+    errorMessage.value = getFetchErrorMessage(error);
+  }
+  finally {
+    loading.value = false;
   }
 }
 
@@ -116,7 +111,7 @@ watch(
     <div class="wrapper wrapper-sm">
       <Loading v-if="sideBarStore.loading || loading" />
 
-      <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
+      <div v-if="!sideBarStore.loading && !loading && !currentRace" role="alert" class="alert alert-error">
         <Icon name="tabler:alert-square-rounded" />
         <span>
           Er is geen race data gevonden!
@@ -129,8 +124,14 @@ watch(
         </span>
       </div>
 
+      <div v-else-if="!currentRace && !currentStage && !sideBarStore.loading && !loading" role="alert" class="alert alert-error">
+        <Icon name="tabler:alert-square-rounded" />
+        <span>
+          Er is geen juiste data gevonden. Probeer het opnieuw.
+        </span>
+      </div>
+
       <section v-else-if="currentRace && currentStage">
-        <AppNavigation :current-route="`Uitslag ${sideBarStore.isClassicSeason ? currentRace.name : `etappe ${currentStage.stageNr}`}`" />
         <StageInfo :race="currentRace" :stage="currentStage" />
 
         <!-- USER RESULT -->

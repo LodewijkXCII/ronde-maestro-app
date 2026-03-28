@@ -20,7 +20,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .team-list {
   display: grid;
   gap: 0.5rem;
