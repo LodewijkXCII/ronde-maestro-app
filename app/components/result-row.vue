@@ -75,5 +75,9 @@ const showTeam = ref(false);
 
 .is-user {
   font-weight: 900;
+
+  .cyclistCard {
+    font-weight: initial;
+  }
 }
 </style>

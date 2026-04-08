@@ -43,12 +43,6 @@ const displayedStandings = computed(() => {
   });
 });
 
-// async function getUpcomingRace() {
-//   if (currentRace.lenght) {
-
-//   }
-// }
-
 async function getUpcomingStage() {
   if (!upComingStage.value) {
     return errorMessage.value.push("Er is geen aankomende etappe.");

@@ -58,6 +58,10 @@ const authStore = useAuthStore();
 }
 
 @media screen and (max-width: 90em) {
+  .user-name {
+    justify-content: end;
+  }
+
   .user-name__name {
     display: none;
   }

@@ -56,7 +56,7 @@ const config = useRuntimeConfig();
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .cyclistCard {
   --_avatar-width: 45px;
   display: grid;
@@ -74,18 +74,22 @@ const config = useRuntimeConfig();
     cursor: pointer;
   }
 
-  &--avatar {
+  > .cyclistCard--avatar {
     position: relative;
 
-    &__flag {
+    .avatar {
+      --_avatar-width: 45px;
+    }
+
+    .cyclistCard--avatar__flag {
       position: absolute;
       right: 0;
       bottom: -10px;
     }
   }
 
-  .avatar {
-    --_avatar-width: 45px;
+  &.avatar {
+    --_avatar-width: var(--_avatar-width);
 
     &:has(> span) {
       place-content: center;
@@ -94,8 +98,8 @@ const config = useRuntimeConfig();
     }
   }
 
-  &--raceInfo,
-  &--specialities {
+  .cyclistCard--raceInfo,
+  .cyclistCard--specialities {
     display: flex;
     gap: 0.25rem;
     place-items: center;
@@ -106,9 +110,9 @@ const config = useRuntimeConfig();
     }
   }
 
-  &--actions {
+  &.cyclistCard--actions {
     justify-self: end;
-    // align-self: start;
+    /* align-self: start; */
   }
 
   &.withdraw {

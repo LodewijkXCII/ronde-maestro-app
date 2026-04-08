@@ -49,7 +49,7 @@ const config = useRuntimeConfig();
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .cyclistMiniCard {
   --_avatar-width: 35px;
   font-size: 0.9rem;
@@ -58,19 +58,19 @@ const config = useRuntimeConfig();
   grid-template-columns: minmax(3ch, auto) var(--_avatar-width) minmax(auto, 40ch) auto;
   gap: 0.5rem;
   align-items: center;
-  max-width: var(--rider-card-width);
+  /* max-width: var(--rider-card-width); */
   border-radius: var(--border-radius);
 
   .cyclistMiniCard--cyclist {
     p {
       margin: 0;
     }
-    &__name {
+    .cyclistMiniCard--cyclist__name {
       display: flex;
       gap: 0.35rem;
       place-items: center;
     }
-    &__team {
+    .cyclistMiniCard--cyclist__team {
       font-weight: 300;
       font-style: italic;
     }

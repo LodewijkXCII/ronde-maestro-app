@@ -77,6 +77,7 @@ function changeSelectedStage(selector: number) {
   border: 1px solid var(--clr-primary);
   border-radius: var(--border-radius);
   font-size: var(--fs-300);
+  height: 100%;
 
   .select-button {
     display: flex;

@@ -350,6 +350,7 @@ watch(route, () => {
       display: flex;
       flex-direction: column-reverse;
       gap: 1rem;
+      width: 100%;
     }
   }
 
@@ -359,6 +360,10 @@ watch(route, () => {
     width: 100%;
     /* Add these to make it overlay or push content if desired */
     padding: 1rem 0;
+
+    ul {
+      align-items: end;
+    }
   }
 
   /* This is the critical fix: override the display: none when data-visible is true */
@@ -382,17 +387,6 @@ watch(route, () => {
     outline: none;
     border-radius: 0;
   }
-}
-
-.hover {
-  cursor: pointer;
-}
-
-summary {
-  list-style: none;
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
 }
 
 /* Rotate the line when open */
