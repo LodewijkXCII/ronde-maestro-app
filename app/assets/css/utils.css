@@ -23,7 +23,13 @@ a.btn,
   > a {
     color: inherit;
     text-decoration: none;
-    display: inline-block;
+    display: flex;
+    place-items: center;
+    gap: .5rem;
+
+    &:hover {
+      font-weight: 400;
+    }
   }
 
   &:hover,
@@ -454,18 +460,24 @@ span.points {
     max-width: 15px;
   }
 
-  .badge-sm {
+  &.badge-sm {
     font-size: var(--fs-200);
   }
 
-  .badge-green {
+  &.badge-green {
     background: hsl(from var(--clr-accent-green) h s 80%);
     border: 1px solid var(--clr-accent-green);
   }
-  .badge-alert {
+  &.badge-alert {
     background: hsl(from var(--clr-alert) h s 80%);
     border: 1px solid var(--clr-alert);
     color: var(--clr-text-black);
+  }
+
+  &.badge-outline {
+    background: hsl(from var(--clr-primary) h s l / 5%);
+    color: var(--clr-primary);
+    font-weight: 700;
   }
 }
 

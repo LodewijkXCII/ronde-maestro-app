@@ -320,13 +320,7 @@ watch(currentRace, async (newRace) => {
               :stages="sideBarStore.allStages"
             />
           </div>
-          <p v-if="!resultIsGC">
-            Voor de etappe van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
-              day: '2-digit',
-              month: 'short',
-            }) }}
-          </p>
-          <p v-else>
+          <p v-if="resultIsGC">
             Algemeen klassement
           </p>
 
@@ -471,6 +465,7 @@ watch(currentRace, async (newRace) => {
   }
 }
 
+.usp-card,
 .dashboard-card,
 .team-card,
 .poule-card {

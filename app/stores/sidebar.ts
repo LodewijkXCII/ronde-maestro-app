@@ -37,6 +37,14 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     lazy: true,
     immediate: false,
   });
+  // const {
+  //   data: openData,
+  //   status: openDataDataStatus,
+  //   refresh: refreshOpenData,
+  // } = useFetch(() => `${config.public.apiBase}/open`, {
+  //   method: "get",
+  //   immediate: true,
+  // });
 
   const currentStage = ref<Stage | null>(null);
 
@@ -166,5 +174,9 @@ export const useSideBarStore = defineStore("useSideBarStore", () => {
     currentStage,
     upComingStage: upcomingStage,
     allStages,
+
+    // openData,
+    // openDataDataStatus,
+    // refreshOpenData,
   };
 });

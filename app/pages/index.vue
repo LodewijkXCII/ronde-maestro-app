@@ -2,10 +2,17 @@
 import { NuxtLink } from "#components";
 
 const authStore = useAuthStore();
+const sideBarStore = useSideBarStore();
+
+const { currentRace } = storeToRefs(sideBarStore);
 
 onMounted(() => {
   if (authStore.user && authStore.session) {
     navigateTo("/dashboard");
+  }
+
+  if (!sideBarStore.currentRace) {
+    sideBarStore.refreshUpcomingRace();
   }
 });
 </script>
@@ -13,23 +20,37 @@ onMounted(() => {
 <template>
   <main>
     <section class="hero">
+      <!-- <div class="hero-image">
+        <picture>
+          <img src="/img/tour-de-france-5543992_1920.webp" alt="RondeMaestro" srcset="">
+        </picture>
+      </div> -->
+
       <div class="hero-wrapper">
         <div class="hero-text">
+          <div class="badge badge-outline">
+            Binnenkort de {{ currentRace?.name }}!
+          </div>
           <h1 class="title">
-            Welkom bij RondeMaestro
+            Word de ultieme ploegleider
           </h1>
-          <p class="subtitle">
-            Hét wielerspel waarbij je dagelijks dezelfde kansen hebt!
+          <p>
+            RondeMaestro, hét wielerspel waarbij je <strong>dagelijks</strong> dezelfde kansen hebt. Selecteer elke dag acht renners en bewijs dat jij thuishoort in de ploegleiderswagen.
           </p>
 
-          <button class="btn btn-primary">
-            <NuxtLink v-if="!authStore.user" to="/registreren">
-              Inschrijven
-            </NuxtLink>
-            <NuxtLink v-else to="/dashboard">
-              Naar dashboard
-            </NuxtLink>
-          </button>
+          <div class="btn-group">
+            <button class="btn btn-primary">
+              <NuxtLink v-if="!authStore.user" to="/registreren">
+                Gratis inschrijven <Icon name="tabler:chevron-right" />
+              </NuxtLink>
+              <NuxtLink v-else to="/dashboard">
+                Naar dashboard
+              </NuxtLink>
+            </button>
+            <div class="btn">
+              Hoe werkt het?
+            </div>
+          </div>
         </div>
         <div class="hero-image">
           <picture>
@@ -38,92 +59,85 @@ onMounted(() => {
         </div>
       </div>
     </section>
-    <div class="text-block">
-      <h2>Wat is RondeMaestro?</h2>
-      <div class="two-cols">
-        <picture>
-          <img src="/img/cyclists.svg" alt="wielrenners">
-        </picture>
-        <div>
-          <p>
-            RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En beter. Daarom mag je bij RondeMaestro elke dag
-            een nieuwe ploeg van acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed naast zitten, dan heb je
-            morgen weer een nieuwe kans een gooi te doen naar de eeuwige roem!
-          </p>
-          <p>
-            Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker of grote ronde is - selecteer je acht renner
-            waarvan jij denkt dat ze hoog in de uitslag eindigen. En voor elke van die renners die zich in de top 15 weet te
-            fietsen krijg je punten. Zo simpel is dat!
-          </p>
-          <p>
-            Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis hoort en
-            <NuxtLink to="/registreren">
-              meld je aan voor RondeMaestro!
-            </NuxtLink>
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="text-block">
-      <h2>Wat maakt RondeMaestro anders?</h2>
-
+    <div class="wrapper-lg wrapper-nobg">
+      <h2>Tourpoules, maar dan beter</h2>
       <div class="usp-list">
         <div class="usp-card">
           <div class="card-image">
-            <img src="/img/trophy.svg" alt="Trofee icon">
+            <Icon size="32" name="tabler:refresh" />
           </div>
           <div class="card-body">
             <h3>Dagelijks dezelfde kansen</h3>
             <p>
-              Zat je er gisteren naast? Geen zorgen! Vandaag krijg je weer de kans om een gooi te doen naar eeuwige roem. Ga niet bij de pakken neerzitten en selecteer opnieuw acht renners. Bij RondeMaestro krijg je elke dag een nieuwe kans!
+              Zat je er gisteren naast? Geen zorgen! Selecteer elke dag opnieuw acht renners en doe een gooi naar eeuwige roem.
             </p>
           </div>
         </div>
         <div class="usp-card">
           <div class="card-image">
-            <img src="/img/plan-list.svg" alt="Clipboard icon">
+            <Icon size="32" name="tabler:list-check" />
           </div>
           <div class="card-body">
             <h3>Duidelijke puntentelling</h3>
             <p>
-              Bij RondeMaestro hoef je geen kopman te selecteren of rekening te houden met klassementsleiders. Ons puntensysteem is eenvoudig: de eerste 15 renners over de streep krijgen punten. That&#39;s it. Zo blijft het spel eerlijk, overzichtelijk en puur koersplezier!
+              Geen ingewikkelde regels. De eerste 15 renners over de streep krijgen punten. Simpel, eerlijk en overzichtelijk.
             </p>
           </div>
         </div>
         <div class="usp-card">
           <div class="card-image">
-            <img src="/img/wallet.svg" alt="Wallet icon">
+            <Icon size="32" name="tabler:wallet" />
           </div>
           <div class="card-body">
             <h3>Geen gedoe met budget</h3>
             <p>
-              Bij RondeMaestro hoef je geen renners te laten schieten vanwege budget. Elke dag kun je elke renner selecteren, zonder beperkingen. Zo maak je altijd de beste keuzes en geniet je volop van het spel!
+              Bij RondeMaestro hoef je geen renners te laten schieten vanwege budget. Elke dag kun je elke renner selecteren, zonder beperkingen.
             </p>
           </div>
         </div>
         <div class="usp-card">
           <div class="card-image">
-            <img src="/img/money.svg" alt="Money icon">
+            <Icon size="32" name="tabler:users" />
           </div>
           <div class="card-body">
-            <h3>Geen verplichte inleg</h3>
+            <h3>Speel met vrienden</h3>
             <p>
-              Wil je een poultje tussen vrienden of op het werk? Dat kan bij RondeMaestro! Geen verplichte inleg, gewoon meedoen en plezier maken. Creëer je eigen competitie en laat zien wie de beste ploegleider is!
+              Maak een team aan, daag je vrienden uit en strijd samen om de beste score in het ploegenklassement.
             </p>
           </div>
         </div>
       </div>
-    </div>
-    <div class="text-block text-center">
-      <h2>Waar wacht je nog op?</h2>
-      <button class="btn btn-primary">
-        <NuxtLink v-if="!authStore.user" to="/registreren">
-          Inschrijven
-        </NuxtLink>
-        <NuxtLink v-else to="/dashboard">
-          Naar dashboard
-        </NuxtLink>
-      </button>
+
+      <div class="text-block">
+        <p>
+          RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En beter. Daarom mag je bij RondeMaestro elke dag
+          een nieuwe ploeg van acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed naast zitten, dan heb je
+          morgen weer een nieuwe kans een gooi te doen naar de eeuwige roem!
+        </p>
+        <p>
+          Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker of grote ronde is - selecteer je acht renner
+          waarvan jij denkt dat ze hoog in de uitslag eindigen. En voor elke van die renners die zich in de top 15 weet te
+          fietsen krijg je punten. Zo simpel is dat!
+        </p>
+        <p>
+          Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis hoort en
+          <NuxtLink to="/registreren">
+            meld je aan voor RondeMaestro!
+          </NuxtLink>
+        </p>
+      </div>
+
+      <div class=" text-center">
+        <h2>Waar wacht je nog op?</h2>
+        <button class="btn btn-primary">
+          <NuxtLink v-if="!authStore.user" to="/registreren">
+            Inschrijven
+          </NuxtLink>
+          <NuxtLink v-else to="/dashboard">
+            Naar dashboard
+          </NuxtLink>
+        </button>
+      </div>
     </div>
   </main>
 </template>
@@ -131,6 +145,7 @@ onMounted(() => {
 <style>
 .hero {
   width: 100%;
+  flex: 1;
   margin-top: -1rem;
   padding-top: 3rem;
   background-color: var(--clr-primary-mute);
@@ -156,7 +171,7 @@ onMounted(() => {
   }
 
   .hero-wrapper {
-    height: 700px;
+    height: 80dvh;
     display: flex;
     gap: 3rem;
     justify-content: center;
@@ -165,20 +180,21 @@ onMounted(() => {
     margin-inline: auto;
     position: relative;
     z-index: 10;
+    color: var(--clr-text);
 
     @media (width < 800px) {
       flex-direction: column;
     }
   }
+
+  .hero-text {
+    max-width: 55ch;
+  }
   .title {
     color: var(--clr-primary);
     font-size: var(--fs-800);
     line-height: 0.9;
-  }
-
-  .subtitle {
-    font-weight: 600;
-    color: var(--clr-text);
+    margin-block: 0.25em;
   }
 
   .hero-image {
@@ -194,6 +210,14 @@ onMounted(() => {
       border-radius: var(--border-radius);
       margin-inline: auto;
     }
+
+    /* position: absolute;
+    height: 100%;
+
+    & picture {
+      height: 100%;
+      width: auto;
+    } */
   }
 }
 
@@ -201,7 +225,7 @@ onMounted(() => {
   width: min(100% - 3rem, 110ch);
   padding-block: 2rem;
   padding-inline: 2rem;
-  background-color: var(--clr-background);
+
   margin-inline: auto;
 
   h2,
@@ -228,7 +252,7 @@ onMounted(() => {
 
 .usp-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(auto, 260px));
+  grid-template-columns: repeat(2, 1fr);
   justify-content: center;
   gap: 1rem;
 
@@ -237,17 +261,23 @@ onMounted(() => {
   }
 
   .usp-card {
-    padding: 1rem;
-    font-size: var(--fs-300);
-    background-color: var(--clr-primary-mute);
-    border-radius: var(--border-radius);
     display: grid;
     gap: 1rem;
-    grid-template-rows: 150px auto;
+    grid-template-columns: 75px auto;
 
-    .card-image img {
-      height: 100%;
-      margin-inline: auto;
+    .card-image {
+      background-color: var(--clr-primary-mute);
+      height: 50px;
+      aspect-ratio: 1/1;
+      display: flex;
+      place-items: center;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--clr-primary);
+
+      span {
+        width: 100%;
+        color: var(--clr-primary);
+      }
     }
 
     h2,

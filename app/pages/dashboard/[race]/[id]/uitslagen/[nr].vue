@@ -93,7 +93,6 @@ watch(
     raceId: route.params.id,
     stageNr: route.params.nr,
     currentRace: sideBarStore.currentRace,
-    currentStage: sideBarStore.currentStage,
   }),
   async ({ currentRace: newCurrentRace }) => {
     if (!sideBarStore.upcomingRace && sideBarStore.upcomingRaceStatus !== "pending") {

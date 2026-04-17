@@ -49,7 +49,7 @@ watch(
 
 <template>
   <main>
-    <div class="wrapper">
+    <div class="wrapper wrapper-nobg">
       <Loading v-if="sideBarStore.loading" />
 
       <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
