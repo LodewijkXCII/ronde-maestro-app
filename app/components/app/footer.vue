@@ -49,7 +49,6 @@ footer {
 
 .footer-wrapper {
   display: flex;
-  align-items: center;
   gap: 2rem;
   padding-block: 1rem;
   justify-content: space-between;
@@ -75,6 +74,10 @@ footer {
         &:hover {
           color: var(--clr-primary);
         }
+      }
+
+      @media (width < 800px) {
+        flex-direction: column;
       }
     }
   }

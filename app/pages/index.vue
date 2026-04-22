@@ -20,11 +20,11 @@ onMounted(() => {
 <template>
   <main>
     <section class="hero">
-      <!-- <div class="hero-image">
+      <div class="hero-image">
         <picture>
           <img src="/img/tour-de-france-5543992_1920.webp" alt="RondeMaestro" srcset="">
         </picture>
-      </div> -->
+      </div>
 
       <div class="hero-wrapper">
         <div class="hero-text">
@@ -52,15 +52,38 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <div class="hero-image">
+        <!-- <div class="hero-image">
           <picture>
             <img src="/img/homepage-screen.jpg" alt="Homepage RondeMaestro">
           </picture>
-        </div>
+        </div> -->
       </div>
     </section>
-    <div class="wrapper-lg wrapper-nobg">
-      <h2>Tourpoules, maar dan beter</h2>
+    <!-- <div class="wrapper-lg wrapper-nobg"> -->
+    <section class="home-section">
+      <div class="text-block">
+        <h1>
+          Tourpoules, maar dan <div class="highlight">
+            beter
+          </div>
+        </h1>
+        <p>
+          RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En beter. Daarom mag je bij RondeMaestro elke dag
+          een nieuwe ploeg van acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed naast zitten, dan heb je
+          morgen weer een nieuwe kans een gooi te doen naar de eeuwige roem!
+        </p>
+        <p>
+          Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker of grote ronde is - selecteer je acht renner
+          waarvan jij denkt dat ze hoog in de uitslag eindigen. En voor elke van die renners die zich in de top 15 weet te
+          fietsen krijg je punten. Zo simpel is dat!
+        </p>
+        <p>
+          Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis hoort en
+          <NuxtLink to="/registreren">
+            meld je aan voor RondeMaestro!
+          </NuxtLink>
+        </p>
+      </div>
       <div class="usp-list">
         <div class="usp-card">
           <div class="card-image">
@@ -107,54 +130,100 @@ onMounted(() => {
           </div>
         </div>
       </div>
+    </section>
+    <section class="home-section">
+      <h2>In 3 stappen meedoen</h2>
 
-      <div class="text-block">
-        <p>
-          RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En beter. Daarom mag je bij RondeMaestro elke dag
-          een nieuwe ploeg van acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed naast zitten, dan heb je
-          morgen weer een nieuwe kans een gooi te doen naar de eeuwige roem!
-        </p>
-        <p>
-          Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker of grote ronde is - selecteer je acht renner
-          waarvan jij denkt dat ze hoog in de uitslag eindigen. En voor elke van die renners die zich in de top 15 weet te
-          fietsen krijg je punten. Zo simpel is dat!
-        </p>
-        <p>
-          Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis hoort en
-          <NuxtLink to="/registreren">
-            meld je aan voor RondeMaestro!
-          </NuxtLink>
-        </p>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="card-image">
+            <span>
+              01</span>
+          </div>
+          <h3>Meld je aan</h3>
+          <p>Maak gratis een account aan en je kunt direct meedoen met alle wedstrijden.</p>
+        </div>
+        <div class="step-item">
+          <div class="card-image">
+            <span>
+              02</span>
+          </div>
+          <h3>Selecteer 8 renners</h3>
+          <p>Kies elke dag opnieuw acht renners waarvan jij denkt dat ze hoog eindigen.</p>
+        </div>
+        <div class="step-item">
+          <div class="card-image">
+            <span>
+              03</span>
+          </div>
+          <h3>Verdien punten</h3>
+          <p>Elke renner in de top 15 levert punten op. Klim in het klassement en versla je vrienden!</p>
+        </div>
       </div>
+    </section>
+    <section class="home-section">
+      <div class="two-cols">
+        <picture>
+          <img src="/img/tour-de-france-5543968_1920.webp" alt="">
+        </picture>
 
-      <div class=" text-center">
-        <h2>Waar wacht je nog op?</h2>
-        <button class="btn btn-primary">
-          <NuxtLink v-if="!authStore.user" to="/registreren">
-            Inschrijven
-          </NuxtLink>
-          <NuxtLink v-else to="/dashboard">
-            Naar dashboard
-          </NuxtLink>
-        </button>
+        <div>
+          <h2>Strijd tegen je vrienden</h2>
+          <p>Maak een team aan of sluitje aan bij vrienden. Jullie dagelijkse scores worden gecombineerd in het ploegenklassement. Wie heeft de beste wielertactiek?</p>
+          <div class="highlight-list">
+            <div class="highlight-item">
+              <div class="card-image">
+                <Icon name="tabler:users" />
+              </div>
+              Maak teams met vrienden en collega's
+            </div>
+            <div class="highlight-item">
+              <div class="card-image">
+                <Icon name="tabler:trophy" />
+              </div>
+              Apart ploegenklassement
+            </div>
+            <div class="highlight-item">
+              <div class="card-image">
+                <Icon name="tabler:bolt" />
+              </div>
+              Dagelijkse updates en ranglijsten
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="cta card text-center">
+      <h2>Klaar om mee te doen?</h2>
+      <p>Meld je vandaag nog gratis aan en bewijs dat jij de ultieme ploegleider bent. De Tour de France wacht op niemand!</p>
+      <button class="btn btn-primary">
+        <NuxtLink v-if="!authStore.user" to="/registreren">
+          Inschrijven <Icon name="tabler:chevron-right" />
+        </NuxtLink>
+        <NuxtLink v-else to="/dashboard">
+          Naar dashboard <Icon name="tabler:chevron-right" />
+        </NuxtLink>
+      </button>
+    </section>
   </main>
 </template>
 
 <style>
 .hero {
   width: 100%;
+  min-height: 90dvh;
+  display: flex;
   flex: 1;
   margin-top: -1rem;
   padding-top: 3rem;
-  background-color: var(--clr-primary-mute);
+  background: linear-gradient(10deg, var(--clr-background-app) 30%, var(--clr-primary-mute));
   color: var(--clr-primary-content);
-  box-shadow: var(--box-shadow);
+  /* box-shadow: var(--box-shadow); */
   overflow: hidden;
   position: relative;
 
-  &::after {
+  /* &::after {
     content: "RondeMaestro";
 
     position: absolute;
@@ -168,14 +237,14 @@ onMounted(() => {
     text-align: left;
     width: 100%;
     overflow: hidden;
-  }
+  } */
 
   .hero-wrapper {
-    height: 80dvh;
     display: flex;
+    width: 100%;
     gap: 3rem;
-    justify-content: center;
-    align-items: center;
+    align-self: end;
+    bottom: 6rem;
     max-width: min(100% - 3rem, 135ch);
     margin-inline: auto;
     position: relative;
@@ -184,6 +253,7 @@ onMounted(() => {
 
     @media (width < 800px) {
       flex-direction: column;
+      max-width: calc(100% - 2rem);
     }
   }
 
@@ -198,7 +268,7 @@ onMounted(() => {
   }
 
   .hero-image {
-    transform: perspective(1500px) rotateY(-10deg) translateX(5%);
+    /* transform: perspective(1500px) rotateY(-10deg) translateX(5%);
     transition: transform 1s ease 0s;
     box-shadow: var(--box-shadow);
 
@@ -209,30 +279,57 @@ onMounted(() => {
       width: min(100%, 725px);
       border-radius: var(--border-radius);
       margin-inline: auto;
-    }
+    } */
 
-    /* position: absolute;
+    position: absolute;
     height: 100%;
+    inset: 0;
+    z-index: -1;
 
     & picture {
       height: 100%;
       width: auto;
-    } */
+    }
+
+    @media (width < 800px) {
+      display: none;
+    }
+  }
+}
+
+.home-section {
+  padding-block: 6rem;
+
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+    color: var(--clr-text);
+  }
+
+  > * {
+    width: min(100% - 3rem, 1366px);
+    margin-inline: auto;
+  }
+
+  &:nth-child(odd) {
+    background: var(--clr-background);
   }
 }
 
 .text-block {
   width: min(100% - 3rem, 110ch);
-  padding-block: 2rem;
+  padding-block: 3rem;
   padding-inline: 2rem;
 
   margin-inline: auto;
 
+  h1,
   h2,
   h3,
   h4 {
     text-align: center;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.75em;
   }
 
   @media (width < 800px) {
@@ -243,10 +340,31 @@ onMounted(() => {
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
+
+  h2,
+  h3,
+  h4 {
+    text-align: left;
+  }
 
   @media (width < 800px) {
     grid-template-columns: 1fr;
+  }
+}
+
+.card-image {
+  --_image-size: 50px;
+  background-color: var(--clr-primary-mute);
+  height: var(--_image-size);
+  aspect-ratio: 1/1;
+  display: flex;
+  place-items: center;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--clr-primary);
+
+  span {
+    width: 100%;
+    color: var(--clr-primary);
   }
 }
 
@@ -266,18 +384,7 @@ onMounted(() => {
     grid-template-columns: 75px auto;
 
     .card-image {
-      background-color: var(--clr-primary-mute);
-      height: 50px;
-      aspect-ratio: 1/1;
-      display: flex;
-      place-items: center;
-      border-radius: var(--border-radius);
-      border: 1px solid var(--clr-primary);
-
-      span {
-        width: 100%;
-        color: var(--clr-primary);
-      }
+      place-self: center;
     }
 
     h2,
@@ -287,6 +394,72 @@ onMounted(() => {
       margin-bottom: 0.5em;
       font-size: var(--fs-400);
     }
+
+    @media (width < 800px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.steps-list {
+  display: flex;
+  gap: 2rem;
+  text-align: center;
+  margin-block: 3rem;
+
+  @media (width < 800px) {
+    flex-direction: column;
+  }
+
+  .step-item {
+    display: grid;
+    gap: 1rem;
+    place-items: center;
+    text-wrap: balance;
+
+    .card-image {
+      --_image-size: 60px;
+      font-weight: 800;
+      font-size: var(--fs-500);
+    }
+  }
+}
+
+.highlight-list {
+  display: grid;
+  gap: 0.75rem;
+}
+.highlight-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .card-image {
+    --_image-size: 30px;
+  }
+}
+
+.cta {
+  background: linear-gradient(to bottom, var(--clr-primary-mute), hsl(from var(--clr-primary-mute) h s l / 10%));
+  max-width: 80ch;
+
+  padding-inline: 6rem;
+  margin: 1rem;
+  text-wrap: balance;
+  outline: 1px solid var(--clr-primary);
+
+  @media (width < 800px) {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: var(--fs-700);
+    color: var(--clr-text);
+    margin-bottom: 0.5em;
+  }
+
+  .btn {
+    margin-block: 1rem;
   }
 }
 </style>

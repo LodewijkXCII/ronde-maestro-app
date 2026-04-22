@@ -30,7 +30,7 @@
   --fs-500: clamp(1.1rem, calc(0.96rem + 0.81vw), 1.48rem);
   --fs-600: clamp(1.27rem, calc(0.92rem + 1.71vw), 2.25rem);
   --fs-700: clamp(1.42rem, calc(0.81rem + 3.06vw), 3.18rem);
-  --fs-800: clamp(1.6rem, calc(2.59rem + 5.04vw), 6.5rem);
+  --fs-800: clamp(1.6rem, calc(2.59rem + 4.20vw), 6.5rem);
   --fs-900: clamp(8.8rem, calc(6.22rem + 9.93vw), 19.36rem);
 
   --border-radius: 0.5rem;
@@ -211,6 +211,7 @@ h1 {
 
 h2 {
   font-size: var(--fs-600);
+  font-weight: 800;
   color: var(--clr-primary);
   margin-bottom: 0.5rem;
 }
@@ -224,6 +225,11 @@ h4 {
   font-size: var(--fs-400);
   font-weight: 800;
   line-height: 1.1;
+}
+
+.highlight {
+  color: var(--clr-primary);
+  display: inline-block;
 }
 
 article.race {
@@ -244,7 +250,6 @@ article.race {
 .text-center {
   text-align: center;
 }
-
 
 .hover {
   cursor: pointer;

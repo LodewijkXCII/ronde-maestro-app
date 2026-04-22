@@ -286,6 +286,17 @@ a.btn,
   }
 }
 
+.card {
+  background: var(--clr-background-mute);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1em;
+
+  h1, h2, h3, h5, p {
+    margin-block: .5em 1em;
+  }
+}
+
 .avatar {
   --_avatar-width: 75px;
   aspect-ratio: 1 /1;
