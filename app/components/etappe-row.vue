@@ -120,6 +120,10 @@ const sideBarStore = useSideBarStore();
       display: flex;
       gap: 0.5rem;
       font-size: var(--fs-300);
+
+      img {
+        max-width: 20px;
+      }
     }
   }
 

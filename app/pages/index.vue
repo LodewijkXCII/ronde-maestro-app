@@ -22,7 +22,7 @@ onMounted(() => {
     <section class="hero">
       <div class="hero-image">
         <picture>
-          <img src="/img/tour-de-france-5543992_1920.webp" alt="RondeMaestro" srcset="">
+          <img src="/img/bryan-lucas.webp" alt="RondeMaestro" srcset="">
         </picture>
       </div>
 
@@ -287,8 +287,10 @@ onMounted(() => {
     z-index: -1;
 
     & picture {
-      height: 100%;
-      width: auto;
+      img {
+        height: auto;
+        min-width: 100%;
+      }
     }
 
     @media (width < 800px) {
@@ -354,17 +356,19 @@ onMounted(() => {
 
 .card-image {
   --_image-size: 50px;
-  background-color: var(--clr-primary-mute);
+  --_image-bg-color: var(--clr-primary-mute);
+  --_image-color: var(--clr-primary);
+  background-color: var(--_image-bg-color);
   height: var(--_image-size);
   aspect-ratio: 1/1;
   display: flex;
   place-items: center;
   border-radius: var(--border-radius);
-  border: 1px solid var(--clr-primary);
+  border: 1px solid var(--_image-color);
 
   span {
     width: 100%;
-    color: var(--clr-primary);
+    color: var(--_image-color);
   }
 }
 
