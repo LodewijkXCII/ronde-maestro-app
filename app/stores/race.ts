@@ -83,6 +83,7 @@ export const useRaceStore = defineStore("useRaceStore", () => {
   }, { immediate: true });
 
   return {
+    url,
     raceResult,
     raceResultStatus,
     refreshRaceResult,

@@ -13,6 +13,10 @@ const selectResultRef = ref<HTMLElement | null>(null);
 const selectTeamsRef = ref<HTMLElement | null>(null);
 
 function closeNavbar() {
+  if (event && (event.target as HTMLElement).closest("summary")) {
+    return;
+  }
+
   showNavbar.value = false;
   if (selectResultRef.value && selectCyclistRef.value) {
     selectCyclistRef.value.removeAttribute("open");
@@ -68,7 +72,9 @@ watch(route, () => {
           </li>
           <li class="nav-link">
             <details ref="selectCyclistRef">
-              <summary>Renners selecteren <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
+              <summary @click.stop>
+                Renners selecteren <Icon name="tabler:chevron-right" size="16" class="nav-icon" />
+              </summary>
 
               <AppNavList
                 v-if="!sideBarStore.isClassicSeason"
@@ -92,7 +98,9 @@ watch(route, () => {
           </li>
           <li class="nav-link">
             <details ref="selectResultRef">
-              <summary>Uitslagen <Icon name="tabler:chevron-right" size="16" /></summary>
+              <summary @click.stop>
+                Uitslagen <Icon name="tabler:chevron-right" size="16" />
+              </summary>
 
               <div v-if="!sideBarStore.isClassicSeason" class="race-list">
                 <AppNavList
@@ -127,7 +135,9 @@ watch(route, () => {
               Ploegenspel
             </NuxtLink>
             <details v-else ref="selectTeamsRef">
-              <summary>Ploegenspel <Icon name="tabler:chevron-right" size="16" class="nav-icon" /></summary>
+              <summary @click.stop>
+                Ploegenspel <Icon name="tabler:chevron-right" size="16" class="nav-icon" />
+              </summary>
 
               <ul class="stage-list">
                 <li class="stage-list--item">
@@ -196,6 +206,22 @@ watch(route, () => {
   display: none;
 }
 
+.primary-navigation {
+  display: flex;
+
+  grid-column-gap: 3rem;
+  grid-row-gap: 1rem;
+  overflow: hidden;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
 .nav-wrapper {
   padding: 1rem;
   background: hsla(from var(--clr-background-mute) h s l / 80%);
@@ -240,6 +266,7 @@ watch(route, () => {
   summary {
     color: var(--clr-text);
     text-decoration: none;
+    justify-content: end;
 
     &:hover {
       font-weight: inherit;
@@ -250,7 +277,7 @@ watch(route, () => {
   margin: 0;
   border-radius: var(--border-radius);
 
-  &:hover {
+  &:hover:not(details) {
     cursor: pointer;
     background: var(--clr-secondary);
     transition: background 0.3s ease-in-out;
@@ -260,59 +287,43 @@ watch(route, () => {
     color: var(--clr-text);
     border: 1px solid var(--clr-primary);
   }
-
-  .stage-list {
-    position: absolute;
-    display: grid;
-    background: var(--clr-background-mute);
-    top: 90%;
-    border-radius: var(--border-radius);
-    outline: 2px solid var(--clr-secondary);
-    padding: 0;
-    gap: 0;
-
-    .stage-list--item {
-      min-width: fit-content;
-      white-space: nowrap;
-      padding: 0.5rem;
-
-      &:first-of-type a {
-        margin-top: 0.5rem;
-      }
-      &:last-of-type a {
-        margin-bottom: 0.5rem;
-      }
-
-      &:hover {
-        background: var(--clr-secondary);
-      }
-      a {
-        display: grid;
-        grid-template-columns: minmax(3ch, auto) 1fr;
-        gap: 0.5rem;
-      }
-
-      &:has(a.router-link-exact-active) {
-        background: var(--clr-primary-dark);
-      }
-    }
-  }
 }
 
-.primary-navigation {
-  display: flex;
+ul.stage-list {
+  position: absolute;
+  display: grid;
+  background: var(--clr-background-mute);
+  top: 90%;
+  border-radius: var(--border-radius);
+  outline: 2px solid var(--clr-secondary);
+  padding: 0;
+  gap: 0;
 
-  grid-column-gap: 3rem;
-  grid-row-gap: 1rem;
-  overflow: hidden;
+  .stage-list--item {
+    min-width: fit-content;
+    white-space: nowrap;
+    padding: 0.5rem;
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+    &:first-of-type a {
+      margin-top: 0.5rem;
+    }
+    &:last-of-type a {
+      margin-bottom: 0.5rem;
+    }
+
+    &:hover {
+      background: var(--clr-secondary);
+      cursor: pointer;
+    }
+    a {
+      display: grid;
+      grid-template-columns: minmax(3ch, auto) 1fr minmax(7ch, auto);
+      gap: 0.5rem;
+    }
+
+    &:has(a.router-link-exact-active) {
+      background: var(--clr-primary-dark);
+    }
   }
 }
 
@@ -361,7 +372,7 @@ watch(route, () => {
     /* Add these to make it overlay or push content if desired */
     padding: 1rem 0;
 
-    ul {
+    ul:not(.stage-list) {
       align-items: end;
     }
   }
@@ -373,7 +384,7 @@ watch(route, () => {
     opacity: 1;
   }
 
-  .primary-navigation ul {
+  .primary-navigation ul:not(.stage-list) {
     flex-direction: column; /* Stack links vertically on mobile */
     width: 100%;
   }
@@ -382,10 +393,64 @@ watch(route, () => {
     display: block;
   }
 
-  .nav-link .stage-list {
-    position: inherit;
+  ul.stage-list {
+    position: relative;
     outline: none;
     border-radius: 0;
+
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-items: end;
+    overflow-x: auto;
+
+    width: calc(100vw - 3rem);
+    padding: 0.5rem 0;
+    gap: 1rem;
+
+    .stage-list--item {
+      flex: 0 0 auto; /* CRITICAL: Prevent items from shrinking */
+      border: 1px solid var(--clr-primary-mute);
+      background: var(--clr-primary-mute);
+      padding: 0;
+      border-radius: var(--border-radius);
+
+      > a {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 4ch auto;
+        grid-template-areas:
+          "number date  "
+          "number cities";
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        margin: 0 !important;
+        gap: 0.25rem;
+        height: 100%;
+      }
+
+      .stage-nr {
+        grid-area: number;
+        font-size: var(--fs-400);
+        height: 100%;
+        align-content: center;
+        background: var(--clr-background-mute);
+        padding: 0.5rem;
+        border-radius: var(--border-radius) 0 0 var(--border-radius);
+        border: 1px solid var(--clr-primary-mute);
+      }
+      .stage-date {
+        grid-area: date;
+        padding-top: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      .stage-city {
+        grid-area: cities;
+        padding-bottom: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    }
   }
 }
 

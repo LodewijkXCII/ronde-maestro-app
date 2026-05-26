@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+
 import type { ClassicsRaces, SelectRaceWithRelations } from "~/types/race";
 
 const props = defineProps<{
@@ -8,17 +10,38 @@ const props = defineProps<{
   onClosed?: () => void;
 }>();
 
-const race = computed(() => {
-  if (props.grandTour) {
-    return props.grandTour;
-  }
-  if (props.classicsRaces) {
-    return props.classicsRaces;
-  }
-  return undefined;
+const sideBarStore = useSideBarStore();
+
+// Check if a race exists to render the list
+const hasRace = computed(() => !!(props.grandTour || props.classicsRaces));
+
+// 1. Centralized Route Name mapping based on compLocation
+const routeName = computed(() => {
+  return props.compLocation === "uitslag"
+    ? "dashboard-race-id-uitslagen-nr"
+    : "dashboard-race-id-selecteer-nr";
 });
 
-const sideBarStore = useSideBarStore();
+// Helper function to format the dates cleanly
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString("nl-NL", {
+    day: "2-digit",
+    month: "short",
+  });
+}
+
+// 2. Filter stages early to keep template conditions simple
+const visibleStages = computed(() => {
+  return sideBarStore.allStages.filter((stage) => {
+    if (props.compLocation === "uitslag") {
+      return stage.done;
+    }
+    if (props.compLocation === "overzicht") {
+      return !stage.done && !stageUnderway(stage.date);
+    }
+    return false;
+  });
+});
 
 function handleClick() {
   if (props.onClosed) {
@@ -28,61 +51,37 @@ function handleClick() {
 </script>
 
 <template>
-  <ul v-if="race" class="stage-list">
-    <template v-for="stage in sideBarStore.allStages" :key="stage.id">
-      <li v-if="stage.done && compLocation === 'uitslag'" class="stage-list--item">
-        <NuxtLink
-          :to="{
-            name: 'dashboard-race-id-uitslagen-nr',
-            params:
-              {
-                race: slugify(getRaceName(stage.raceId)),
-                id: stage.raceId,
-                nr: stage.stageNr,
-              },
-          }"
-          @click="handleClick"
-        >
-          <template v-if="!sideBarStore.isClassicSeason">
-            <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-              stage.finishCity }}
-          </template>
-          <template v-else>
-            <span>{{ new Date(stage.date).toLocaleDateString("nl-NL", {
-              day: '2-digit',
-              month: 'short',
-            }) }}. </span>
-            {{ getRaceName(stage.raceId) }}
-          </template>
-        </NuxtLink>
-      </li>
+  <ul v-if="hasRace" class="stage-list">
+    <li
+      v-for="stage in visibleStages"
+      :key="stage.id"
+      class="stage-list--item"
+    >
+      <NuxtLink
+        :to="{
+          name: routeName,
+          params: {
+            race: slugify(getRaceName(stage.raceId)),
+            id: stage.raceId,
+            nr: stage.stageNr,
+          },
+        }"
+        @click="handleClick"
+      >
+        <template v-if="!sideBarStore.isClassicSeason">
+          <span class="stage-nr">{{ stage.stageNr }}.</span>
 
-      <li v-else-if="!stage.done && !stageUnderway(stage.date) && compLocation === 'overzicht'" class="stage-list--item">
-        <NuxtLink
-          :to="{
-            name: 'dashboard-race-id-selecteer-nr',
-            params:
-              {
-                race: slugify(getRaceName(stage.raceId)),
-                id: stage.raceId,
-                nr: stage.stageNr,
-              },
-          }"
-          @click="handleClick"
-        >
-          <template v-if="!sideBarStore.isClassicSeason">
-            <span>{{ stage.stageNr }}.</span> {{ stage.startCity }} - {{
-              stage.finishCity }}
-          </template>
-          <template v-else>
-            <span>{{ new Date(stage.date).toLocaleDateString("nl-NL", {
-              day: '2-digit',
-              month: 'short',
-            }) }}. </span>
+          <span class="stage-city">{{ stage.startCity }} - {{ stage.finishCity }}</span>
+          <span class="stage-date">{{ formatDate(stage.date) }}</span>
+        </template>
+
+        <template v-else>
+          <span class="stage-date">{{ formatDate(stage.date) }}. </span>
+          <span :class="{ 'stage-race': compLocation === 'overzicht' }">
             {{ getRaceName(stage.raceId) }}
-          </template>
-        </NuxtLink>
-      </li>
-    </template>
+          </span>
+        </template>
+      </NuxtLink>
+    </li>
   </ul>
 </template>

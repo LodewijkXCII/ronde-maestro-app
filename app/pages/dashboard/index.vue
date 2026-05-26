@@ -15,7 +15,7 @@ const errorMessage = ref<string[]>([]);
 const entriesLoading = ref(false);
 const resultsLoading = ref(false);
 const userEntries = ref<GetEntry[] | []>([]);
-const resultIsGC = ref(false);
+const resultIsGC = ref(true);
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
@@ -252,7 +252,9 @@ watch(currentRace, async (newRace) => {
                 <p>{{ latestResult.stage.startCity }} - {{ latestResult.stage.finishCity }}</p>
                 <img :src="`${config.public.s3BucketURL}/${latestResult.stage.stageType.image}`" :alt="latestResult.stage.stageType.name">
               </div>
-              <img :src="`${config.public.s3BucketURL}/${latestResult.stage.image}`" :alt="latestResult.stage.race.name">
+              <div class="stage-box--image">
+                <img :src="`${config.public.s3BucketURL}/${latestResult.stage.image}`" :alt="latestResult.stage.race.name">
+              </div>
             </div>
 
             <div>
@@ -265,8 +267,10 @@ watch(currentRace, async (newRace) => {
               />
             </div>
 
-            <div class="points-box ">
-              Jouw score: <span>{{ latestResult.users.find(user => user.userId === authStore.user.id)?.points }} ptn</span>
+            <div class="points-box">
+              <div class="stage-box--body">
+                Jouw score: <span>{{ latestResult.users.find(user => user.userId === authStore.user.id)?.points }} ptn</span>
+              </div>
             </div>
 
             <button class="btn btn-primary btn-full-width" @click="goToStage(latestResult.stage.id)">
@@ -368,21 +372,6 @@ watch(currentRace, async (newRace) => {
           </div>
         </div>
       </div>
-
-      <!-- <section v-if="upComingStage">
-        <h4>Jouw selectie voor etappe {{ upComingStage.stageNr }}:</h4>
-        <p>{{ upComingStage.startCity }} - {{ upComingStage.finishCity }}</p>
-
-        <div class="selected-stage">
-          <CyclistCardLarge
-            v-for="{ cyclist } in userEntries"
-            :key="cyclist.id"
-            :cyclist
-
-            show-team-data
-          />
-        </div>
-      </section> -->
     </div>
   </main>
 </template>
@@ -425,6 +414,7 @@ watch(currentRace, async (newRace) => {
       inset: 0;
       display: flex;
       align-items: center;
+      padding: 1rem;
 
       &__inner {
         max-width: 50ch;

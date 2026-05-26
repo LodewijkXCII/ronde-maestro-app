@@ -58,6 +58,7 @@ const config = useRuntimeConfig();
     grid-template-columns: auto minmax(auto, 75px);
     gap: 0.75rem 0.25rem;
     justify-content: space-between;
+    padding: 1rem;
 
     h3 {
       font-weight: 700;
@@ -83,8 +84,12 @@ const config = useRuntimeConfig();
 
 .stage-image {
   width: 100%;
-  max-height: 180px;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
   overflow: hidden;
+
+  @media (max-width: 90em) {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
 
   img {
     width: 100%;

@@ -337,10 +337,8 @@ a.btn,
 .stage-box,
 .points-box {
   background: var(--clr-background-mute);
-  padding: 1rem;
   border-radius: var(--border-radius);
   min-width: 90%;
-
   display: flex;
   margin-bottom: 1em;
 
@@ -353,15 +351,24 @@ a.btn,
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: .75rem 1rem;
 
+  
+  
     img {
       max-width: 20px;
     }
   }
 
+  .points-box--image, .stage-box--image {
+    overflow: hidden;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
+
   .points-box--body,
   .stage-box--body {
     justify-self: start;
+    padding: 1rem;
   }
 }
 

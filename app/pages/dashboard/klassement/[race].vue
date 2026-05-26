@@ -90,6 +90,7 @@ async function getRaceData() {
 }
 
 function selectStageFromQuery() {
+  console.log(route);
   const querySlug = route.query.race as string || route.query.stage as string;
   if (querySlug) {
     const foundStage = resultPerStage.value.find(

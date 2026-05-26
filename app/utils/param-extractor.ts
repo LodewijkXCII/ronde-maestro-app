@@ -1,5 +1,4 @@
 export default function getParamId(param: string | string[] | undefined): number | undefined {
-  console.log(param);
   let actualString: string | undefined;
 
   if (Array.isArray(param)) {

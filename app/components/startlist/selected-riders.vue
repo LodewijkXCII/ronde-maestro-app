@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import { ref, watch } from "vue";
-
 import type { CyclistWithRaceDetails } from "~/types/startlist";
 
 const config = useRuntimeConfig();
@@ -24,7 +22,9 @@ const submitted = ref(false);
 const errorMessage = ref("");
 const submitMessage = ref("");
 
-const selectableRiders = ref(currentStage.value?.stageType.name === "Ploegentijdrit" ? 3 : 8);
+const selectableRiders = computed(() => {
+  return currentStage.value?.stageType?.name === "Ploegentijdrit" ? 3 : 8;
+});
 
 function addToSelection(cyclist: CyclistWithRaceDetails) {
   selectedRidersStore.handleCyclist(cyclist.id);
@@ -77,15 +77,15 @@ async function handleSubmit() {
 
     submitted.value = true;
 
-    if (!sideBarStore.isClassicSeason) {
-      navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
-        race: slugify(sideBarStore.currentRace?.name as string),
-        id: sideBarStore.currentRace?.id,
-      } });
-    }
-    else {
-      navigateTo({ name: "dashboard-etappe-overzicht" });
-    }
+    navigateTo({ name: "dashboard-etappe-overzicht" });
+    // if (!sideBarStore.isClassicSeason) {
+    //   navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
+    //     race: slugify(sideBarStore.currentRace?.name as string),
+    //     id: sideBarStore.currentRace?.id,
+    //   } });
+    // }
+    // else {
+    // }
   }
   catch (e) {
     const error = e as FetchError;
@@ -98,19 +98,18 @@ async function handleSubmit() {
 }
 
 watch(currentStage, (newStage) => {
-  // Only proceed if newStage has a valid value (is not null/undefined)
   if (newStage) {
     getSelectedRiders(newStage.id);
   }
 }, { immediate: true });
 
-function emtpyErrorMessage() {
-  return errorMessage.value = "";
+function emptyErrorMessage() {
+  errorMessage.value = "";
 }
 
-watch(() => errorMessage.value, (oldMessage, newMessage) => {
-  if (newMessage !== oldMessage) {
-    setTimeout(emtpyErrorMessage, 2000);
+watch(() => errorMessage.value, (newMessage) => {
+  if (newMessage) {
+    setTimeout(emptyErrorMessage, 2000);
   }
 });
 
@@ -196,25 +195,27 @@ onBeforeRouteLeave(() => {
 </template>
 
 <style>
+/* FIX: Standardized Nesting selectors for seamless Vite compiling */
 .selected-riders {
   --_padding-size: 1rem;
   padding: 1.25rem var(--_padding-size);
   border-radius: var(--border-radius);
   height: fit-content;
   background: var(--clr-background-mute);
-
-  > .btn-group {
-    margin-top: 1rem;
-  }
   @media (min-width: 750px) {
     position: sticky;
     top: calc(var(--navbar-height) + 2rem);
   }
-  .dashboard-card & {
-    background: transparent;
-    padding: 0;
-    position: initial;
+
+  .btn-group {
+    margin-top: 1rem;
   }
+}
+
+.selected-riders .dashboard-card .selected-riders {
+  background: transparent;
+  padding: 0;
+  position: initial;
 }
 
 .selected-riders-container {
@@ -222,30 +223,31 @@ onBeforeRouteLeave(() => {
   gap: 0.5rem;
   margin-block: calc(2 * var(--_padding-size));
   position: relative;
+}
 
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    width: calc(100% + (2 * var(--_padding-size)));
-    height: 2px;
-    background-color: var(--clr-primary-mute);
-    left: calc(var(--_padding-size) * -1);
-  }
+.selected-riders-container::before,
+.selected-riders-container::after {
+  content: "";
+  position: absolute;
+  width: calc(100% + (2 * var(--_padding-size)));
+  height: 2px;
+  background-color: var(--clr-primary-mute);
+  left: calc(var(--_padding-size) * -1);
+}
 
-  &::before {
-    top: calc(var(--_padding-size) * -1);
-  }
-  &::after {
-    bottom: calc(var(--_padding-size) * -1);
-  }
+.selected-riders-container::before {
+  top: calc(var(--_padding-size) * -1);
+}
+
+.selected-riders-container::after {
+  bottom: calc(var(--_padding-size) * -1);
 }
 
 .selected-riders-container > .selected:nth-of-type(n + 9) {
   background-color: var(--clr-error);
+}
 
-  &:hover {
-    outline-color: hsl(354 51% 59% / 0.9);
-  }
+.selected-riders-container > .selected:nth-of-type(n + 9):hover {
+  outline-color: hsl(354 51% 59% / 0.9);
 }
 </style>
