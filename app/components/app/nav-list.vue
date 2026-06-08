@@ -32,7 +32,7 @@ function formatDate(dateString: string): string {
 
 // 2. Filter stages early to keep template conditions simple
 const visibleStages = computed(() => {
-  return sideBarStore.allStages.filter((stage) => {
+  const filteredStages = sideBarStore.allStages.filter((stage) => {
     if (props.compLocation === "uitslag") {
       return stage.done;
     }
@@ -41,6 +41,12 @@ const visibleStages = computed(() => {
     }
     return false;
   });
+
+  if (props.compLocation === "uitslag") {
+    filteredStages.reverse();
+  }
+
+  return filteredStages;
 });
 
 function handleClick() {

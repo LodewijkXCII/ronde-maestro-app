@@ -74,6 +74,13 @@ watch(
         </div>
         <section v-else class="cyclistSelector">
           <h2>Teams en renners</h2>
+
+          <div class="alert alert-success">
+            <Icon name="tabler:info-square-rounded" />
+            <span>
+              Ploegentijdritten zijn net wat anders dan andere races. Selecteer de kopman (nr 1) van het team. Ook kan je in plaats van 8 renners, nu 3 teams selecteren. Voor de uitslag zal alleen de top 5 teams en hun kopman in de uitslag komen te staan.
+            </span>
+          </div>
           <!-- TODO ADD FILTERS -->
 
           <div class="filter-group">
