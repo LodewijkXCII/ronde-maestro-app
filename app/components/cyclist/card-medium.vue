@@ -15,8 +15,12 @@ const config = useRuntimeConfig();
 <template>
   <div class="cyclistCard" :class="{ withdraw: raceDetails?.withdraw, selected: riderSelected(cyclist.id) }" :data-user-select="noUserSelect ? false : true">
     <div class="cyclistCard--avatar">
-      <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
-        <img v-if="cyclist.image !== '/' || !cyclist.image" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">
+      <div class="avatar" :class="{ 'avatar-placeholder': !cyclist.image || cyclist.image === '/' }">
+        <img
+          v-if="cyclist.image && cyclist.image !== '/'"
+          :src="`${config.public.s3BucketURL}/${cyclist.image}`"
+          :alt="cyclist.lastName"
+        >
         <span v-else>
           {{ cyclist.firstName.charAt(0) }}{{ cyclist.lastName.charAt(0) }}
         </span>
@@ -30,6 +34,14 @@ const config = useRuntimeConfig();
         <div v-if="raceDetails" class="cyclistCard-raceInfo__number">
           # {{ raceDetails.raceNumber }}
         </div>
+        <div v-if="showSpecialies" class="cyclistCard--specialities">
+          <img
+            v-for="{ speciality } in cyclist.specialities"
+            :key="speciality.id"
+            :src="`${config.public.s3BucketURL}/${speciality.image}`"
+            :alt="speciality.name"
+          >
+        </div>
       </div>
       <div class="cyclistCard--cyclistInfo">
         <div class="cyclistCard--cyclistInfo__name">
@@ -40,23 +52,15 @@ const config = useRuntimeConfig();
         </div>
       </div>
     </div>
-    <div v-if="showSpecialies" class="cyclistCard--specialities">
-      <img
-        v-for="{ speciality } in cyclist.specialities"
-        :key="speciality.id"
-        :src="`${config.public.s3BucketURL}/${speciality.image}`"
-        :alt="speciality.name"
-      >
-    </div>
     <slot name="actionSlot" />
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .cyclistCard {
   --_avatar-width: 45px;
   display: grid;
-  grid-template-columns: var(--_avatar-width) 1fr minmax(35px, 65px) minmax(1px, auto);
+  grid-template-columns: var(--_avatar-width) 1fr minmax(35px, auto) minmax(1px, auto);
   align-items: center;
   gap: 0.5rem;
   background: var(--clr-background-mute);
@@ -70,35 +74,44 @@ const config = useRuntimeConfig();
     cursor: pointer;
   }
 
-  &--avatar {
+  > .cyclistCard--avatar {
     position: relative;
 
-    &__flag {
+    .avatar {
+      --_avatar-width: 45px;
+    }
+
+    .cyclistCard--avatar__flag {
       position: absolute;
       right: 0;
       bottom: -10px;
     }
   }
 
-  .avatar {
-    --_avatar-width: 45px;
+  &.avatar {
+    --_avatar-width: var(--_avatar-width);
+
+    &:has(> span) {
+      place-content: center;
+      font-size: var(--fs-400);
+      place-items: center;
+    }
   }
 
-  &--raceInfo,
-  &--specialities {
+  .cyclistCard--raceInfo,
+  .cyclistCard--specialities {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     place-items: center;
     flex-wrap: wrap;
 
     img {
-      width: 20px;
+      width: 15px;
     }
   }
 
-  &--actions {
+  & .cyclistCard--actions {
     justify-self: end;
-    align-self: start;
   }
 
   &.withdraw {
@@ -111,8 +124,11 @@ const config = useRuntimeConfig();
     }
   }
   &.selected {
-    background: var(--clr-primary);
-    color: var(--clr-primary-content);
+    background: var(--clr-primary-mute);
+    outline: 1px solid var(--clr-primary);
+  }
+  &.compared {
+    outline: 1px solid var(--clr-secondary);
   }
   .points {
     text-align: right;

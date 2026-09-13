@@ -12,8 +12,6 @@
           &copy; 2021 - {{ new Date().getFullYear() }} by ZweersDesign
         </p>
       </div>
-
-      <AppAuthButton :show-navbar-content="false" />
     </div>
     <div class="footer-wrapper footer-bottom">
       <div class="bottom-links">
@@ -51,7 +49,6 @@ footer {
 
 .footer-wrapper {
   display: flex;
-  align-items: center;
   gap: 2rem;
   padding-block: 1rem;
   justify-content: space-between;
@@ -59,6 +56,10 @@ footer {
   &.footer-top {
     border-top: 1px solid var(--clr-primary);
     border-bottom: 2px solid var(--clr-background);
+
+    svg {
+      width: 100px;
+    }
   }
   &.footer-bottom {
     & .bottom-links {
@@ -73,6 +74,10 @@ footer {
         &:hover {
           color: var(--clr-primary);
         }
+      }
+
+      @media (width < 800px) {
+        flex-direction: column;
       }
     }
   }

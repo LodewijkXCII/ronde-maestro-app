@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import { ref, watch } from "vue";
-
 import type { CyclistWithRaceDetails } from "~/types/startlist";
 
 const config = useRuntimeConfig();
@@ -24,7 +22,9 @@ const submitted = ref(false);
 const errorMessage = ref("");
 const submitMessage = ref("");
 
-const selectableRiders = ref(currentStage.value?.stageType.name === "Ploegentijdrit" ? 3 : 8);
+const selectableRiders = computed(() => {
+  return currentStage.value?.stageType?.name === "Ploegentijdrit" ? 3 : 8;
+});
 
 function addToSelection(cyclist: CyclistWithRaceDetails) {
   selectedRidersStore.handleCyclist(cyclist.id);
@@ -77,15 +77,15 @@ async function handleSubmit() {
 
     submitted.value = true;
 
-    if (!sideBarStore.isClassicSeason) {
-      navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
-        race: slugify(sideBarStore.currentRace?.name as string),
-        id: sideBarStore.currentRace?.id,
-      } });
-    }
-    else {
-      navigateTo({ name: "dashboard-etappe-overzicht" });
-    }
+    navigateTo({ name: "dashboard-etappe-overzicht" });
+    // if (!sideBarStore.isClassicSeason) {
+    //   navigateTo({ name: "dashboard-etappe-overzicht-race-id", params: {
+    //     race: slugify(sideBarStore.currentRace?.name as string),
+    //     id: sideBarStore.currentRace?.id,
+    //   } });
+    // }
+    // else {
+    // }
   }
   catch (e) {
     const error = e as FetchError;
@@ -98,19 +98,18 @@ async function handleSubmit() {
 }
 
 watch(currentStage, (newStage) => {
-  // Only proceed if newStage has a valid value (is not null/undefined)
   if (newStage) {
     getSelectedRiders(newStage.id);
   }
 }, { immediate: true });
 
-function emtpyErrorMessage() {
-  return errorMessage.value = "";
+function emptyErrorMessage() {
+  errorMessage.value = "";
 }
 
-watch(() => errorMessage.value, (oldMessage, newMessage) => {
-  if (newMessage !== oldMessage) {
-    setTimeout(emtpyErrorMessage, 2000);
+watch(() => errorMessage.value, (newMessage) => {
+  if (newMessage) {
+    setTimeout(emptyErrorMessage, 2000);
   }
 });
 
@@ -133,21 +132,44 @@ onBeforeRouteLeave(() => {
 
     <p>{{ selectedRidersComponents.length }} van {{ selectableRiders }} renners geselecteerd</p>
 
+    <AppProgressBar :selected-count="selectedRidersComponents.length" :max-select-riders="selectableRiders" />
+
     <div v-if="errorMessage" role="alert" class="alert alert-error">
       <Icon name="tabler:alert-square-rounded" />
       <span>
         {{ errorMessage }}
       </span>
     </div>
+
+    <div class="selected-riders-container">
+      <CyclistCardMedium
+        v-for="cyclist in selectedRidersComponents"
+        :key="cyclist.id"
+        :cyclist="cyclist"
+        :race-details="cyclist.startlistDetails"
+        @click="addToSelection(cyclist)"
+      >
+        <template #actionSlot>
+          <div class="cyclistCard--actions">
+            <Icon
+              name="tabler:circle-minus"
+              size="24"
+            />
+          </div>
+        </template>
+      </CyclistCardMedium>
+    </div>
+
     <div v-if="submitMessage" role="alert" class="alert alert-success">
       <Icon name="tabler:alert-square-rounded" />
       <span>
         {{ submitMessage }}
       </span>
     </div>
+
     <div class="btn-group">
       <button
-        class="btn btn-primary"
+        class="btn btn-primary btn-full-width"
         :disabled="!selectedRidersStore.formDirty
           || selectedRidersComponents.length === 0
           || selectedRidersComponents.length > selectableRiders
@@ -158,42 +180,79 @@ onBeforeRouteLeave(() => {
         <Icon v-else name="tabler:send" />
         Verzenden
       </button>
-      <button class="btn btn-alert" @click="selectedRidersStore.clearSelection">
+      <button class="btn btn-alert btn-full-width" @click="selectedRidersStore.clearSelection">
         <Icon name="tabler:trash-x" />
         Wis selectie
       </button>
     </div>
-
-    <CyclistCardMedium
-      v-for="cyclist in selectedRidersComponents"
-      :key="cyclist.id"
-      :cyclist="cyclist"
-      :race-details="cyclist.startlistDetails"
-      @click="addToSelection(cyclist)"
-    >
-      <template #actionSlot>
-        <div class="cyclistCard--actions">
-          <Icon
-            name="tabler:circle-minus"
-            size="24"
-            style="color: var(--clr-alert)"
-          />
-        </div>
-      </template>
-    </CyclistCardMedium>
+  </div>
+  <div v-if="submitMessage" role="alert" class="alert alert-success">
+    <Icon name="tabler:alert-square-rounded" />
+    <span>
+      {{ submitMessage }}
+    </span>
   </div>
 </template>
 
 <style>
-.selected-riders > .selected:nth-of-type(n + 10) {
-  background-color: var(--clr-error);
+/* FIX: Standardized Nesting selectors for seamless Vite compiling */
+.selected-riders {
+  --_padding-size: 1rem;
+  padding: 1.25rem var(--_padding-size);
+  border-radius: var(--border-radius);
+  height: fit-content;
+  background: var(--clr-background-mute);
+  @media (min-width: 750px) {
+    position: sticky;
+    top: calc(var(--navbar-height) + 2rem);
+  }
 
-  &:hover {
-    outline-color: hsl(354 51% 59% / 0.9);
+  .btn-group {
+    margin-top: 1rem;
   }
 }
 
+<<<<<<< HEAD
 .selected-riders > .cyclistCard .withdraw {
   pointer-events: initial;
+=======
+.selected-riders .dashboard-card .selected-riders {
+  background: transparent;
+  padding: 0;
+  position: initial;
+}
+
+.selected-riders-container {
+  display: grid;
+  gap: 0.5rem;
+  margin-block: calc(2 * var(--_padding-size));
+  position: relative;
+}
+
+.selected-riders-container::before,
+.selected-riders-container::after {
+  content: "";
+  position: absolute;
+  width: calc(100% + (2 * var(--_padding-size)));
+  height: 2px;
+  background-color: var(--clr-primary-mute);
+  left: calc(var(--_padding-size) * -1);
+}
+
+.selected-riders-container::before {
+  top: calc(var(--_padding-size) * -1);
+}
+
+.selected-riders-container::after {
+  bottom: calc(var(--_padding-size) * -1);
+}
+
+.selected-riders-container > .selected:nth-of-type(n + 9) {
+  background-color: var(--clr-error);
+}
+
+.selected-riders-container > .selected:nth-of-type(n + 9):hover {
+  outline-color: hsl(354 51% 59% / 0.9);
+>>>>>>> 3370b0a64ff85a61d75006ce6db4be0b04fa7a2f
 }
 </style>

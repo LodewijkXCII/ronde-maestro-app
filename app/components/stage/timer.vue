@@ -73,8 +73,10 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
   </section>
 </template>
 
-<style lang="scss">
+<style>
 .stage-timer {
+  padding: 1rem;
+
   .counter {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -90,6 +92,10 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
       padding: 1rem 0.5rem;
       color: var(--clr-primary);
       border-radius: var(--border-radius);
+    }
+
+    h3 {
+      margin-bottom: 0;
     }
   }
 }

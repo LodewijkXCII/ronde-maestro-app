@@ -1,21 +1,21 @@
-@use "utils.scss";
-@use "input.scss";
-@use "table.scss";
-
+@import url("./utils.css");
+@import url("./input.css");
+@import url("./table.css");
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Roboto:wght@100;400;700;900&display=swap");
 
 :root {
   --clr-text: hsl(0, 4%, 15%);
   --clr-text-black: hsl(0, 7%, 3%);
   --clr-text-white: hsl(20, 6%, 90%);
-  --clr-background: hsl(20, 6%, 90%);
+  --clr-background: hsl(30, 8%, 85%);
   --clr-background-mute: hsl(220, 13%, 95%);
-  --clr-background-app: hsl(0, 0%, 83%);
+  --clr-background-app: hsl(20, 6%, 90%);
   --clr-primary: hsl(212, 29%, 47%);
   --clr-primary-dark: hsla(213, 28%, 37%, 0.6);
   --clr-primary-mute: hsla(212, 29%, 47%, 25%);
   --clr-primary-content: var(--clr-text-white);
   --clr-secondary: hsl(183, 59%, 52%);
+  --clr-secondary-content: var(--clr-text-black);
   --clr-error: hsl(354, 65%, 59%);
   --clr-text-error: var(--clr-text-white);
   --clr-alert: hsl(30, 62%, 69%);
@@ -30,7 +30,7 @@
   --fs-500: clamp(1.1rem, calc(0.96rem + 0.81vw), 1.48rem);
   --fs-600: clamp(1.27rem, calc(0.92rem + 1.71vw), 2.25rem);
   --fs-700: clamp(1.42rem, calc(0.81rem + 3.06vw), 3.18rem);
-  --fs-800: clamp(1.6rem, calc(2.59rem + 5.04vw), 6.5rem);
+  --fs-800: clamp(1.6rem, calc(2.59rem + 4.20vw), 6.5rem);
   --fs-900: clamp(8.8rem, calc(6.22rem + 9.93vw), 19.36rem);
 
   --border-radius: 0.5rem;
@@ -41,7 +41,7 @@
 
   --rider-card-width-dynamic: minmax(325px, var(--rider-card-width));
   --rider-card-height-dynamic: minmax(var(--rider-card-height), 130px);
-  --box-shadow: 0px 12px 28px -7px rgba(0, 0, 0, 0.35);
+  --box-shadow: 0px 12px 12px -7px rgba(0, 0, 0, 0.35);
 }
 
 .dark {
@@ -50,7 +50,7 @@
   --clr-background-app: hsl(250, 9%, 13%);
 
   --clr-primary: hsl(212, 29%, 47%);
-  --clr-secondary: hsl(184, 59%, 62%);
+  --clr-secondary: hsl(184, 59%, 35%);
   --clr-text: var(--clr-text-white);
   --box-shadow: 0px 12px 28px -7px rgba(0, 0, 0, 0.75);
 }
@@ -59,7 +59,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  // outline: 2px solid lime;
 }
 
 * {
@@ -82,6 +81,7 @@ picture,
 svg,
 video {
   max-width: 100%;
+  height: auto;
   display: block;
   object-fit: contain;
 }
@@ -93,21 +93,14 @@ body {
   color: var(--clr-text);
   background: var(--clr-background-app);
   min-height: 100vh;
-
-  // &:has(.primary-navigation[data-visible="true"]) {
-  //   height: 100dvh;
-  //   overflow: hidden;
-  // }
 }
 
 main {
-  margin-top: calc(var(--navbar-height) + 0.25rem);
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   place-items: center;
 }
-
 
 ol,
 ul {
@@ -132,6 +125,10 @@ ul {
   padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+
+  > * + * {
+    margin-top: 1em;
+  }
 }
 
 .wrapper {
@@ -147,9 +144,16 @@ ul {
   }
 }
 
+.wrapper-nobg {
+  background: var(--clr-background-app);
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .wrapper-lg {
   /* 3* rider card width  + 1rem gap per colum*/
-  width: min(100% - 3rem, (var(--rider-card-width) + 1rem) * 3);
+  width: min(100% - 3rem, 1366px);
 }
 .wrapper-sm {
   /* 2* rider card width  + 1rem gap per colum*/
@@ -158,10 +162,6 @@ ul {
 
 .wrapper-xs {
   width: min(100% - 1rem, var(--rider-card-width));
-}
-
-.flow > * + * {
-  margin-top: 1em;
 }
 
 p {
@@ -182,7 +182,7 @@ a {
   box-shadow: none;
   text-decoration: underline;
   text-decoration-color: var(--clr-primary);
-  
+
   &:visited {
     font-weight: 600;
   }
@@ -190,10 +190,9 @@ a {
   &:hover {
     font-weight: 600;
   }
-  
+
   &:not([class]) {
     font-weight: 600;
-
   }
 }
 
@@ -207,11 +206,12 @@ h3 {
 h1 {
   font-size: var(--fs-700);
   color: currentColor;
-  margin-bottom: 0.75rem;
+  font-weight: 800;
 }
 
 h2 {
   font-size: var(--fs-600);
+  font-weight: 800;
   color: var(--clr-primary);
   margin-bottom: 0.5rem;
 }
@@ -227,7 +227,10 @@ h4 {
   line-height: 1.1;
 }
 
-
+.highlight {
+  color: var(--clr-primary);
+  display: inline-block;
+}
 
 article.race {
   margin-top: 1em;
@@ -246,4 +249,19 @@ article.race {
 
 .text-center {
   text-align: center;
+}
+
+.hover {
+  cursor: pointer;
+}
+
+summary {
+  list-style: none;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+
+  &:hover {
+    cursor: pointer;
+  }
 }

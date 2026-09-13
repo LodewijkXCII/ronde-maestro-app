@@ -2,12 +2,18 @@ import type { User } from "better-auth";
 
 import { createAuthClient } from "better-auth/vue";
 
+import type { UserPref } from "~/lib/user-schema";
+import type { UserPoule } from "~/types/teams";
+
 export type UserWithId = Omit<User, "id"> & {
   id: number;
 };
 
 export const useAuthStore = defineStore("useAuthstore", () => {
   const config = useRuntimeConfig();
+  const toastStore = useToastStore();
+  const sideBarStore = useSideBarStore();
+
   const clientBaseUrl = config.public.clientBase;
 
   const authClient = createAuthClient({
@@ -56,12 +62,17 @@ export const useAuthStore = defineStore("useAuthstore", () => {
 
   const router = useRouter();
   const session = ref<Awaited<ReturnType<typeof authClient.getSession>> | null>(null);
+  // TODO CHANGE TO $USEFETCH REQUEST WITH REFRESH POSIBILITIES
+  const userPoules = ref<UserPoule[]>([]);
 
   async function init() {
     const sessionData = await getSession();
 
     if (sessionData.data?.session) {
       session.value = sessionData;
+
+      await getUserPreference(session.value.data.user.id);
+      await getUserTeamInfo(session.value.data.user.id);
     }
   }
 
@@ -121,6 +132,99 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     });
   }
 
+  async function getUserPreference(userId: string): Promise<UserPref> {
+    const userData = localStorage.getItem("userPrefs");
+
+    if (userData) {
+      const extractedData = JSON.parse(userData);
+
+      if (extractedData.needsUpdate === false || extractedData.updated === true) {
+        return {
+          startlistNotif: extractedData.startlistNotif,
+          resultNotif: extractedData.resultNotif,
+          reminderNotif: extractedData.reminderNotif,
+        };
+      }
+    }
+
+    try {
+      const preferences = await $fetch<UserPref & { createdAt: string; updatedAt: string }>(`${config.public.apiBase}/users/preferences/${userId}`, {
+        method: "get",
+        credentials: "include",
+      });
+
+      let toastBody: ToastBody;
+
+      if (!preferences) {
+        toastBody = {
+          title: "Geen voorkeuren gevonden",
+          description: "Je krijgt op dit moment geen enkele email notificatie! Het is te adviseren om dit aan te passen.",
+          responseStatus: "warning",
+
+        };
+        toastStore.showToast({ ...toastBody, link: "/gebruiker", linkText: "Pas gegevens aan" });
+      }
+
+      if (preferences.createdAt === preferences.updatedAt) {
+        toastBody = {
+          title: "Update je meldingsvoorkeuren!",
+          description: "Je krijgt op dit moment geen enkele email notificatie! Het is te adviseren om dit aan te passen.",
+          responseStatus: "warning",
+
+        };
+        toastStore.showToast({ ...toastBody, link: "/gebruiker", linkText: "Pas gegevens aan" });
+      }
+
+      const userPrefsStorage: UserPref & { updated: boolean; needsUpdate: boolean } = {
+        needsUpdate: preferences.createdAt === preferences.updatedAt,
+        updated: false,
+        ...preferences,
+      };
+
+      localStorage.setItem("userPrefs", JSON.stringify(userPrefsStorage));
+
+      return { startlistNotif: preferences.startlistNotif, resultNotif: preferences.resultNotif, reminderNotif: preferences.reminderNotif };
+    }
+    catch (error: any) {
+      toastStore.showToast({
+        title: "Er is een fout opgetreden",
+        description: error.message,
+        responseStatus: "warning",
+      });
+
+      return {
+        startlistNotif: "none",
+        resultNotif: "none",
+        reminderNotif: "none",
+      };
+    }
+  }
+
+  async function getUserTeamInfo(userId: string): Promise<UserPoule[] | undefined> {
+    if (!sideBarStore.upcomingRace && !sideBarStore.currentRace) {
+      await sideBarStore.refreshUpcomingRace();
+    }
+
+    try {
+      const queryParams = sideBarStore.isClassicSeason
+        ? { seasonTimeId: sideBarStore.classicsRaces?.seasonTimeId }
+        : { raceId: sideBarStore.currentRace?.id };
+
+      const poules = await $fetch<UserPoule[]>(`${config.public.apiBase}/users/poules/${userId}`, {
+        method: "get",
+        query: { ...queryParams },
+        credentials: "include",
+      });
+
+      if (poules) {
+        return userPoules.value = poules;
+      }
+    }
+    catch (error: any) {
+      console.error(error);
+    }
+  }
+
   async function resendVerification(email: string) {
     await sendVerificationEmail({
       email,
@@ -176,9 +280,27 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     });
   }
 
+  async function deleteUser() {
+    if (!user.value) {
+      console.error("No user found");
+    }
+
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+
+    headers.append("csrf-token", csrf);
+
+    await authClient.deleteUser({
+      callbackURL: "/", // you can provide a callback URL to redirect after deletion
+    });
+
+    navigateTo("/");
+  }
+
   return {
     init,
     session,
+    userPoules,
     user,
     loading,
     inloggen,
@@ -190,5 +312,8 @@ export const useAuthStore = defineStore("useAuthstore", () => {
     resetPassword,
     resetPasswordRequest,
     showVerificationButton: showVerificationComponent,
+    getUserPreference,
+    deleteUser,
+    getUserTeamInfo,
   };
 });

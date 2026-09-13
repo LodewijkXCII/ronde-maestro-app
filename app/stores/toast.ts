@@ -2,6 +2,8 @@ export type ToastBody = {
   title: string;
   description: string;
   responseStatus: "success" | "warning" | "error" | "neutral";
+  linkText?: string;
+  link?: string;
 };
 
 export const useToastStore = defineStore("useToastStore", () => {
@@ -9,12 +11,16 @@ export const useToastStore = defineStore("useToastStore", () => {
   const description = ref("");
   const show = ref(false);
   const response = ref<ToastBody["responseStatus"]>("warning");
+  const toastLink = ref<string | undefined>(undefined);
+  const toastLinkText = ref<string | undefined>(undefined);
 
-  function showToast({ title: newTitle, description: newDescription, responseStatus }: ToastBody) {
+  function showToast({ title: newTitle, description: newDescription, responseStatus, linkText: newLinkText, link: newLink }: ToastBody) {
     title.value = newTitle;
     description.value = newDescription;
     show.value = true;
     response.value = responseStatus;
+    toastLink.value = newLink;
+    toastLinkText.value = newLinkText;
   }
 
   function hideToast() {
@@ -26,6 +32,8 @@ export const useToastStore = defineStore("useToastStore", () => {
     description,
     show,
     response,
+    toastLink,
+    toastLinkText,
     showToast,
     hideToast,
   };

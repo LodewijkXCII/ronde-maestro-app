@@ -19,7 +19,6 @@ onMounted(() => {
 <template>
   <main>
     <div class="wrapper-sm">
-      <AppNavigation current-route="Etappe overzicht" />
       <div class="title-bar">
         <h2>Etappe overzicht</h2>
         <NuxtLink

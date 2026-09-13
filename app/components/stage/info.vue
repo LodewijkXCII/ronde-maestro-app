@@ -21,9 +21,9 @@ const config = useRuntimeConfig();
               month: 'short',
             }) }}. - {{ stage.startCity }} - {{ stage.finishCity }}
           </p>
-          <div v-if="stage" class="stage-section--stage__type badge">
-            <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name" class="stage-type-image"><span>{{ stage.stageType.name }}</span>
-          </div>
+        </div>
+        <div v-if="stage" class="stage-section--stage__type badge">
+          <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name" class="stage-type-image"><span>{{ stage.stageType.name }}</span>
         </div>
         <p v-else>
           {{ new Date(race.startDate).toLocaleDateString("nl-NL", {
@@ -47,14 +47,18 @@ const config = useRuntimeConfig();
   </article>
 </template>
 
-<style lang="scss">
+<style>
 .stage-section {
-  &--race {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / span 2;
+
+  .stage-section--race {
     display: grid;
     grid-template-columns: auto minmax(auto, 75px);
     gap: 0.75rem 0.25rem;
     justify-content: space-between;
-    align-items: center;
+    padding: 1rem;
 
     h3 {
       font-weight: 700;
@@ -62,12 +66,12 @@ const config = useRuntimeConfig();
     }
 
     p {
-      margin: 0;
+      margin-bottom: 0.75em;
     }
   }
 
-  &--stage {
-    &__info {
+  .stage-section--stage {
+    .stage-section--stage__info {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
@@ -80,35 +84,16 @@ const config = useRuntimeConfig();
 
 .stage-image {
   width: 100%;
-  max-height: 180px;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
   overflow: hidden;
-  border: 1px dotted pink;
+
+  @media (max-width: 90em) {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
 
   img {
     width: 100%;
     object-fit: cover;
   }
-}
-
-.badge {
-  display: inline-flex;
-  gap: 0.15rem;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  background: var(--clr-primary);
-  border: 2px solid var(--clr-primary-dark);
-  color: var(--clr-primary-content);
-  border-radius: 500px;
-  font-size: var(--fs-200);
-  user-select: none;
-
-  img {
-    max-width: 15px;
-  }
-}
-
-.badged {
-  display: flex;
-  gap: 0.5rem;
 }
 </style>

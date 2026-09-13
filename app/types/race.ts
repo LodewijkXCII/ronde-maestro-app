@@ -7,7 +7,7 @@ export type ClassicsRaces = {
   name: string;
   startDate: Date;
   finishDate: Date;
-  races: Race[] | null;
+  races: SelectRaceWithRelations[] | null;
   year: number;
   seasonTimeId: number | null;
 };
@@ -16,6 +16,7 @@ export type Race = {
   id: number;
   name: string;
   image: string | null;
+  coverImage: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   countryId: number;

@@ -40,6 +40,8 @@ export const useStartlistStore = defineStore("useStartlistStore", () => {
 
   const loading = computed(() => startlistDataStatus.value === "pending");
 
+
+
   return {
     activeRaceIdForFetch,
     loading,

@@ -47,6 +47,8 @@ const onSubmit = handleSubmit(async (values) => {
     };
     toastStore.showToast(toastBody);
     submitted.value = true;
+
+    localStorage.setItem("userPrefs", JSON.stringify({ updated: true, needsUpdate: false, ...sendBody }));
   }
   catch (e: any) {
     const error = e as FetchError;
@@ -64,26 +66,15 @@ const onSubmit = handleSubmit(async (values) => {
 onMounted(async () => {
   if (authStore.user) {
     loading.value = true;
-
-    try {
-      const preferences = await $fetch<UserPref>(`${config.public.apiBase}/users/preferences/${authStore.user.id}`, {
-        method: "get",
-        credentials: "include",
-      });
-
-      setValues({
-        startlistNotif: preferences.startlistNotif,
-        resultNotif: preferences.resultNotif,
-        reminderNotif: preferences.reminderNotif,
-      });
-    }
-    catch (error: any) {
-      submitError.value = `Failed to load preferences: ${error.message}`;
-    }
-    finally {
-      loading.value = false;
-    }
   }
+
+  const userData = await authStore.getUserPreference(authStore.user.id);
+
+  if (userData) {
+    setValues(userData);
+  }
+
+  loading.value = false;
 });
 </script>
 
@@ -102,16 +93,15 @@ onMounted(async () => {
       </span>
     </div>
 
-    <h2>Account voorkeuren</h2>
+    <div class="icon-header">
+      <Icon name="tabler:bell-ringing" />
+      <h3>Account voorkeuren</h3>
+    </div>
     <p>
-      Hier kan je account gegevens inzien en wijzigen. Voor de beste ervaring is het verstanding om de functionele
-      notificaties aan te zetten.
+      Hier kan je account gegevens inzien en wijzigen. Voor de beste ervaring is het verstanding om de onderstaande notificaties aan te zetten.
     </p>
 
     <form @submit="onSubmit">
-      <h3>Functionele notificaties</h3>
-      <p>Geef hieroner aan op welke manier je meldingen van bepaalde onderdelen wilt ontvangen.</p>
-
       <!-- Startlijst -->
       <fieldset>
         <legend>Startlijst bekend</legend>

@@ -3,21 +3,11 @@ import getParamId from "~/utils/param-extractor";
 
 const sideBarStore = useSideBarStore();
 const startlistStore = useStartlistStore();
-
 const route = useRoute();
 
-const { currentRace } = storeToRefs(sideBarStore);
-const { currentStage } = storeToRefs(sideBarStore);
+const { currentStage, currentRace } = storeToRefs(sideBarStore);
+
 const compkey = ref(0);
-
-const showAllTeams = ref(false);
-
-function toggleAllTeams() {
-  showAllTeams.value = !showAllTeams.value;
-}
-function handleChildToggle() {
-  showAllTeams.value = false;
-}
 
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   if (!route.params.id) {
@@ -53,16 +43,13 @@ watch(
     }
     setRaceAndStageData(newCurrentRace);
   },
-  {
-    immediate: true,
-    deep: true,
-  },
+  { deep: true, immediate: true },
 );
 </script>
 
 <template>
   <main>
-    <div class="wrapper">
+    <div class="wrapper wrapper-nobg">
       <Loading v-if="sideBarStore.loading" />
 
       <div v-if="!sideBarStore.loading && !currentRace" role="alert" class="alert alert-error">
@@ -72,7 +59,6 @@ watch(
         </span>
       </div>
       <div class="cyclistOverview">
-        <AppNavigation :current-route="`Selectie etappe ${currentStage?.stageNr}`" />
         <section v-if="currentRace && currentStage" class="cyclistOverview-cards">
           <StageInfo :race="currentRace" :stage="currentStage" />
           <StageTimer
@@ -82,29 +68,44 @@ watch(
             :stage-id="currentStage.id"
           />
         </section>
-        <Loading v-if="startlistStore.loading" />
+
+        <div v-if="startlistStore.loading" class="cyclistSelector">
+          <Loading text="Renners zoeken..." />
+        </div>
         <section v-else class="cyclistSelector">
           <h2>Teams en renners</h2>
+
+          <div v-if="currentStage.stageType.name === 'Ploegentijdrit'" class="alert alert-success">
+            <Icon name="tabler:info-square-rounded" />
+            <span>
+              Ploegentijdritten zijn net wat anders dan andere races. Selecteer de kopman (nr 1) van het team. Ook kan je in plaats van 8 renners, nu 3 teams selecteren. Voor de uitslag zal alleen de top 5 teams en hun kopman in de uitslag komen te staan.
+            </span>
+          </div>
           <!-- TODO ADD FILTERS -->
 
           <div class="filter-group">
             <div class="toggle-switch">
               <label class="switch">
-                <input type="checkbox" switch @click="toggleAllTeams">
+                <input type="checkbox" switch @click="startlistStore.showAllTeams = !startlistStore.showAllTeams">
                 <div class="slider round" />
               </label>
-              <p>{{ showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
+              <p>{{ startlistStore.showAllTeams ? 'Verberg alle teams' : 'Toon alle teams' }}</p>
             </div>
           </div>
+
+          <div v-if="!startlistStore.loading && startlistStore.startlistDataStatus === 'success' && !startlistStore.startlistData?.length" role="alert" class="alert alert-warning">
+            <Icon name="tabler:alert-square-rounded" />
+            <span>
+              Er is nog geen startlijst voor deze race. Houd je mail in de gaten wanneer de startlijst defitief is, meestal is dit 24u voor het start van de race.
+            </span>
+          </div>
           <!-- Startlist -->
-          <div v-if="startlistStore.startlistData" class="cyclistSelector--teams">
+          <div else class="cyclistSelector--teams">
             <StartlistTeam
               v-for="{ team, cyclists } in startlistStore.startlistData"
               :key="team.id"
               :team="team"
               :cyclists
-              :is-all-teams-shown="showAllTeams"
-              @toggle-team-state="handleChildToggle"
             />
           </div>
         <!-- Selected Riders -->
@@ -121,13 +122,13 @@ watch(
 .cyclistOverview {
   display: grid;
   grid-template-columns: repeat(4, var(--rider-card-width));
-  grid-template-rows: auto minmax(0, 350px) auto;
+  grid-template-rows: auto minmax(215px, auto) auto;
   grid-template-areas:
-    "breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
     "info info info info"
     "startlist startlist startlist select";
   gap: 2rem 1rem;
   justify-content: center;
+  align-items: start;
 
   .startlist {
     grid-area: startlist;
@@ -151,28 +152,10 @@ watch(
   .selected-riders {
     grid-area: select;
   }
-}
 
-.cyclistSelector {
-  grid-area: startlist;
-
-  &--teams {
-    display: grid;
-    gap: 0 1rem;
-    grid-template-columns: repeat(3, var(--rider-card-width));
-  }
-}
-
-.breadcrumbs {
-  grid-column: 1 / -1;
-  grid-area: breadcrumbs;
-}
-
-@media (min-width: 20em) and (max-width: 900px) {
-  .cyclistOverview {
+  @media (min-width: 20em) and (max-width: 900px) {
     grid-template-columns: var(--rider-card-width-dynamic);
     grid-template-areas:
-      "breadcrumbs"
       "info"
       "select"
       "startlist";
@@ -186,80 +169,95 @@ watch(
         min-width: 80%;
       }
     }
-  }
 
-  .cyclistSelector {
-    grid-area: startlist;
+    .cyclistSelector {
+      grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: var(--rider-card-width-dynamic);
+      &--teams {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: var(--rider-card-width-dynamic);
+      }
     }
   }
-}
 
-@media (min-width: 900px) and (max-width: 1300px) {
-  .cyclistOverview {
+  @media (min-width: 900px) and (max-width: 1300px) {
     grid-template-columns: repeat(2, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs  breadcrumbs" "info  info" "startlist  select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
+    grid-template-areas:
+      "info  info"
+      "startlist  select";
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(1, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(1, var(--rider-card-width));
+      }
     }
   }
-}
-@media (min-width: 1300px) and (max-width: 1720px) {
-  .cyclistOverview {
+  @media (min-width: 1300px) and (max-width: 1720px) {
     grid-template-columns: repeat(3, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
+    grid-template-areas:
+      "info info info"
+      "startlist startlist select";
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(2, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(2, var(--rider-card-width));
+      }
     }
   }
-}
 
-@media (min-width: 1720px) and (max-width: 90em) {
-  .cyclistOverview {
+  @media (min-width: 1720px) and (max-width: 90em) {
     grid-template-columns: repeat(3, var(--rider-card-width));
-    grid-template-areas: "breadcrumbs breadcrumbs breadcrumbs" "info info info" "startlist startlist select";
-  }
-  .cyclistSelector {
-    grid-area: startlist;
+    grid-template-areas:
+      "info info info"
+      "startlist startlist select";
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(2, var(--rider-card-width));
+    .cyclistSelector {
+      grid-area: startlist;
+
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(2, var(--rider-card-width));
+      }
     }
   }
-}
 
-@media (min-width: 160em) {
-  .cyclistOverview {
+  @media (min-width: 160em) {
     grid-template-columns: repeat(6, var(--rider-card-width));
     grid-template-areas:
-      "breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs breadcrumbs"
       "info info info info info info"
       "startlist startlist startlist startlist startlist select";
-  }
 
-  .cyclistSelector {
-    grid-area: startlist;
+    .cyclistSelector {
+      grid-area: startlist;
 
-    &--teams {
-      display: grid;
-      grid-template-columns: repeat(5, var(--rider-card-width));
+      &--teams {
+        display: grid;
+        grid-template-columns: repeat(5, var(--rider-card-width));
+      }
     }
   }
+}
+
+.cyclistSelector {
+  grid-area: startlist;
+
+  &--teams {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, var(--rider-card-width));
+  }
+}
+
+.breadcrumbs {
+  grid-column: 1 / -1;
+  grid-area: breadcrumbs;
 }
 
 .toggle-switch {

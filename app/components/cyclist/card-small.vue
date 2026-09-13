@@ -15,12 +15,16 @@ const config = useRuntimeConfig();
 <template>
   <div class="cyclistMiniCard">
     <div class="cyclistMiniCard--position">
-      <span v-if="result">{{ result.position }}.</span>
+      <span v-if="result && result.position > 0">{{ result.position }}</span>
       <span v-else>-</span>
     </div>
 
-    <div class="avatar" :class="{ 'avatar-placeholder': cyclist.image === '/' }">
-      <img v-if="cyclist.image !== '/' || !cyclist.image" :src="`${config.public.s3BucketURL}/${cyclist.image}`" :alt="cyclist.lastName">
+    <div class="avatar" :class="{ 'avatar-placeholder': !cyclist.image || cyclist.image === '/' }">
+      <img
+        v-if="cyclist.image && cyclist.image !== '/'"
+        :src="`${config.public.s3BucketURL}/${cyclist.image}`"
+        :alt="cyclist.lastName"
+      >
       <span v-else>
         {{ cyclist.firstName.charAt(0) }}{{ cyclist.lastName.charAt(0) }}
       </span>
@@ -38,39 +42,35 @@ const config = useRuntimeConfig();
         {{ cyclist.team.name }}
       </p>
     </div>
-    <!-- FIXME IF NEEDED USE AS SLOT -->
+
     <div v-if="result?.points" class="points">
       <span>{{ result?.points }}</span> ptn
     </div>
   </div>
 </template>
 
-<style lang="scss">
+<style>
 .cyclistMiniCard {
   --_avatar-width: 35px;
   font-size: 0.9rem;
-  margin: 0.5rem 0;
+
   display: grid;
   grid-template-columns: minmax(3ch, auto) var(--_avatar-width) minmax(auto, 40ch) auto;
   gap: 0.5rem;
   align-items: center;
-  max-width: var(--rider-card-width);
+  /* max-width: var(--rider-card-width); */
   border-radius: var(--border-radius);
 
-  &:first-of-type {
-    margin-top: 1rem;
-  }
-
-  &--cyclist {
+  .cyclistMiniCard--cyclist {
     p {
       margin: 0;
     }
-    &__name {
+    .cyclistMiniCard--cyclist__name {
       display: flex;
       gap: 0.35rem;
       place-items: center;
     }
-    &__team {
+    .cyclistMiniCard--cyclist__team {
       font-weight: 300;
       font-style: italic;
     }
@@ -80,7 +80,7 @@ const config = useRuntimeConfig();
     --_avatar-width: var(--_avatar-width);
   }
 
-  &--raceInfo__number {
+  .cyclistMiniCard--raceInfo__number {
     font-weight: 900;
   }
 

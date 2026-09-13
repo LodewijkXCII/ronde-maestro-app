@@ -19,6 +19,7 @@ export type ResultUsersByStage = {
   points: number;
   entries: EntryWithResult[];
   winner: boolean;
+  absolutePosition: number;
 };
 export type EntryWithResult = {
   id: number;
@@ -37,7 +38,6 @@ export type ResultResponse = {
   cyclist: ResultCyclistByStage[];
   users: ResultUsersByStage[];
   entry: EntryWithResult[];
-
 };
 
 export type TotalPointsUser = {
@@ -54,4 +54,9 @@ export type RaceTotalPoints = {
     stageNr: number;
     winner: boolean;
   })[];
+};
+
+export type ResultPerStage = {
+  stage: Stage;
+  results: (TotalPointsUser & { winner: boolean })[];
 };

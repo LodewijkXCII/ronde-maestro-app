@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-defineProps<{
-  showNavbarContent: boolean;
-}>();
 const authStore = useAuthStore();
 </script>
 
@@ -15,18 +12,8 @@ const authStore = useAuthStore();
       @click="navigateTo('/gebruiker')"
     >
       <Icon name="tabler:user-check" size="24" />
-      <span class="user-name__name">{{ authStore.user.name }}</span>
+      <span class="user-name__name">Hoi, {{ authStore.user.name }}</span>
     </div>
-    <ul v-if="showNavbarContent" class="user-nav">
-      <li>
-        <NuxtLink to="/gebruiker">
-          Account
-        </NuxtLink>
-      </li>
-      <li class="hover" @click="authStore.uitloggen">
-        Uitloggen
-      </li>
-    </ul>
   </div>
   <NuxtLink
     v-else
@@ -42,7 +29,7 @@ const authStore = useAuthStore();
   </NuxtLink>
 </template>
 
-<style lang="scss">
+<style>
 .user-name {
   position: relative;
   display: flex;
@@ -51,13 +38,10 @@ const authStore = useAuthStore();
   padding: 0.25rem 0.5rem;
   color: var(--clr-text);
   text-decoration: none;
-  background: var(--clr-background);
   height: min-content;
-  border-radius: 1000px;
 
   &:hover {
-    background-color: var(--clr-primary);
-    color: var(--clr-primary-content);
+    color: var(--clr-primary);
     cursor: pointer;
   }
 }
@@ -74,6 +58,10 @@ const authStore = useAuthStore();
 }
 
 @media screen and (max-width: 90em) {
+  .user-name {
+    justify-content: end;
+  }
+
   .user-name__name {
     display: none;
   }

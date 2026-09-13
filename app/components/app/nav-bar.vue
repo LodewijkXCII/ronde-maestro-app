@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { onMounted } from "vue";
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
@@ -7,16 +7,28 @@ const route = useRoute();
 
 const isMounted = ref(false);
 const showNavbar = ref(false);
-const navbarRef = ref<HTMLElement | null>(null);
+
+const selectCyclistRef = ref<HTMLElement | null>(null);
+const selectResultRef = ref<HTMLElement | null>(null);
+const selectTeamsRef = ref<HTMLElement | null>(null);
 
 function closeNavbar() {
+  if (event && (event.target as HTMLElement).closest("summary")) {
+    return;
+  }
+
   showNavbar.value = false;
+  if (selectResultRef.value && selectCyclistRef.value) {
+    selectCyclistRef.value.removeAttribute("open");
+    selectResultRef.value.removeAttribute("open");
+    if (selectTeamsRef.value) {
+      selectTeamsRef.value.removeAttribute("open");
+    }
+  }
 }
 
-function handleClickOutside(e: Event) {
-  if (navbarRef.value && !navbarRef.value.contains(e.target as Node)) {
-    closeNavbar();
-  }
+function handleClickOutside() {
+  closeNavbar();
 }
 
 onMounted(() => {
@@ -31,195 +43,203 @@ onBeforeUnmount(() => {
 
 const isNavbarActive = computed({
   get() {
-    return showNavbar.value === false;
+    return showNavbar.value;
   },
-  set() {
-    showNavbar.value = !showNavbar.value;
+  set(val) {
+    showNavbar.value = val;
   },
 });
 
 watch(route, () => {
-  if (showNavbar.value) {
-    closeNavbar();
-  }
+  closeNavbar();
 });
 </script>
 
 <template>
-  <div ref="navbarRef" class="nav-wrapper">
+  <div class="nav-wrapper">
     <div class="navbar">
       <div class="nav-left">
-        <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo" @click="closeNavbar">
+        <NuxtLink :to="authStore.session ? '/dashboard' : '/'" class="nav-logo">
           <AppLogo />
         </NuxtLink>
       </div>
-      <nav class="nav-middle primary-navigation" :data-visible="showNavbar">
-        <div class="link-block">
-          <div v-if="authStore.session" class="link-block__title">
-            <NuxtLink to="/dashboard" @click="closeNavbar">
+      <nav v-if="authStore.session && sideBarStore.upcomingRace" class="nav-middle primary-navigation" :data-visible="showNavbar">
+        <ul @click="closeNavbar">
+          <li class="nav-link">
+            <NuxtLink to="/dashboard">
               Dashboard
             </NuxtLink>
-          </div>
-          <ul>
-            <li>
-              <NuxtLink to="/kalender" @click="closeNavbar">
-                Kalender
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/spelregels" @click="closeNavbar">
-                Spelregels
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
-        <div v-if="authStore.session" class="link-block">
-          <div class="link-block__title">
-            <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }" @click="closeNavbar">
-              Etappe overzicht
-            </NuxtLink>
-          </div>
-          <div v-if="!sideBarStore.isClassicSeason" class="race-list">
-            <NavList
-              v-for="race in sideBarStore.upcomingRace"
-              :key="race.id"
-              :grand-tour="race"
-              :on-closed="closeNavbar"
-              comp-location="overzicht"
-            />
-          </div>
-          <div v-else-if="sideBarStore.classicsRaces">
-            <NavList
-              :classics-races="sideBarStore.classicsRaces"
-              :on-closed="closeNavbar"
-              comp-location="overzicht"
-            />
-          </div>
-        </div>
-        <div v-if="authStore.session" class="link-block">
-          <div class="link-block__title">
-            Uitslagen
-          </div>
-          <div class="race-list">
-            <div v-if="!sideBarStore.isClassicSeason" class="race-list">
-              <NavList
-                v-for="race in sideBarStore.upcomingRace"
-                :key="race.id"
-                :grand-tour="race"
+          </li>
+          <li class="nav-link">
+            <details ref="selectCyclistRef">
+              <summary @click.stop>
+                Renners selecteren <Icon name="tabler:chevron-right" size="16" class="nav-icon" />
+              </summary>
+
+              <AppNavList
+                v-if="!sideBarStore.isClassicSeason"
+                :grand-tour="sideBarStore.currentRace || undefined"
                 :on-closed="closeNavbar"
-                comp-location="uitslag"
+                comp-location="overzicht"
               />
-            </div>
-            <div v-else-if="sideBarStore.classicsRaces">
-              <NavList
+
+              <AppNavList
+                v-else-if="sideBarStore.classicsRaces"
                 :classics-races="sideBarStore.classicsRaces"
                 :on-closed="closeNavbar"
-                comp-location="uitslag"
+                comp-location="overzicht"
               />
-            </div>
-          </div>
-        </div>
-        <div v-if="authStore.session" class="link-block">
-          <div class="link-block__title">
-            Klassement
-          </div>
-          <ul>
-            <template v-if="!sideBarStore.isClassicSeason">
-              <li v-for="race in sideBarStore.upcomingRace" :key="race.id">
-                <NuxtLink
-                  :to="{
-                    name: 'dashboard-klassement-race',
-                    params: {
-                      race: slugify(race.name),
-                    },
-                  }"
-                  @click="closeNavbar"
-                >
-                  {{ race.name }}
-                </NuxtLink>
-              </li>
-            </template>
+            </details>
+          </li>
+          <li class="nav-link">
+            <NuxtLink :to="{ name: 'dashboard-etappe-overzicht' }">
+              Etappe overzicht
+            </NuxtLink>
+          </li>
+          <li class="nav-link">
+            <details ref="selectResultRef">
+              <summary @click.stop>
+                Uitslagen <Icon name="tabler:chevron-right" size="16" />
+              </summary>
 
-            <template v-else>
-              <li>
-                <NuxtLink
-                  :to="{
-                    name: 'dashboard-klassement-race',
-                    params: {
-                      race: 'klassiekers',
-                    },
-                  }"
-                  @click="closeNavbar"
-                >
-                  Klassiekers
-                </NuxtLink>
-              </li>
-            </template>
-          </ul>
-        </div>
+              <div v-if="!sideBarStore.isClassicSeason" class="race-list">
+                <AppNavList
+                  :grand-tour="sideBarStore.currentRace || undefined"
+                  :on-closed="closeNavbar"
+                  comp-location="uitslag"
+                />
+              </div>
+              <div v-else-if="sideBarStore.classicsRaces">
+                <AppNavList
+                  :classics-races="sideBarStore.classicsRaces"
+                  :on-closed="closeNavbar"
+                  comp-location="uitslag"
+                />
+              </div>
+            </details>
+          </li>
+          <li class="nav-link">
+            <NuxtLink
+              :to="{
+                name: 'dashboard-klassement-race',
+                params: {
+                  race: !sideBarStore.isClassicSeason ? slugify(sideBarStore.currentRace?.name || null) : 'klassiekers',
+                },
+              }"
+            >
+              Klassement
+            </NuxtLink>
+          </li>
+          <li class="nav-link">
+            <NuxtLink v-if="authStore.userPoules.length <= 0" :to="{ name: 'dashboard-ploegenspel' }">
+              Ploegenspel
+            </NuxtLink>
+            <details v-else ref="selectTeamsRef">
+              <summary @click.stop>
+                Ploegenspel <Icon name="tabler:chevron-right" size="16" class="nav-icon" />
+              </summary>
+
+              <ul class="stage-list">
+                <li class="stage-list--item">
+                  <NuxtLink
+                    :to="{
+                      name: 'dashboard-ploegenspel',
+                    }"
+                  >
+                    Klassement
+                  </NuxtLink>
+                </li>
+                <li v-for="team in authStore.userPoules" :key="team.id" class="stage-list--item">
+                  <NuxtLink
+                    :to="{
+                      name: 'dashboard-ploegenspel-ploeg-id',
+                      params: {
+                        ploeg: slugify(team.name),
+                        id: team.id,
+                      },
+                    }"
+                  >
+                    {{ team.name }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </details>
+          </li>
+        </ul>
       </nav>
 
       <div class="nav-right">
-        <AppAuthButton :show-navbar-content="showNavbar" />
+        <AppAuthButton />
         <AppThemeToggle />
 
-        <label class="swap" aria-label="Toggle menu">
-          <input v-model="isNavbarActive" type="checkbox">
+        <span class="mobile-nav-toggle">
+          <label class="swap" aria-label="Toggle menu">
+            <input v-model="isNavbarActive" type="checkbox">
 
-          <Icon
-            class="swap-icon"
-            :class="{ active: isMounted && isNavbarActive }"
-            name="tabler:align-justified"
-            size="24"
-            color="currentColor"
-          />
-          <Icon
-            class="swap-icon"
-            :class="{ active: isMounted && !isNavbarActive }"
-            name="tabler:x"
-            size="24"
-            color="currentColor"
-          />
-
-          <span class="visually-hidden">Menu</span>
-        </label>
+            <Icon
+              class="swap-icon"
+              :class="{ active: isMounted && isNavbarActive }"
+              name="tabler:x"
+              size="24"
+              color="currentColor"
+            />
+            <Icon
+              class="swap-icon"
+              :class="{ active: isMounted && !isNavbarActive }"
+              name="tabler:align-justified"
+              size="24"
+              color="currentColor"
+            />
+          </label>
+        </span>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss">
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+<style>
+.mobile-nav-toggle {
+  display: none;
+}
 
-  li {
+.mobile-user-list {
+  display: none;
+}
+
+.primary-navigation {
+  display: flex;
+
+  grid-column-gap: 3rem;
+  grid-row-gap: 1rem;
+  overflow: hidden;
+
+  ul {
+    list-style-type: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    gap: 0.75rem;
   }
 }
 
 .nav-wrapper {
   padding: 1rem;
-  background: var(--clr-background-mute);
+  background: hsla(from var(--clr-background-mute) h s l / 80%);
+  backdrop-filter: blur(4px);
   margin-bottom: 1rem;
   width: 100%;
-  position: absolute;
+  position: sticky;
   z-index: 1000;
   top: 0;
   min-height: var(--navbar-height);
   box-shadow: var(--box-shadow);
-}
-
-.nav-wrapper:has(.primary-navigation[data-visible="true"]) {
-  position: absolute;
+  border-bottom: 2px solid var(--clr-primary-mute);
 }
 
 .navbar {
   display: grid;
+  align-items: center;
   gap: 1rem;
-  justify-content: space-between;
   border-top: 1px solid var(--clr-primary);
   padding-top: 1rem;
   grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
@@ -229,6 +249,7 @@ ul {
     display: flex;
     gap: 1rem;
     grid-area: left;
+    align-items: center;
   }
 
   .nav-right {
@@ -240,70 +261,72 @@ ul {
   }
 }
 
-.primary-navigation {
-  display: flex;
-
-  grid-column-gap: 3rem;
-  grid-row-gap: 1rem;
-  overflow: hidden;
-
-  visibility: hidden;
-  pointer-events: none;
-  max-height: 0;
-
-  opacity: 0;
-  transition:
-    max-height 0.5s ease-in-out,
-    opacity 0.3s ease-in-out,
-    visibility 0.5s;
-}
-
-.primary-navigation[data-visible="true"] {
-  max-height: 200vh;
-  /* A value that is larger than the content's height */
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-
-  // display: flex;
-  // opacity: 1;
-  // flex-direction: row;
-  // grid-column-gap: 3rem;
-  // grid-row-gap: 1rem;
-
-  @starting-style {
-    opacity: 0;
-  }
-
-  a {
-    color: currentColor;
+.nav-link {
+  a,
+  summary {
+    color: var(--clr-text);
+    text-decoration: none;
+    justify-content: end;
 
     &:hover {
-      color: var(--clr-primary);
-      font-weight: 800;
+      font-weight: inherit;
     }
   }
 
-  .router-link-active {
-    color: var(--clr-primary);
-    box-shadow: none;
-    font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  border-radius: var(--border-radius);
+
+  &:has(.router-link-active.router-link-exact-active) {
+    background: var(--clr-primary-mute);
+    color: var(--clr-text);
+    border: 1px solid var(--clr-primary);
   }
 }
 
-.link-block {
-  min-width: 25ch;
-  max-width: 35ch;
+.nav-link:has(a:hover:not(details), summary:hover) {
+  cursor: pointer;
+  background: var(--clr-secondary);
+  transition: background 0.3s ease-in-out;
+}
 
-  &__title {
-    font-weight: 800;
-    margin-bottom: 0.75rem;
-    text-transform: uppercase;
-  }
+ul.stage-list {
+  position: absolute;
+  display: grid;
+  background: var(--clr-background-mute);
+  top: 90%;
+  border-radius: var(--border-radius);
+  outline: 2px solid var(--clr-secondary);
+  padding: 0;
+  gap: 0;
 
-  a:has(:not(.link-block__title)) {
-    font-weight: 400;
+  .stage-list--item {
+    min-width: fit-content;
+    white-space: nowrap;
+    padding: 0.5rem;
+
+    &:first-of-type a {
+      margin-top: 0.5rem;
+    }
+    &:last-of-type a {
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      display: grid;
+      grid-template-columns: minmax(3ch, auto) 1fr minmax(7ch, auto);
+      gap: 0.5rem;
+    }
+
+    &:has(a.router-link-exact-active) {
+      background: var(--clr-primary-dark);
+    }
   }
+}
+
+.stage-list--item:has(a:hover) {
+  background: var(--clr-secondary);
+  cursor: pointer;
 }
 
 @media screen and (max-width: 90em) {
@@ -315,6 +338,7 @@ ul {
     grid-template-columns: minmax(0, auto) minmax(0, auto);
     grid-template-rows: minmax(0, auto) 1fr;
     grid-template-areas: "left right" "middle middle";
+    align-items: start;
 
     .nav-right {
       gap: 0.25rem 0.5rem;
@@ -323,7 +347,15 @@ ul {
   }
 
   .navbar:has(.primary-navigation[data-visible="true"]) {
-    min-height: 100dvh;
+    min-height: 100svh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--clr-background-mute);
+    padding: 1rem;
+    padding-top: 2rem;
+    border: none;
 
     .user-container {
       position: absolute;
@@ -331,99 +363,103 @@ ul {
       display: flex;
       flex-direction: column-reverse;
       gap: 1rem;
+      width: 100%;
     }
   }
 
+  .primary-navigation {
+    display: none; /* Hidden by default on mobile */
+    flex-direction: column;
+    width: 100%;
+    /* Add these to make it overlay or push content if desired */
+    padding: 1rem 0;
+
+    ul:not(.stage-list) {
+      align-items: end;
+    }
+  }
+
+  /* This is the critical fix: override the display: none when data-visible is true */
   .primary-navigation[data-visible="true"] {
     display: flex;
-    flex-flow: column;
     grid-area: middle;
+    opacity: 1;
   }
 
-  .link-block {
-    max-width: 100%;
+  .primary-navigation ul:not(.stage-list) {
+    flex-direction: column; /* Stack links vertically on mobile */
+    width: 100%;
   }
 
-  .primary-navigation {
-    /* Reset styles for desktop */
-    display: none;
-    opacity: 0;
-  }
-}
-
-.hover {
-  cursor: pointer;
-}
-
-.race-list {
-  &:not(:last-child) {
-    margin-bottom: 1em;
-  }
-}
-
-summary a {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-  align-items: center;
-  font-weight: 400;
-
-  &:hover {
-    color: var(--clr-primary);
-    font-weight: 800;
+  .mobile-nav-toggle {
+    display: block;
   }
 
-  img {
-    max-width: 75px;
-    height: 50px;
-    object-fit: contain;
-  }
-}
+  ul.stage-list {
+    position: relative;
+    outline: none;
+    border-radius: 0;
 
-details {
-  margin-block: 0.5rem;
-  padding-block: 0.5rem;
-}
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-items: end;
+    overflow-x: auto;
 
-summary {
-  /* Pin the custom marker to the container */
-  position: relative;
-  /* Register summary as an anchor element */
-  anchor-name: --summary;
+    width: calc(100vw - 3rem);
+    padding: 0.5rem 0;
+    gap: 1rem;
 
-  &::marker {
-    content: "";
-  }
+    .stage-list--item {
+      flex: 0 0 auto; /* CRITICAL: Prevent items from shrinking */
+      border: 1px solid var(--clr-primary-mute);
+      background: var(--clr-primary-mute);
+      padding: 0;
+      border-radius: var(--border-radius);
 
-  &::before,
-  &::after {
-    /* Custom marker dimensions */
-    content: "";
-    border-block-start: 3px solid var(--clr-primary);
-    height: 0;
-    width: 1rem;
+      > a {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 4ch auto;
+        grid-template-areas:
+          "number date  "
+          "number cities";
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        margin: 0 !important;
+        gap: 0.25rem;
+        height: 100%;
+      }
 
-    /* Positions the lines */
-    inset-block-start: 50%;
-    inset-inline-end: 0;
-
-    /* Anchor the shape to the summary */
-    position: absolute;
-    position-anchor: --summary;
-    position-area: top end;
-  }
-
-  /* Rotate just the ::after line to create a "+"" shape */
-  &::after {
-    transform: rotate(90deg);
-    transform-origin: 50%;
+      .stage-nr {
+        grid-area: number;
+        font-size: var(--fs-400);
+        height: 100%;
+        align-content: center;
+        background: var(--clr-background-mute);
+        padding: 0.5rem;
+        border-radius: var(--border-radius) 0 0 var(--border-radius);
+        border: 1px solid var(--clr-primary-mute);
+      }
+      .stage-date {
+        grid-area: date;
+        padding-top: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      .stage-city {
+        grid-area: cities;
+        padding-bottom: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    }
   }
 }
 
 /* Rotate the line when open */
-details[open] summary::after {
-  transform: rotate(0deg);
+details[open] .nav-icon {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease-in-out;
 }
 
 .stage-nav a {
@@ -439,7 +475,7 @@ details[open] summary::after {
     font-weight: 800;
   }
 
-  span.iconify {
+  span.nav-icon {
     justify-self: end;
   }
 }
@@ -449,13 +485,5 @@ details[open] summary::after {
     width: 100px;
     height: auto;
   }
-}
-
-.mobile-nav-toggle {
-  display: none;
-}
-
-.mobile-user-list {
-  display: none;
 }
 </style>
