@@ -60,7 +60,7 @@ const config = useRuntimeConfig();
 .cyclistCard {
   --_avatar-width: 45px;
   display: grid;
-  grid-template-columns: var(--_avatar-width) 1fr minmax(35px, 65px) minmax(1px, auto);
+  grid-template-columns: var(--_avatar-width) 1fr minmax(35px, auto) minmax(1px, auto);
   align-items: center;
   gap: 0.5rem;
   background: var(--clr-background-mute);
@@ -110,9 +110,8 @@ const config = useRuntimeConfig();
     }
   }
 
-  &.cyclistCard--actions {
+  & .cyclistCard--actions {
     justify-self: end;
-    /* align-self: start; */
   }
 
   &.withdraw {

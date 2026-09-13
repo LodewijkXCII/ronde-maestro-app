@@ -277,16 +277,17 @@ watch(route, () => {
   margin: 0;
   border-radius: var(--border-radius);
 
-  &:hover:not(details) {
-    cursor: pointer;
-    background: var(--clr-secondary);
-    transition: background 0.3s ease-in-out;
-  }
   &:has(.router-link-active.router-link-exact-active) {
     background: var(--clr-primary-mute);
     color: var(--clr-text);
     border: 1px solid var(--clr-primary);
   }
+}
+
+.nav-link:has(a:hover:not(details), summary:hover) {
+  cursor: pointer;
+  background: var(--clr-secondary);
+  transition: background 0.3s ease-in-out;
 }
 
 ul.stage-list {
@@ -311,10 +312,6 @@ ul.stage-list {
       margin-bottom: 0.5rem;
     }
 
-    &:hover {
-      background: var(--clr-secondary);
-      cursor: pointer;
-    }
     a {
       display: grid;
       grid-template-columns: minmax(3ch, auto) 1fr minmax(7ch, auto);
@@ -325,6 +322,11 @@ ul.stage-list {
       background: var(--clr-primary-dark);
     }
   }
+}
+
+.stage-list--item:has(a:hover) {
+  background: var(--clr-secondary);
+  cursor: pointer;
 }
 
 @media screen and (max-width: 90em) {
