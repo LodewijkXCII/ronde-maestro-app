@@ -192,4 +192,8 @@ onBeforeRouteLeave(() => {
     outline-color: hsl(354 51% 59% / 0.9);
   }
 }
+
+.selected-riders > .cyclistCard .withdraw {
+  pointer-events: initial;
+}
 </style>

@@ -66,7 +66,7 @@ export const useAuthStore = defineStore("useAuthstore", () => {
   }
 
   const user = computed(() => session.value?.data?.user);
-  
+
   const loading = computed(() => session.value?.isPending);
   const errorMessage = ref("");
   const showVerificationComponent = ref(false);
