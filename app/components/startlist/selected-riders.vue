@@ -195,7 +195,6 @@ onBeforeRouteLeave(() => {
 </template>
 
 <style>
-/* FIX: Standardized Nesting selectors for seamless Vite compiling */
 .selected-riders {
   --_padding-size: 1rem;
   padding: 1.25rem var(--_padding-size);
@@ -212,10 +211,10 @@ onBeforeRouteLeave(() => {
   }
 }
 
-<<<<<<< HEAD
 .selected-riders > .cyclistCard .withdraw {
   pointer-events: initial;
-=======
+}
+
 .selected-riders .dashboard-card .selected-riders {
   background: transparent;
   padding: 0;
@@ -253,6 +252,5 @@ onBeforeRouteLeave(() => {
 
 .selected-riders-container > .selected:nth-of-type(n + 9):hover {
   outline-color: hsl(354 51% 59% / 0.9);
->>>>>>> 3370b0a64ff85a61d75006ce6db4be0b04fa7a2f
 }
 </style>
