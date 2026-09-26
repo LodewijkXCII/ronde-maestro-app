@@ -3,9 +3,9 @@
 import type { FetchError } from "ofetch";
 
 import type {
-  ResultCyclistByStage,
-  ResultResponse,
-  ResultUsersByStage,
+    ResultCyclistByStage,
+    ResultResponse,
+    ResultUsersByStage,
 } from "~/types/results";
 
 import getParamId from "~/utils/param-extractor";
@@ -24,7 +24,13 @@ const errorMessage = ref("");
 const cyclistResult = ref<ResultCyclistByStage[]>([]);
 const usersResult = ref<ResultUsersByStage[]>([]);
 
+const resultLimit = 100
+
 const loading = ref(false);
+
+const visibleRows = computed(() =>
+  getResultWithUser(usersResult.value, authStore.user.id, resultLimit)
+);
 
 const userStandingData = computed(() => {
   if (usersResult.value) {
@@ -236,22 +242,24 @@ watch(
           <div>
             <h3>Etappe klassement</h3>
 
-            <ul class="standings-list">
-              <li
-                v-for="user in usersResult"
-                :key="user.userId"
-                class="standings-user"
-                :class="{ 'current-user': authStore.user?.id === user.userId }"
+            <div class="standings-list">
+              <template
+                v-for="row in visibleRows"
+                :key="row.type === 'gap' ? 'gap' : row.user.userId"
               >
-                <details :open="authStore.user?.id === user.userId">
+              <div v-if="row.type === 'gap'">...</div>
+              <div v-else
+              class="standings-user"
+              :class="{ 'current-user': authStore.user?.id === row.user.userId }">
+                <details :open="authStore.user?.id === row.user.userId">
                   <summary>
                     <div class="standings-user--info__position">
-                      <span>{{ user.absolutePosition }}</span>
+                      <span>{{ row.user.absolutePosition }}</span>
                     </div>
                     <div class="standings-user--info">
-                      {{ user.name }}
+                      {{ row.user.name }}
                     </div>
-                    <div>{{ user.points }} ptn</div>
+                    <div>{{ row.user.points }} ptn</div>
                     <Icon
                       name="tabler:chevron-right"
                       size="16"
@@ -262,7 +270,7 @@ watch(
                   <h4>Geselecteerde renners</h4>
                   <div class="cyclist-result-list">
                     <CyclistCardMedium
-                      v-for="{ cyclist } in user.entries"
+                      v-for="{ cyclist } in row.user.entries"
                       :key="cyclist.id"
                       :cyclist
                       :show-specialies="false"
@@ -278,8 +286,9 @@ watch(
                     </CyclistCardMedium>
                   </div>
                 </details>
-              </li>
-            </ul>
+              </div>
+              </template>
+            </div>
           </div>
           <!-- USER SELECTION WITH RESULT -->
           <div class="cyclist-result">

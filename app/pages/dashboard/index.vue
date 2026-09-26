@@ -15,7 +15,6 @@ const errorMessage = ref<string[]>([]);
 const entriesLoading = ref(false);
 const resultsLoading = ref(false);
 const userEntries = ref<GetEntry[] | []>([]);
-const resultIsGC = ref(true);
 
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
@@ -28,28 +27,6 @@ const {
   loading: storeLoading,
 } = storeToRefs(sideBarStore);
 const latestResult = ref<ResultResponse>();
-
-const displayedStandings = computed(() => {
-  // If GC: use the raceResult from store
-  // If Etappe: use the resultData (which reacts to searchStageId) from store
-  const data = resultIsGC.value
-    ? raceStore.raceResult
-    : raceStore.resultData?.users; // Changed from latestResult.value?.users
-
-  if (!data) return [];
-
-  return data
-    .map((user) => {
-      const pointsValue =
-        "totalPoints" in user ? user.totalPoints : user.points;
-      return {
-        userId: user.userId,
-        name: user.name,
-        points: pointsValue,
-      };
-    })
-    .slice(0, 10);
-});
 
 async function getUpcomingStage() {
   if (!upComingStage.value) {
@@ -390,94 +367,7 @@ watch(
             <p>Er is nog geen uitslag voor {{ upcomingRace[0]?.name }}</p>
           </div>
         </div>
-        <div
-          v-if="latestResult && upcomingRace"
-          class="dashboard-card dashboard-standings"
-        >
-          <div class="dashboard-stadings--heading">
-            <div class="icon-header">
-              <Icon name="tabler:list-numbers" />
-              <h3>Klassement</h3>
-            </div>
-
-            <div class="btn-group-switch">
-              <button
-                class="btn"
-                :class="{ active: resultIsGC }"
-                @click="resultIsGC = true"
-              >
-                Algemeen
-              </button>
-              <button
-                class="btn"
-                :class="{ active: !resultIsGC }"
-                @click="resultIsGC = false"
-              >
-                Etappe
-              </button>
-            </div>
-          </div>
-
-          <div v-if="!resultIsGC">
-            <AppStageSelector
-              v-if="sideBarStore.isClassicSeason"
-              v-model:stage-id="raceStore.searchStageId"
-              :classics="sideBarStore.classicsRaces"
-            />
-            <AppStageSelector
-              v-else
-              v-model:stage-id="raceStore.searchStageId"
-              :stages="sideBarStore.allStages"
-            />
-          </div>
-          <p v-if="resultIsGC">Algemeen klassement</p>
-
-          <Loading
-            v-if="raceStore.resultDataStatus === 'pending' || storeLoading"
-          />
-          <div v-else class="standings-list">
-            <div
-              v-for="(user, index) in displayedStandings"
-              :key="user.userId"
-              class="standings-user"
-              :class="{ 'current-user': user.userId === authStore.user.id }"
-            >
-              <div class="standings-user--info">
-                <div class="standings-user--info__position">
-                  <span>{{ index + 1 }}</span>
-                </div>
-                {{ user.name }}
-              </div>
-              <div>{{ user.points }} ptn</div>
-            </div>
-          </div>
-          <NuxtLink
-            :to="{
-              name: 'dashboard-klassement-race',
-              params: {
-                race: sideBarStore.isClassicSeason
-                  ? 'klassiekers'
-                  : slugify(latestResult.stage.race.name),
-              },
-              query: { race: `${slugify(latestResult.stage.race.name)}` },
-            }"
-            class="btn btn-primary btn-full-width"
-          >
-            Volledig klassement
-            <Icon name="tabler:arrow-right" />
-          </NuxtLink>
-        </div>
-        <div v-else class="dashboard-card">
-          <div class="icon-header">
-            <Icon name="tabler:list-numbers" />
-            <h3>Klassement</h3>
-          </div>
-          <div>
-            <p>
-              Er is nog geen klassement, deze zal komen na de eerste uitslag.
-            </p>
-          </div>
-        </div>
+        <DashboardStandings :latest-result/>
       </div>
     </div>
   </main>

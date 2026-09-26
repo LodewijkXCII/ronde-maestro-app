@@ -23,7 +23,7 @@ const routeName = computed(() => {
 });
 
 // Helper function to format the dates cleanly
-function formatDate(dateString: string): string {
+function formatDate(dateString: string | Date): string {
   return new Date(dateString).toLocaleDateString("nl-NL", {
     day: "2-digit",
     month: "short",
@@ -32,7 +32,7 @@ function formatDate(dateString: string): string {
 
 // 2. Filter stages early to keep template conditions simple
 const visibleStages = computed(() => {
-  const filteredStages = sideBarStore.allStages.filter((stage) => {
+  const filteredStages = sideBarStore.allStages?.filter((stage) => {
     if (props.compLocation === "uitslag") {
       return stage.done;
     }
@@ -42,10 +42,13 @@ const visibleStages = computed(() => {
     return false;
   });
 
-  if (props.compLocation === "uitslag") {
+  if (props.compLocation === "uitslag" && filteredStages) {
     filteredStages.reverse();
   }
 
+  if (!filteredStages) {
+    return [];
+  }
   return filteredStages;
 });
 

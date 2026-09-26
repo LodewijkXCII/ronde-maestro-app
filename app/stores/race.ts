@@ -25,15 +25,16 @@ export const useRaceStore = defineStore("useRaceStore", () => {
     status: raceResultStatus,
     refresh: refreshRaceResult,
     error,
-  } = useFetch<RaceTotalPoints[]>((): string => {
-    // 2. If urlPath is null, this returns null and useFetch will NOT execute
+  } = useAsyncData("race-result", () => {
+    // Skip the request until the race data is ready (useFetch would request "/null")
     if (!url.value) {
-      return null as unknown as string;
+      return Promise.resolve(null);
     }
-    return `${config.public.apiBase}/results/race/${url.value}`;
+    return $fetch<RaceTotalPoints[]>(`${config.public.apiBase}/results/race/${url.value}`, {
+      method: "get",
+      credentials: "include",
+    });
   }, {
-    method: "get",
-    credentials: "include",
     watch: [url],
     immediate: false,
     lazy: true,
@@ -46,22 +47,22 @@ export const useRaceStore = defineStore("useRaceStore", () => {
     data: resultData,
     status: resultDataStatus,
     refresh: refreshResultData,
-  } = useFetch<ResultResponse>(() => {
+  } = useAsyncData("stage-result", () => {
     if (!searchStageId.value) {
-      return null as unknown as string;
+      return Promise.resolve(null);
     }
 
-    return `${config.public.apiBase}/results/stage/${searchStageId.value}`;
+    return $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${searchStageId.value}`, {
+      query: {
+        pouleId: currentPouleId.value || undefined,
+      },
+      method: "get",
+      credentials: "include",
+    });
   }, {
-    query: computed(() => ({
-      pouleId: currentPouleId.value || undefined,
-    })),
-    method: "get",
-    credentials: "include",
-    watch: [searchStageId],
+    watch: [searchStageId, currentPouleId],
     immediate: true,
     lazy: true,
-
   });
 
   const errorMessage = computed(() => error.value ? error.value.message : "");
