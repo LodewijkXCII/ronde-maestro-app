@@ -32,28 +32,34 @@ function addToSelection(cyclist: CyclistWithRaceDetails) {
 
 async function handleSubmit() {
   if (!currentStage.value) {
-    return errorMessage.value = "Er is geen etappe ingeladen!";
+    return (errorMessage.value = "Er is geen etappe ingeladen!");
   }
   // Check count
   loading.value = true;
   if (selectedRidersComponents.value.length > selectableRiders.value) {
     loading.value = false;
-    return errorMessage.value = `Er zijn meer dan ${selectableRiders.value} renners geselecteerd!`;
+    return (errorMessage.value = `Er zijn meer dan ${selectableRiders.value} renners geselecteerd!`);
   }
 
   if (stageUnderway(currentStage.value.date)) {
     loading.value = false;
-    return errorMessage.value = "De rit is al onderweg. Je kan niet meer invullen.";
+    return (errorMessage.value =
+      "De rit is al onderweg. Je kan niet meer invullen.");
   }
 
-  if (selectedRidersComponents.value.length < selectableRiders.value && selectedRidersComponents.value.length >= 1) {
+  if (
+    selectedRidersComponents.value.length < selectableRiders.value &&
+    selectedRidersComponents.value.length >= 1
+  ) {
     // TODO MAKE USE OF OTHER LIBARY
     // eslint-disable-next-line no-alert
-    const confirm = window.confirm(`Weet je zeker dat je minder dan ${selectableRiders.value} renners wil inzetten?`);
+    const confirm = window.confirm(
+      `Weet je zeker dat je minder dan ${selectableRiders.value} renners wil inzetten?`,
+    );
     if (!confirm) {
       loading.value = false;
 
-      return errorMessage.value = "Niets verstuurd";
+      return (errorMessage.value = "Niets verstuurd");
     }
   }
   try {
@@ -86,37 +92,44 @@ async function handleSubmit() {
     // }
     // else {
     // }
-  }
-  catch (e) {
+  } catch (e) {
     const error = e as FetchError;
 
     errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
+  } finally {
     loading.value = false;
   }
 }
 
-watch(currentStage, (newStage) => {
-  if (newStage) {
-    getSelectedRiders(newStage.id);
-  }
-}, { immediate: true });
+watch(
+  currentStage,
+  (newStage) => {
+    if (newStage) {
+      getSelectedRiders(newStage.id);
+    }
+  },
+  { immediate: true },
+);
 
 function emptyErrorMessage() {
   errorMessage.value = "";
 }
 
-watch(() => errorMessage.value, (newMessage) => {
-  if (newMessage) {
-    setTimeout(emptyErrorMessage, 2000);
-  }
-});
+watch(
+  () => errorMessage.value,
+  (newMessage) => {
+    if (newMessage) {
+      setTimeout(emptyErrorMessage, 2000);
+    }
+  },
+);
 
 onBeforeRouteLeave(() => {
   if (selectedRidersStore.formDirty && !submitted.value) {
     // eslint-disable-next-line no-alert
-    const confirm = window.confirm("Weet je zeker dat je weg gaat, je team wordt niet opgeslagen.");
+    const confirm = window.confirm(
+      "Weet je zeker dat je weg gaat, je team wordt niet opgeslagen.",
+    );
     if (!confirm) {
       return false;
     }
@@ -130,9 +143,15 @@ onBeforeRouteLeave(() => {
   <div class="selected-riders">
     <h3>Geselecteerde renners</h3>
 
-    <p>{{ selectedRidersComponents.length }} van {{ selectableRiders }} renners geselecteerd</p>
+    <p>
+      {{ selectedRidersComponents.length }} van {{ selectableRiders }} renners
+      geselecteerd
+    </p>
 
-    <AppProgressBar :selected-count="selectedRidersComponents.length" :max-select-riders="selectableRiders" />
+    <AppProgressBar
+      :selected-count="selectedRidersComponents.length"
+      :max-select-riders="selectableRiders"
+    />
 
     <div v-if="errorMessage" role="alert" class="alert alert-error">
       <Icon name="tabler:alert-square-rounded" />
@@ -151,10 +170,7 @@ onBeforeRouteLeave(() => {
       >
         <template #actionSlot>
           <div class="cyclistCard--actions">
-            <Icon
-              name="tabler:circle-minus"
-              size="24"
-            />
+            <Icon name="tabler:circle-minus" size="24" />
           </div>
         </template>
       </CyclistCardMedium>
@@ -170,17 +186,22 @@ onBeforeRouteLeave(() => {
     <div class="btn-group">
       <button
         class="btn btn-primary btn-full-width"
-        :disabled="!selectedRidersStore.formDirty
-          || selectedRidersComponents.length === 0
-          || selectedRidersComponents.length > selectableRiders
-          || loading"
+        :disabled="
+          !selectedRidersStore.formDirty ||
+          selectedRidersComponents.length === 0 ||
+          selectedRidersComponents.length > selectableRiders ||
+          loading
+        "
         @click="handleSubmit"
       >
         <Loading v-if="loading" />
         <Icon v-else name="tabler:send" />
         Verzenden
       </button>
-      <button class="btn btn-alert btn-full-width" @click="selectedRidersStore.clearSelection">
+      <button
+        class="btn btn-alert btn-full-width"
+        @click="selectedRidersStore.clearSelection"
+      >
         <Icon name="tabler:trash-x" />
         Wis selectie
       </button>
@@ -201,6 +222,7 @@ onBeforeRouteLeave(() => {
   border-radius: var(--border-radius);
   height: fit-content;
   background: var(--clr-background-mute);
+
   @media (min-width: 750px) {
     position: sticky;
     top: calc(var(--navbar-height) + 2rem);

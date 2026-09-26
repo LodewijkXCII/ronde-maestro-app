@@ -12,7 +12,11 @@ const showTeam = ref(false);
 </script>
 
 <template>
-  <li class="table-row" :class="{ 'is-user': authUser?.id === user.userId }" @click="showTeam = !showTeam">
+  <li
+    class="table-row"
+    :class="{ 'current-user': authUser?.id === user.userId }"
+    @click="showTeam = !showTeam"
+  >
     <div>{{ position }}.</div>
     <div>{{ user.name }}</div>
     <div class="points">
@@ -70,14 +74,6 @@ const showTeam = ref(false);
 
   @media (max-width: 90em) {
     grid-template-columns: 1fr;
-  }
-}
-
-.is-user {
-  font-weight: 900;
-
-  .cyclistCard {
-    font-weight: initial;
   }
 }
 </style>

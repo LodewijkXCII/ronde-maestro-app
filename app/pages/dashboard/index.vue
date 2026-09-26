@@ -20,7 +20,13 @@ const resultIsGC = ref(true);
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
 const raceStore = useRaceStore();
-const { upComingStage, currentRace, upcomingRace, allStages, loading: storeLoading } = storeToRefs(sideBarStore);
+const {
+  upComingStage,
+  currentRace,
+  upcomingRace,
+  allStages,
+  loading: storeLoading,
+} = storeToRefs(sideBarStore);
 const latestResult = ref<ResultResponse>();
 
 const displayedStandings = computed(() => {
@@ -30,17 +36,19 @@ const displayedStandings = computed(() => {
     ? raceStore.raceResult
     : raceStore.resultData?.users; // Changed from latestResult.value?.users
 
-  if (!data)
-    return [];
+  if (!data) return [];
 
-  return data.map((user) => {
-    const pointsValue = "totalPoints" in user ? user.totalPoints : user.points;
-    return {
-      userId: user.userId,
-      name: user.name,
-      points: pointsValue,
-    };
-  });
+  return data
+    .map((user) => {
+      const pointsValue =
+        "totalPoints" in user ? user.totalPoints : user.points;
+      return {
+        userId: user.userId,
+        name: user.name,
+        points: pointsValue,
+      };
+    })
+    .slice(0, 10);
 });
 
 async function getUpcomingStage() {
@@ -52,25 +60,25 @@ async function getUpcomingStage() {
     errorMessage.value = [];
     entriesLoading.value = true; // Start loader
 
-    const data = await $fetch<GetEntry[]>(`${config.public.apiBase}/entries/${upComingStage.value.id}`, {
-      method: "get",
-      credentials: "include",
-    });
+    const data = await $fetch<GetEntry[]>(
+      `${config.public.apiBase}/entries/${upComingStage.value.id}`,
+      {
+        method: "get",
+        credentials: "include",
+      },
+    );
 
     userEntries.value = data as GetEntry[];
-  }
-
-  catch (e) {
+  } catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
+  } finally {
     entriesLoading.value = false;
   }
 }
 
 async function getLatestResult() {
-  const lastDoneStage = allStages.value?.findLast(stage => stage.done);
+  const lastDoneStage = allStages.value?.findLast((stage) => stage.done);
 
   if (!lastDoneStage) {
     console.error("Geen voltooide etappe gevonden voor deze race.");
@@ -80,14 +88,19 @@ async function getLatestResult() {
   try {
     resultsLoading.value = true;
 
-    const data = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${lastDoneStage.id}`, {
-      method: "get",
-      credentials: "include",
-    });
+    const data = await $fetch<ResultResponse>(
+      `${config.public.apiBase}/results/stage/${lastDoneStage.id}`,
+      {
+        method: "get",
+        credentials: "include",
+      },
+    );
 
     if (data) {
       if (data.cyclist) {
-        data.cyclist = data.cyclist.sort((a, b) => a.position - b.position).slice(0, 5);
+        data.cyclist = data.cyclist
+          .sort((a, b) => a.position - b.position)
+          .slice(0, 10);
       }
 
       if (data.users) {
@@ -96,12 +109,10 @@ async function getLatestResult() {
     }
 
     latestResult.value = data as ResultResponse;
-  }
-  catch (e) {
+  } catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
+  } finally {
     resultsLoading.value = false; // Stop loader
   }
 }
@@ -118,19 +129,26 @@ onMounted(async () => {
 });
 
 // Watch for the race data to arrive, then trigger local API calls
-watch(currentRace, async (newRace) => {
-  if (newRace) {
-    await getUpcomingStage();
-    await getLatestResult();
-  }
-}, { immediate: true });
+watch(
+  currentRace,
+  async (newRace) => {
+    if (newRace) {
+      await getUpcomingStage();
+      await getLatestResult();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
   <main>
     <div class="wrapper-lg wrapper-nobg">
       <h1>Hoi {{ authStore.user?.name }}</h1>
-      <p>Welkom terug! Hier vind je een overzicht van je ploegen en de laatste resultaten.</p>
+      <p>
+        Welkom terug! Hier vind je een overzicht van je ploegen en de laatste
+        resultaten.
+      </p>
 
       <!-- <div v-if="errorMessage || errorMessage.length > 0" role="alert" class="alert alert-warning">
         <Icon name="tabler:alert-square-rounded" />
@@ -139,37 +157,67 @@ watch(currentRace, async (newRace) => {
         </span>
       </div> -->
 
-      <div
-        v-if="currentRace"
-        class="dashboard-cover"
-      >
+      <div v-if="currentRace" class="dashboard-cover">
         <Loading v-if="storeLoading" />
 
         <template v-else-if="currentRace">
           <img
-
             class="dasboard-cover--image"
             :src="`${config.public.s3BucketURL}/${currentRace?.coverImage}`"
-          >
+          />
           <div class="dashboard-cover--text">
             <div class="dashboard-cover--text__inner">
-              <h2>De {{ sideBarStore.isClassicSeason ? 'klassiekers' : currentRace?.name }} bij RondeMaestro</h2>
+              <h2>
+                De
+                {{
+                  sideBarStore.isClassicSeason
+                    ? "klassiekers"
+                    : currentRace?.name
+                }}
+                bij RondeMaestro
+              </h2>
               <div v-if="sideBarStore.isClassicSeason">
                 <p>
-                  {{ new Date(currentRace.startDate).toLocaleDateString("nl-NL", {
-                    day: '2-digit',
-                    month: 'short',
-                  }) }} • {{ currentRace?.name }} • {{ currentRace?.stages[0]?.stageType.name }}
+                  {{
+                    new Date(currentRace.startDate).toLocaleDateString(
+                      "nl-NL",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                      },
+                    )
+                  }}
+                  • {{ currentRace?.name }} •
+                  {{ currentRace?.stages[0]?.stageType.name }}
                 </p>
-                <button class="btn btn-primary" @click="goToStage(currentRace?.stages[0]?.id || null)">
-                  {{ currentRace?.stages[0]?.done ? 'Bekijk de uitslag' : "Selecteer je renners" }}
+                <button
+                  class="btn btn-primary"
+                  @click="goToStage(currentRace?.stages[0]?.id || null)"
+                >
+                  {{
+                    currentRace?.stages[0]?.done
+                      ? "Bekijk de uitslag"
+                      : "Selecteer je renners"
+                  }}
                 </button>
               </div>
               <div v-else-if="upComingStage">
                 <span>Eerstvolgende etappe:</span>
-                <p>Etappe {{ upComingStage.stageNr }} • {{ upComingStage.startCity }} - {{ upComingStage.finishCity }} • {{ upComingStage.stageType.name }}</p>
-                <button class="btn btn-primary" @click="goToStage(upComingStage.id)">
-                  {{ upComingStage.done ? 'Bekijk de uistlag' : "Selecteer je renners" }}
+                <p>
+                  Etappe {{ upComingStage.stageNr }} •
+                  {{ upComingStage.startCity }} -
+                  {{ upComingStage.finishCity }} •
+                  {{ upComingStage.stageType.name }}
+                </p>
+                <button
+                  class="btn btn-primary"
+                  @click="goToStage(upComingStage.id)"
+                >
+                  {{
+                    upComingStage.done
+                      ? "Bekijk de uistlag"
+                      : "Selecteer je renners"
+                  }}
                 </button>
               </div>
             </div>
@@ -180,27 +228,41 @@ watch(currentRace, async (newRace) => {
       <DashboardTeams />
 
       <div class="dashboard-cards">
-        <div v-if="upComingStage" class="dashboard-card dashboard-selected-riders">
+        <div
+          v-if="upComingStage"
+          class="dashboard-card dashboard-selected-riders"
+        >
           <div>
             <div class="icon-header">
               <Icon name="tabler:users" />
               <h3>Geselecteerde renners</h3>
             </div>
             <p v-if="!sideBarStore.isClassicSeason">
-              Voor etappe {{ upComingStage?.stageNr }} van {{ new Date(upComingStage.date).toLocaleDateString("nl-NL", {
-                day: '2-digit',
-                month: 'short',
-              }) }}
+              Voor etappe {{ upComingStage?.stageNr }} van
+              {{
+                new Date(upComingStage.date).toLocaleDateString("nl-NL", {
+                  day: "2-digit",
+                  month: "short",
+                })
+              }}
             </p>
             <p v-else>
-              Voor {{ currentRace?.name }} van {{ new Date(upComingStage.date).toLocaleDateString("nl-NL", {
-                day: '2-digit',
-                month: 'short',
-              }) }}
+              Voor {{ currentRace?.name }} van
+              {{
+                new Date(upComingStage.date).toLocaleDateString("nl-NL", {
+                  day: "2-digit",
+                  month: "short",
+                })
+              }}
             </p>
           </div>
-          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
-          <div v-if="userEntries.length > 0 && !entriesLoading" class="selected-riders">
+          <Loading
+            v-if="raceStore.resultDataStatus === 'pending' || storeLoading"
+          />
+          <div
+            v-if="userEntries.length > 0 && !entriesLoading"
+            class="selected-riders"
+          >
             <CyclistCardMedium
               v-for="entry in userEntries"
               :key="entry.id"
@@ -209,17 +271,22 @@ watch(currentRace, async (newRace) => {
               :cyclist="entry.cyclist"
             />
 
-            <button v-if="!stageUnderway(upComingStage.date)" class="btn btn-primary btn-full-width" @click="goToStage(upComingStage.id)">
+            <button
+              v-if="!stageUnderway(upComingStage.date)"
+              class="btn btn-primary btn-full-width"
+              @click="goToStage(upComingStage.id)"
+            >
               Pas je team aan
               <Icon name="tabler:arrow-right" />
             </button>
           </div>
           <div v-if="!entriesLoading && !userEntries">
-            <p>
-              Geen renners geselecteerd voor deze etappe.
-            </p>
+            <p>Geen renners geselecteerd voor deze etappe.</p>
 
-            <button class="btn btn-primary btn-full-width" @click="goToStage(upComingStage.id)">
+            <button
+              class="btn btn-primary btn-full-width"
+              @click="goToStage(upComingStage.id)"
+            >
               Vul je team in
               <Icon name="tabler:arrow-right" />
             </button>
@@ -233,32 +300,51 @@ watch(currentRace, async (newRace) => {
               <h3>Laatste uitslag</h3>
             </div>
             <p v-if="!sideBarStore.isClassicSeason">
-              Voor de etappe van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
-                day: '2-digit',
-                month: 'short',
-              }) }}
+              Voor de etappe van
+              {{
+                new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
+                  day: "2-digit",
+                  month: "short",
+                })
+              }}
             </p>
             <p v-else>
-              Voor {{ latestResult.stage.race.name }} van {{ new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
-                day: '2-digit',
-                month: 'short',
-              }) }}
+              Voor {{ latestResult.stage.race.name }} van
+              {{
+                new Date(latestResult.stage.date).toLocaleDateString("nl-NL", {
+                  day: "2-digit",
+                  month: "short",
+                })
+              }}
             </p>
           </div>
-          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
+          <Loading
+            v-if="raceStore.resultDataStatus === 'pending' || storeLoading"
+          />
           <template v-if="!resultsLoading">
             <div class="stage-box">
               <div class="stage-box--heading">
-                <p>{{ latestResult.stage.startCity }} - {{ latestResult.stage.finishCity }}</p>
-                <img :src="`${config.public.s3BucketURL}/${latestResult.stage.stageType.image}`" :alt="latestResult.stage.stageType.name">
+                <p>
+                  {{ latestResult.stage.startCity }} -
+                  {{ latestResult.stage.finishCity }}
+                </p>
+                <img
+                  :src="`${config.public.s3BucketURL}/${latestResult.stage.stageType.image}`"
+                  :alt="latestResult.stage.stageType.name"
+                />
               </div>
               <div class="stage-box--image">
-                <img :src="`${config.public.s3BucketURL}/${latestResult.stage.image}`" :alt="latestResult.stage.race.name">
+                <img
+                  :src="`${config.public.s3BucketURL}/${latestResult.stage.image}`"
+                  :alt="latestResult.stage.race.name"
+                />
               </div>
             </div>
 
             <div>
-              <span>De top 5 van de etappe</span>
+              <span>
+                De top {{ latestResult.cyclist.length }} van de etappe
+              </span>
               <CyclistCardSmall
                 v-for="entry in latestResult.cyclist"
                 :key="entry.id"
@@ -269,11 +355,22 @@ watch(currentRace, async (newRace) => {
 
             <div class="points-box">
               <div class="stage-box--body">
-                Jouw score: <span>{{ latestResult.users.find(user => user.userId === authStore.user.id)?.points }} ptn</span>
+                Jouw score:
+                <span>
+                  {{
+                    latestResult.users.find(
+                      (user) => user.userId === authStore.user.id,
+                    )?.points
+                  }}
+                  ptn
+                </span>
               </div>
             </div>
 
-            <button class="btn btn-primary btn-full-width" @click="goToStage(latestResult.stage.id)">
+            <button
+              class="btn btn-primary btn-full-width"
+              @click="goToStage(latestResult.stage.id)"
+            >
               Bekijk volledige uitslag
               <Icon name="tabler:arrow-right" />
             </button>
@@ -293,20 +390,29 @@ watch(currentRace, async (newRace) => {
             <p>Er is nog geen uitslag voor {{ upcomingRace[0]?.name }}</p>
           </div>
         </div>
-        <div v-if="latestResult && upcomingRace" class="dashboard-card dashboard-standings">
+        <div
+          v-if="latestResult && upcomingRace"
+          class="dashboard-card dashboard-standings"
+        >
           <div class="dashboard-stadings--heading">
             <div class="icon-header">
               <Icon name="tabler:list-numbers" />
-              <h3>
-                Klassement
-              </h3>
+              <h3>Klassement</h3>
             </div>
 
             <div class="btn-group-switch">
-              <button class="btn" :class="{ active: resultIsGC }" @click="resultIsGC = true">
+              <button
+                class="btn"
+                :class="{ active: resultIsGC }"
+                @click="resultIsGC = true"
+              >
                 Algemeen
               </button>
-              <button class="btn" :class="{ active: !resultIsGC }" @click="resultIsGC = false">
+              <button
+                class="btn"
+                :class="{ active: !resultIsGC }"
+                @click="resultIsGC = false"
+              >
                 Etappe
               </button>
             </div>
@@ -324,11 +430,11 @@ watch(currentRace, async (newRace) => {
               :stages="sideBarStore.allStages"
             />
           </div>
-          <p v-if="resultIsGC">
-            Algemeen klassement
-          </p>
+          <p v-if="resultIsGC">Algemeen klassement</p>
 
-          <Loading v-if="raceStore.resultDataStatus === 'pending' || storeLoading" />
+          <Loading
+            v-if="raceStore.resultDataStatus === 'pending' || storeLoading"
+          />
           <div v-else class="standings-list">
             <div
               v-for="(user, index) in displayedStandings"
@@ -346,11 +452,12 @@ watch(currentRace, async (newRace) => {
             </div>
           </div>
           <NuxtLink
-
             :to="{
               name: 'dashboard-klassement-race',
               params: {
-                race: sideBarStore.isClassicSeason ? 'klassiekers' : slugify(latestResult.stage.race.name),
+                race: sideBarStore.isClassicSeason
+                  ? 'klassiekers'
+                  : slugify(latestResult.stage.race.name),
               },
               query: { race: `${slugify(latestResult.stage.race.name)}` },
             }"
@@ -363,12 +470,12 @@ watch(currentRace, async (newRace) => {
         <div v-else class="dashboard-card">
           <div class="icon-header">
             <Icon name="tabler:list-numbers" />
-            <h3>
-              Klassement
-            </h3>
+            <h3>Klassement</h3>
           </div>
           <div>
-            <p>Er is nog geen klassement, deze zal komen na de eerste uitslag.</p>
+            <p>
+              Er is nog geen klassement, deze zal komen na de eerste uitslag.
+            </p>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ a.btn,
     text-decoration: none;
     display: flex;
     place-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
 
     &:hover {
       font-weight: 400;
@@ -292,8 +292,12 @@ a.btn,
   border-radius: var(--border-radius);
   margin-bottom: 1em;
 
-  h1, h2, h3, h5, p {
-    margin-block: .5em 1em;
+  h1,
+  h2,
+  h3,
+  h5,
+  p {
+    margin-block: 0.5em 1em;
   }
 }
 
@@ -351,18 +355,17 @@ a.btn,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .75rem 1rem;
+    padding: 0.75rem 1rem;
 
-  
-  
     img {
       max-width: 20px;
     }
   }
 
-  .points-box--image, .stage-box--image {
+  .points-box--image,
+  .stage-box--image {
     overflow: hidden;
-      border-radius: 0 0 var(--border-radius) var(--border-radius);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
   }
 
   .points-box--body,
@@ -587,10 +590,9 @@ span.points {
     details {
       width: 100%;
 
-      &:is(:open) summary{
+      &:is(:open) summary {
         margin-bottom: 1rem;
       }
-
     }
     &.hover:hover {
       background-color: var(--clr-primary-mute);
@@ -630,6 +632,8 @@ span.points {
       color: var(--clr-text);
     }
     &:nth-child(1) {
+      background: hsl(51 100% 40% / 30%);
+
       .standings-user--info__position {
         border: 1px solid hsl(51, 100%, 50%);
         background: hsl(51 100% 40% / 50%);
@@ -638,6 +642,8 @@ span.points {
       }
     }
     &:nth-child(2) {
+      background: hsl(0 0% 75% / 30%);
+
       .standings-user--info__position {
         border: 1px solid hsl(0, 0%, 75%);
         background: hsl(0 0% 75% / 50%);
@@ -646,6 +652,8 @@ span.points {
       }
     }
     &:nth-child(3) {
+      background: hsl(32, 95%, 44%, 0.3);
+
       .standings-user--info__position {
         border: 1px solid hsl(32, 95%, 44%);
         background: hsla(32, 95%, 44%, 0.5);
@@ -655,9 +663,8 @@ span.points {
     }
   }
 
-  
   .standings-user summary {
-    gap: .5rem;
+    gap: 0.5rem;
   }
 }
 
@@ -695,5 +702,13 @@ span.points {
 
   & > *:last-of-type {
     margin-left: auto;
+  }
+}
+
+.current-user {
+  font-weight: 900;
+
+  .cyclistCard {
+    font-weight: initial;
   }
 }

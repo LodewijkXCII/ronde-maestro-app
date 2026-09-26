@@ -2,7 +2,11 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import type { ResultCyclistByStage, ResultResponse, ResultUsersByStage } from "~/types/results";
+import type {
+  ResultCyclistByStage,
+  ResultResponse,
+  ResultUsersByStage,
+} from "~/types/results";
 
 import getParamId from "~/utils/param-extractor";
 
@@ -24,7 +28,9 @@ const loading = ref(false);
 
 const userStandingData = computed(() => {
   if (usersResult.value) {
-    const foundUser = usersResult.value.find(user => user.userId === authStore.user.id);
+    const foundUser = usersResult.value.find(
+      (user) => user.userId === authStore.user.id,
+    );
     if (!foundUser) {
       return {
         points: 0,
@@ -35,7 +41,9 @@ const userStandingData = computed(() => {
     return {
       points: foundUser.points,
       position: foundUser.absolutePosition,
-      winnerDiff: (usersResult.value.find(user => user.absolutePosition === 1)?.points || 0) - foundUser.points,
+      winnerDiff:
+        (usersResult.value.find((user) => user.absolutePosition === 1)
+          ?.points || 0) - foundUser.points,
     };
   }
   return {
@@ -53,37 +61,38 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   const stageNr = getParamId(route.params.nr);
 
   if (!route.params.id || !raceId || !stageNr || !newRace || !newRace.stages) {
-    return errorMessage.value = "Er is geen juiste data gevonden";
+    return (errorMessage.value = "Er is geen juiste data gevonden");
   }
 
   startlistStore.activeRaceIdForFetch = raceId;
   await startlistStore.refreshStartlistData();
 
-  const foundStage = newRace.stages.find(stage => stage.stageNr === stageNr) || null;
+  const foundStage =
+    newRace.stages.find((stage) => stage.stageNr === stageNr) || null;
 
   sideBarStore.currentStage = foundStage;
 
   if (!foundStage || !foundStage.id) {
     console.warn("No valid stage found for results fetch.");
-    return errorMessage.value = "Geen etappe gevonden met deze gegevens.";
+    return (errorMessage.value = "Geen etappe gevonden met deze gegevens.");
   }
 
   try {
-    const { cyclist, users } = await $fetch<ResultResponse>(`${config.public.apiBase}/results/stage/${currentStage.value?.id}`, {
-      method: "get",
-      credentials: "include",
-    });
+    const { cyclist, users } = await $fetch<ResultResponse>(
+      `${config.public.apiBase}/results/stage/${currentStage.value?.id}`,
+      {
+        method: "get",
+        credentials: "include",
+      },
+    );
     if (cyclist && users) {
       cyclistResult.value = cyclist.sort((a, b) => a.position - b.position);
       usersResult.value = users;
     }
-  }
-
-  catch (e) {
+  } catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
+  } finally {
     loading.value = false;
   }
 }
@@ -95,7 +104,10 @@ watch(
     currentRace: sideBarStore.currentRace,
   }),
   async ({ currentRace: newCurrentRace }) => {
-    if (!sideBarStore.upcomingRace && sideBarStore.upcomingRaceStatus !== "pending") {
+    if (
+      !sideBarStore.upcomingRace &&
+      sideBarStore.upcomingRaceStatus !== "pending"
+    ) {
       await sideBarStore.refreshUpcomingRace();
     }
     setRaceAndStageData(newCurrentRace);
@@ -112,11 +124,13 @@ watch(
     <div class="wrapper-lg wrapper-nobg">
       <Loading v-if="sideBarStore.loading || loading" />
 
-      <div v-if="!sideBarStore.loading && !loading && !currentRace" role="alert" class="alert alert-error">
+      <div
+        v-if="!sideBarStore.loading && !loading && !currentRace"
+        role="alert"
+        class="alert alert-error"
+      >
         <Icon name="tabler:alert-square-rounded" />
-        <span>
-          Er is geen race data gevonden!
-        </span>
+        <span> Er is geen race data gevonden! </span>
       </div>
       <div v-if="errorMessage" role="alert" class="alert alert-error">
         <Icon name="tabler:alert-square-rounded" />
@@ -125,11 +139,15 @@ watch(
         </span>
       </div>
 
-      <div v-else-if="!currentRace && !currentStage && !sideBarStore.loading && !loading" role="alert" class="alert alert-error">
+      <div
+        v-else-if="
+          !currentRace && !currentStage && !sideBarStore.loading && !loading
+        "
+        role="alert"
+        class="alert alert-error"
+      >
         <Icon name="tabler:alert-square-rounded" />
-        <span>
-          Er is geen juiste data gevonden. Probeer het opnieuw.
-        </span>
+        <span> Er is geen juiste data gevonden. Probeer het opnieuw. </span>
       </div>
 
       <template v-else-if="currentRace && currentStage">
@@ -141,23 +159,38 @@ watch(
               <h3>{{ currentRace.name }}</h3>
               <div v-if="currentStage" class="stage-section--stage__info">
                 <p>
-                  <span v-if="!sideBarStore.isClassicSeason">{{ currentStage.stageNr }}:  </span>{{ new Date(currentStage.date).toLocaleDateString("nl-NL", {
-                    day: '2-digit',
-                    month: 'short',
-                  }) }}. - {{ currentStage.startCity }} - {{ currentStage.finishCity }}
+                  <span v-if="!sideBarStore.isClassicSeason"
+                    >{{ currentStage.stageNr }}: </span
+                  >{{
+                    new Date(currentStage.date).toLocaleDateString("nl-NL", {
+                      day: "2-digit",
+                      month: "short",
+                    })
+                  }}. - {{ currentStage.startCity }} -
+                  {{ currentStage.finishCity }}
                 </p>
               </div>
               <div v-if="currentStage" class="stage-section--stage__type badge">
-                <img :src="`${config.public.s3BucketURL}/${currentStage.stageType.image}`" :alt="currentStage.stageType.name" class="stage-type-image"><span>{{ currentStage.stageType.name }}</span>
+                <img
+                  :src="`${config.public.s3BucketURL}/${currentStage.stageType.image}`"
+                  :alt="currentStage.stageType.name"
+                  class="stage-type-image"
+                /><span>{{ currentStage.stageType.name }}</span>
               </div>
               <p v-else>
-                {{ new Date(currentRace.startDate).toLocaleDateString("nl-NL", {
-                  day: '2-digit',
-                  month: 'short',
-                }) }} -  {{ new Date(currentRace.finishDate).toLocaleDateString("nl-NL", {
-                  day: '2-digit',
-                  month: 'short',
-                }) }}
+                {{
+                  new Date(currentRace.startDate).toLocaleDateString("nl-NL", {
+                    day: "2-digit",
+                    month: "short",
+                  })
+                }}
+                -
+                {{
+                  new Date(currentRace.finishDate).toLocaleDateString("nl-NL", {
+                    day: "2-digit",
+                    month: "short",
+                  })
+                }}
               </p>
             </div>
 
@@ -176,21 +209,22 @@ watch(
           <div class="profile-list">
             <div class="profile-list--item">
               <span>Jouw positie</span>
-              <h4 class="rank-highlight">
-                # {{ userStandingData.position }}
-              </h4>
+              <h4 class="rank-highlight"># {{ userStandingData.position }}</h4>
             </div>
             <div class="profile-list--item">
               <span>Jouw punten</span>
-              <h4 class="rank-highlight">
-                {{ userStandingData.points }} pnt
-              </h4>
+              <h4 class="rank-highlight">{{ userStandingData.points }} pnt</h4>
             </div>
             <div class="profile-list--item">
               <span>Winnaar</span>
               <h4 class="rank-highlight">
-                {{ usersResult.find(user => user.absolutePosition === 1)?.name }}
-                <span v-if="userStandingData.winnerDiff > 0" class="points-difference">
+                {{
+                  usersResult.find((user) => user.absolutePosition === 1)?.name
+                }}
+                <span
+                  v-if="userStandingData.winnerDiff > 0"
+                  class="points-difference"
+                >
                   + {{ userStandingData.winnerDiff }} pnt
                 </span>
               </h4>
@@ -204,10 +238,10 @@ watch(
 
             <ul class="standings-list">
               <li
-                v-for="(user) in usersResult"
+                v-for="user in usersResult"
                 :key="user.userId"
                 class="standings-user"
-                :class="{ 'is-user': authStore.user?.id === user.userId }"
+                :class="{ 'current-user': authStore.user?.id === user.userId }"
               >
                 <details :open="authStore.user?.id === user.userId">
                   <summary>
@@ -218,7 +252,11 @@ watch(
                       {{ user.name }}
                     </div>
                     <div>{{ user.points }} ptn</div>
-                    <Icon name="tabler:chevron-right" size="16" class="nav-icon" />
+                    <Icon
+                      name="tabler:chevron-right"
+                      size="16"
+                      class="nav-icon"
+                    />
                   </summary>
 
                   <h4>Geselecteerde renners</h4>
@@ -265,12 +303,14 @@ watch(
           :to="{
             name: 'dashboard-klassement-race',
             params: {
-              race: sideBarStore.isClassicSeason ? 'klassiekers' : slugify(currentRace.name),
+              race: sideBarStore.isClassicSeason
+                ? 'klassiekers'
+                : slugify(currentRace.name),
             },
             query: { race: `${slugify(currentRace.name)}` },
           }"
           class="btn btn-secondary"
-          style="float: right;"
+          style="float: right"
         >
           Bekijk algemeen klassement
           <Icon name="tabler:arrow-right" />

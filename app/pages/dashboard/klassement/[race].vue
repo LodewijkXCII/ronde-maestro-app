@@ -23,11 +23,15 @@ const currentRace = computed(() => {
 const resultPerStage = ref<ResultPerStage[]>([]);
 const selectedStageResult = ref<ResultPerStage>();
 
-function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] | undefined {
-  if (!sideBarStore.isClassicSeason && (!currentRace.value || !currentRace.value.stages)) {
+function combineResultsAndStages(
+  result: RaceTotalPoints[],
+): ResultPerStage[] | undefined {
+  if (
+    !sideBarStore.isClassicSeason &&
+    (!currentRace.value || !currentRace.value.stages)
+  ) {
     return [];
-  }
-  else if (sideBarStore.isClassicSeason && !sideBarStore.allStages) {
+  } else if (sideBarStore.isClassicSeason && !sideBarStore.allStages) {
     return [];
   }
 
@@ -47,7 +51,7 @@ function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] | 
     for (const user of result) {
       for (const userStageResult of user.stages) {
         const foundStage = combinedResults.find(
-          combined => combined.stage.stageNr === userStageResult.stageNr,
+          (combined) => combined.stage.stageNr === userStageResult.stageNr,
         );
 
         if (foundStage) {
@@ -64,7 +68,7 @@ function combineResultsAndStages(result: RaceTotalPoints[]): ResultPerStage[] | 
       }
     }
 
-    return resultPerStage.value = combinedResults;
+    return (resultPerStage.value = combinedResults);
   }
 }
 
@@ -79,22 +83,22 @@ async function getRaceData() {
     }
     combineResultsAndStages(raceStore.raceResult);
     selectStageFromQuery();
-  }
-  catch (e) {
+  } catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  }
-  finally {
+  } finally {
     loading.value = false;
   }
 }
 
 function selectStageFromQuery() {
   console.log(route);
-  const querySlug = route.query.race as string || route.query.stage as string;
+  const querySlug =
+    (route.query.race as string) || (route.query.stage as string);
   if (querySlug) {
     const foundStage = resultPerStage.value.find(
-      stageResult => slugify(getRaceName(stageResult.stage.raceId)) === querySlug,
+      (stageResult) =>
+        slugify(getRaceName(stageResult.stage.raceId)) === querySlug,
     );
     if (foundStage) {
       selectedStage.value = foundStage.stage.stageNr;
@@ -107,7 +111,9 @@ onMounted(() => {
 });
 
 watch(selectedStage, (newValue) => {
-  const foundStage = resultPerStage.value.find(stage => stage.stage.stageNr === newValue);
+  const foundStage = resultPerStage.value.find(
+    (stage) => stage.stage.stageNr === newValue,
+  );
   if (foundStage) {
     selectedStageResult.value = foundStage;
     const raceName = getRaceName(foundStage.stage.raceId);
@@ -121,11 +127,15 @@ watch(selectedStage, (newValue) => {
   <main>
     <div class="wrapper-lg wrapper-nobg">
       <Loading v-if="sideBarStore.loading || loading" />
-      <div v-if="!sideBarStore.loading && (!currentRace && !sideBarStore.isClassicSeason)" role="alert" class="alert alert-error">
+      <div
+        v-if="
+          !sideBarStore.loading && !currentRace && !sideBarStore.isClassicSeason
+        "
+        role="alert"
+        class="alert alert-error"
+      >
         <Icon name="tabler:alert-square-rounded" />
-        <span>
-          Er is geen race data gevonden!
-        </span>
+        <span> Er is geen race data gevonden! </span>
       </div>
       <div v-if="errorMessage" role="alert" class="alert alert-error">
         <Icon name="tabler:alert-square-rounded" />
@@ -134,17 +144,26 @@ watch(selectedStage, (newValue) => {
         </span>
       </div>
 
-      <template v-else-if="(currentRace || sideBarStore.isClassicSeason) && !loading && raceResult">
+      <template
+        v-else-if="
+          (currentRace || sideBarStore.isClassicSeason) &&
+          !loading &&
+          raceResult
+        "
+      >
         <section>
           <h2>Algemeen klassement</h2>
-          <p>Stand na {{ raceResult[0]?.stages.length }} {{ sideBarStore.isClassicSeason ? 'klassiekers' : 'etappes' }}</p>
+          <p>
+            Stand na {{ raceResult[0]?.stages.length }}
+            {{ sideBarStore.isClassicSeason ? "klassiekers" : "etappes" }}
+          </p>
 
           <ul v-if="raceResult.length" class="standings-list">
             <li
               v-for="(user, index) in raceResult"
               :key="user.userId"
               class="standings-user"
-              :class="{ 'is-user': authUser?.id === user.userId }"
+              :class="{ 'current-user': authUser?.id === user.userId }"
             >
               <div class="standings-user--info__position">
                 <span>{{ index + 1 }}</span>
