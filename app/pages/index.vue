@@ -22,7 +22,7 @@ onMounted(() => {
     <section class="hero">
       <div class="hero-image">
         <picture>
-          <img src="/img/bryan-lucas.webp" alt="RondeMaestro" srcset="">
+          <img src="/img/bryan-lucas.webp" alt="RondeMaestro" srcset="" />
         </picture>
       </div>
 
@@ -31,11 +31,11 @@ onMounted(() => {
           <div class="badge badge-outline">
             Binnenkort de {{ currentRace?.name }}!
           </div>
-          <h1 class="title">
-            Word de ultieme ploegleider
-          </h1>
+          <h1 class="title">Word de ultieme ploegleider</h1>
           <p>
-            RondeMaestro, hét wielerspel waarbij je <strong>dagelijks</strong> dezelfde kansen hebt. Selecteer elke dag acht renners en bewijs dat jij thuishoort in de ploegleiderswagen.
+            RondeMaestro, hét wielerspel waarbij je
+            <strong>dagelijks</strong> dezelfde kansen hebt. Selecteer elke dag
+            acht renners en bewijs dat jij thuishoort in de ploegleiderswagen.
           </p>
 
           <div class="btn-group">
@@ -43,13 +43,9 @@ onMounted(() => {
               <NuxtLink v-if="!authStore.user" to="/registreren">
                 Gratis inschrijven <Icon name="tabler:chevron-right" />
               </NuxtLink>
-              <NuxtLink v-else to="/dashboard">
-                Naar dashboard
-              </NuxtLink>
+              <NuxtLink v-else to="/dashboard"> Naar dashboard </NuxtLink>
             </button>
-            <div class="btn">
-              Hoe werkt het?
-            </div>
+            <div class="btn">Hoe werkt het?</div>
           </div>
         </div>
         <!-- <div class="hero-image">
@@ -63,22 +59,25 @@ onMounted(() => {
     <section class="home-section">
       <div class="text-block">
         <h1>
-          Tourpoules, maar dan <div class="highlight">
-            beter
-          </div>
+          Tourpoules, maar dan
+          <div class="highlight">beter</div>
         </h1>
         <p>
-          RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En beter. Daarom mag je bij RondeMaestro elke dag
-          een nieuwe ploeg van acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed naast zitten, dan heb je
-          morgen weer een nieuwe kans een gooi te doen naar de eeuwige roem!
+          RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En
+          beter. Daarom mag je bij RondeMaestro elke dag een nieuwe ploeg van
+          acht renners aanmaken! Het grote voordeel: mocht je er vandaag goed
+          naast zitten, dan heb je morgen weer een nieuwe kans een gooi te doen
+          naar de eeuwige roem!
         </p>
         <p>
-          Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker of grote ronde is - selecteer je acht renner
-          waarvan jij denkt dat ze hoog in de uitslag eindigen. En voor elke van die renners die zich in de top 15 weet te
-          fietsen krijg je punten. Zo simpel is dat!
+          Het werkt heel simpel. Voor elke wedstrijd - of dat nu een klassieker
+          of grote ronde is - selecteer je acht renner waarvan jij denkt dat ze
+          hoog in de uitslag eindigen. En voor elke van die renners die zich in
+          de top 15 weet te fietsen krijg je punten. Zo simpel is dat!
         </p>
         <p>
-          Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis hoort en
+          Laat zien dat jij met jouw koersinzicht in die ploegleiderswagen thuis
+          hoort en
           <NuxtLink to="/registreren">
             meld je aan voor RondeMaestro!
           </NuxtLink>
@@ -92,7 +91,8 @@ onMounted(() => {
           <div class="card-body">
             <h3>Dagelijks dezelfde kansen</h3>
             <p>
-              Zat je er gisteren naast? Geen zorgen! Selecteer elke dag opnieuw acht renners en doe een gooi naar eeuwige roem.
+              Zat je er gisteren naast? Geen zorgen! Selecteer elke dag opnieuw
+              acht renners en doe een gooi naar eeuwige roem.
             </p>
           </div>
         </div>
@@ -103,7 +103,8 @@ onMounted(() => {
           <div class="card-body">
             <h3>Duidelijke puntentelling</h3>
             <p>
-              Geen ingewikkelde regels. De eerste 15 renners over de streep krijgen punten. Simpel, eerlijk en overzichtelijk.
+              Geen ingewikkelde regels. De eerste 15 renners over de streep
+              krijgen punten. Simpel, eerlijk en overzichtelijk.
             </p>
           </div>
         </div>
@@ -114,7 +115,9 @@ onMounted(() => {
           <div class="card-body">
             <h3>Geen gedoe met budget</h3>
             <p>
-              Bij RondeMaestro hoef je geen renners te laten schieten vanwege budget. Elke dag kun je elke renner selecteren, zonder beperkingen.
+              Bij RondeMaestro hoef je geen renners te laten schieten vanwege
+              budget. Elke dag kun je elke renner selecteren, zonder
+              beperkingen.
             </p>
           </div>
         </div>
@@ -125,7 +128,8 @@ onMounted(() => {
           <div class="card-body">
             <h3>Speel met vrienden</h3>
             <p>
-              Maak een team aan, daag je vrienden uit en strijd samen om de beste score in het ploegenklassement.
+              Maak een team aan, daag je vrienden uit en strijd samen om de
+              beste score in het ploegenklassement.
             </p>
           </div>
         </div>
@@ -137,39 +141,49 @@ onMounted(() => {
       <div class="steps-list">
         <div class="step-item">
           <div class="card-image">
-            <span>
-              01</span>
+            <span> 01</span>
           </div>
           <h3>Meld je aan</h3>
-          <p>Maak gratis een account aan en je kunt direct meedoen met alle wedstrijden.</p>
+          <p>
+            Maak gratis een account aan en je kunt direct meedoen met alle
+            wedstrijden.
+          </p>
         </div>
         <div class="step-item">
           <div class="card-image">
-            <span>
-              02</span>
+            <span> 02</span>
           </div>
           <h3>Selecteer 8 renners</h3>
-          <p>Kies elke dag opnieuw acht renners waarvan jij denkt dat ze hoog eindigen.</p>
+          <p>
+            Kies elke dag opnieuw acht renners waarvan jij denkt dat ze hoog
+            eindigen.
+          </p>
         </div>
         <div class="step-item">
           <div class="card-image">
-            <span>
-              03</span>
+            <span> 03</span>
           </div>
           <h3>Verdien punten</h3>
-          <p>Elke renner in de top 15 levert punten op. Klim in het klassement en versla je vrienden!</p>
+          <p>
+            Elke renner in de top 15 levert punten op. Klim in het klassement en
+            versla je vrienden!
+          </p>
         </div>
       </div>
     </section>
     <section class="home-section">
       <div class="two-cols">
         <picture>
-          <img src="/img/tour-de-france-5543968_1920.webp" alt="">
+          <img src="/img/tour-de-france-5543968_1920.webp" alt="" />
         </picture>
 
         <div>
           <h2>Strijd tegen je vrienden</h2>
-          <p>Maak een team aan of sluitje aan bij vrienden. Jullie dagelijkse scores worden gecombineerd in het ploegenklassement. Wie heeft de beste wielertactiek?</p>
+          <p>
+            Maak een team aan of sluitje aan bij vrienden. Jullie dagelijkse
+            scores worden gecombineerd in het ploegenklassement. Wie heeft de
+            beste wielertactiek?
+          </p>
           <div class="highlight-list">
             <div class="highlight-item">
               <div class="card-image">
@@ -196,7 +210,10 @@ onMounted(() => {
 
     <section class="cta card text-center">
       <h2>Klaar om mee te doen?</h2>
-      <p>Meld je vandaag nog gratis aan en bewijs dat jij de ultieme ploegleider bent. De Tour de France wacht op niemand!</p>
+      <p>
+        Meld je vandaag nog gratis aan en bewijs dat jij de ultieme ploegleider
+        bent. De Tour de France wacht op niemand!
+      </p>
       <button class="btn btn-primary">
         <NuxtLink v-if="!authStore.user" to="/registreren">
           Inschrijven <Icon name="tabler:chevron-right" />
@@ -217,7 +234,11 @@ onMounted(() => {
   flex: 1;
   margin-top: -1rem;
   padding-top: 3rem;
-  background: linear-gradient(10deg, var(--clr-background-app) 30%, var(--clr-primary-mute));
+  background: linear-gradient(
+    10deg,
+    var(--clr-background-app) 30%,
+    var(--clr-primary-mute)
+  );
   color: var(--clr-primary-content);
   /* box-shadow: var(--box-shadow); */
   overflow: hidden;
@@ -444,7 +465,11 @@ onMounted(() => {
 }
 
 .cta {
-  background: linear-gradient(to bottom, var(--clr-primary-mute), hsl(from var(--clr-primary-mute) h s l / 10%));
+  background: linear-gradient(
+    to bottom,
+    var(--clr-primary-mute),
+    hsl(from var(--clr-primary-mute) h s l / 10%)
+  );
   max-width: 80ch;
 
   padding-inline: 6rem;

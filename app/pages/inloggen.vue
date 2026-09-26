@@ -39,7 +39,6 @@ const onSubmit = handleSubmit(async (values) => {
   catch (e) {
     const error = e as FetchError;
 
-    console.log(error, e);
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
