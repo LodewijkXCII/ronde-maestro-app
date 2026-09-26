@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // eslint-disable-next-line node/no-process-env
-      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:5959",
       // Add a client URL for callbacks:
       // eslint-disable-next-line node/no-process-env
       clientBase: process.env.NUXT_PUBLIC_CLIENT_BASE || "http://localhost:3000",

@@ -12,11 +12,15 @@ const sideBarStore = useSideBarStore();
 
 <template>
   <li class="stage-row">
-    <div class="stage-nr" :class="{ 'next-stage': stageUnderway(stage.date) && !stage.done }">
+    <div
+      class="stage-nr"
+      :class="{ 'next-stage': stageUnderway(stage.date) && !stage.done }"
+    >
       <span>
         {{ stage.stageNr }}
       </span>
     </div>
+
     <div class="stage-info">
       <div v-if="!sideBarStore.isClassicSeason">
         {{ stage.startCity }} - {{ stage.finishCity }}
@@ -25,12 +29,17 @@ const sideBarStore = useSideBarStore();
         {{ raceName }}
       </div>
       <div class="stage-details">
-        {{ new Date(stage.date).toLocaleDateString("nl-NL", {
-          day: '2-digit',
-          month: 'short',
-        }) }} •
-        {{ stage.distance }} km  •
-        <img :src="`${config.public.s3BucketURL}/${stage.stageType.image}`" :alt="stage.stageType.name">
+        {{
+          new Date(stage.date).toLocaleDateString("nl-NL", {
+            day: "2-digit",
+            month: "short",
+          })
+        }}
+        • {{ stage.distance }} km •
+        <img
+          :src="`${config.public.s3BucketURL}/${stage.stageType.image}`"
+          :alt="stage.stageType.name"
+        />
       </div>
     </div>
     <div class="actions">
@@ -38,13 +47,11 @@ const sideBarStore = useSideBarStore();
         v-if="stage.done"
         :to="{
           name: 'dashboard-race-id-uitslagen-nr',
-          params:
-            {
-              race: slugify(raceName),
-              id: stage.raceId,
-              nr: stage.stageNr,
-            },
-
+          params: {
+            race: slugify(raceName),
+            id: stage.raceId,
+            nr: stage.stageNr,
+          },
         }"
         class="btn btn-success"
       >
@@ -55,12 +62,11 @@ const sideBarStore = useSideBarStore();
         v-else-if="!stageUnderway(stage.date)"
         :to="{
           name: 'dashboard-race-id-selecteer-nr',
-          params:
-            {
-              race: slugify(raceName),
-              id: stage.raceId,
-              nr: stage.stageNr,
-            },
+          params: {
+            race: slugify(raceName),
+            id: stage.raceId,
+            nr: stage.stageNr,
+          },
         }"
         class="btn btn-primary"
       >
@@ -68,7 +74,10 @@ const sideBarStore = useSideBarStore();
         Selecteren
       </NuxtLink>
 
-      <div v-if="stageUnderway(stage.date) && !stage.done" class="badge badge-alert">
+      <div
+        v-if="stageUnderway(stage.date) && !stage.done"
+        class="badge badge-alert"
+      >
         Onderweg
       </div>
     </div>
