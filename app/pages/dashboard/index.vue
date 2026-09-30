@@ -19,6 +19,9 @@ const userEntries = ref<GetEntry[] | []>([]);
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
 const raceStore = useRaceStore();
+
+const startlistStore = useStartlistStore();
+
 const {
   upComingStage,
   currentRace,
@@ -27,6 +30,11 @@ const {
   loading: storeLoading,
 } = storeToRefs(sideBarStore);
 const latestResult = ref<ResultResponse>();
+
+// Startlijstgegevens (o.a. rugnummer) per renner-id
+const startlistDetailsById = computed(() =>
+  new Map(startlistStore.riderStartlist.map(rider => [rider.id, rider.startlistDetails])),
+);
 
 async function getUpcomingStage() {
   if (!upComingStage.value) {
@@ -46,16 +54,21 @@ async function getUpcomingStage() {
     );
 
     userEntries.value = data as GetEntry[];
-  } catch (e) {
+
+    startlistStore.activeRaceIdForFetch = upComingStage.value.raceId;
+    await startlistStore.refreshStartlistData();
+  }
+  catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  } finally {
+  }
+  finally {
     entriesLoading.value = false;
   }
 }
 
 async function getLatestResult() {
-  const lastDoneStage = allStages.value?.findLast((stage) => stage.done);
+  const lastDoneStage = allStages.value?.findLast(stage => stage.done);
 
   if (!lastDoneStage) {
     console.error("Geen voltooide etappe gevonden voor deze race.");
@@ -86,10 +99,12 @@ async function getLatestResult() {
     }
 
     latestResult.value = data as ResultResponse;
-  } catch (e) {
+  }
+  catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  } finally {
+  }
+  finally {
     resultsLoading.value = false; // Stop loader
   }
 }
@@ -141,7 +156,7 @@ watch(
           <img
             class="dasboard-cover--image"
             :src="`${config.public.s3BucketURL}/${currentRace?.coverImage}`"
-          />
+          >
           <div class="dashboard-cover--text">
             <div class="dashboard-cover--text__inner">
               <h2>
@@ -192,7 +207,7 @@ watch(
                 >
                   {{
                     upComingStage.done
-                      ? "Bekijk de uistlag"
+                      ? "Bekijk de uitslag"
                       : "Selecteer je renners"
                   }}
                 </button>
@@ -246,7 +261,11 @@ watch(
               show-team-data
               no-user-select
               :cyclist="entry.cyclist"
-            />
+            >
+              <template #actionSlot>
+                #{{ startlistDetailsById.get(entry.cyclist.id)?.raceNumber }}
+              </template>
+            </CyclistCardMedium>
 
             <button
               v-if="!stageUnderway(upComingStage.date)"
@@ -256,8 +275,11 @@ watch(
               Pas je team aan
               <Icon name="tabler:arrow-right" />
             </button>
+            <button v-else class="btn btn-primary btn-full-width" disabled>
+              Etappe is onderweg
+            </button>
           </div>
-          <div v-if="!entriesLoading && !userEntries">
+          <div v-if="!entriesLoading && userEntries.length === 0">
             <p>Geen renners geselecteerd voor deze etappe.</p>
 
             <button
@@ -308,13 +330,13 @@ watch(
                 <img
                   :src="`${config.public.s3BucketURL}/${latestResult.stage.stageType.image}`"
                   :alt="latestResult.stage.stageType.name"
-                />
+                >
               </div>
               <div class="stage-box--image">
                 <img
                   :src="`${config.public.s3BucketURL}/${latestResult.stage.image}`"
                   :alt="latestResult.stage.race.name"
-                />
+                >
               </div>
             </div>
 
@@ -367,7 +389,7 @@ watch(
             <p>Er is nog geen uitslag voor {{ upcomingRace[0]?.name }}</p>
           </div>
         </div>
-        <DashboardStandings :latest-result/>
+        <DashboardStandings :latest-result />
       </div>
     </div>
   </main>
@@ -496,6 +518,8 @@ watch(
     display: grid;
     gap: 0.5rem;
     margin-top: 0.75rem;
+    background: none;
+    padding: 0;
   }
 
   .cyclistCard {

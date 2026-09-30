@@ -27,10 +27,14 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
 </script>
 
 <template>
-  <section class="stage-box stage-timer">
+  <section class="stage-box stage-timer" :class="{ 'stage-timer--finished': timeRemaining === 0 }">
     <h3 class="strong stage-box--title">
       Etappe sluit over:
     </h3>
+
+    <div v-if="timeRemaining === 0">
+      De etappe is onderweg maar de uitslag nog niet bekend, je kan niet meer invullen. Veel kijk plezier!
+    </div>
 
     <VueCountdown
       v-slot="{ days, hours, minutes, seconds }"
@@ -38,7 +42,6 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
       :interval="1000"
       :transform="transformSlotProps"
       class="counter stage-box--body"
-      @end="() => goToStage(stageId)"
     >
       <div class="counter-days">
         <span>
@@ -96,6 +99,14 @@ function transformSlotProps(props: { days: number; hours: number; minutes: numbe
 
     h3 {
       margin-bottom: 0;
+    }
+  }
+}
+.stage-timer--finished {
+  outline: 2px solid var(--clr-error);
+  .counter {
+    span {
+      color: var(--clr-error);
     }
   }
 }

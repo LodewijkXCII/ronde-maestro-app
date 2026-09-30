@@ -9,6 +9,12 @@ const { currentStage, currentRace } = storeToRefs(sideBarStore);
 
 const compkey = ref(0);
 
+// Prevent late async results from overwriting shared store state after navigating away
+let active = true;
+onBeforeUnmount(() => {
+  active = false;
+});
+
 async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   if (!route.params.id) {
     return;
@@ -22,6 +28,10 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   startlistStore.activeRaceIdForFetch = raceId;
   await startlistStore.refreshStartlistData();
 
+  if (!active) {
+    return;
+  }
+
   if (newRace && newRace.stages) {
     const stageNr = getParamId(route.params.nr);
     if (stageNr) {
@@ -32,18 +42,17 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
 }
 
 watch(
-  () => ({
-    raceId: route.params.id,
-    stageNr: route.params.nr,
-    currentRace: sideBarStore.currentRace,
-  }),
-  async ({ currentRace: newCurrentRace }) => {
+  () => [route.params.id, route.params.nr, sideBarStore.currentRace?.id],
+  async () => {
     if (!sideBarStore.upcomingRace && sideBarStore.upcomingRaceStatus !== "pending") {
       await sideBarStore.refreshUpcomingRace();
     }
-    setRaceAndStageData(newCurrentRace);
+    if (!active) {
+      return;
+    }
+    setRaceAndStageData(sideBarStore.currentRace);
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 );
 </script>
 
@@ -113,9 +122,9 @@ watch(
         <StartlistSelectedRiders />
       </div>
     </div>
+    <!-- TO TOP COMPONENT -->
+    <AppToTop />
   </main>
-  <!-- TO TOP COMPONENT -->
-  <AppToTop />
 </template>
 
 <style lang="scss" scoped>

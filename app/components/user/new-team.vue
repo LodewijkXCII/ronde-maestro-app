@@ -103,7 +103,9 @@ const onSubmit = handleSubmit(async (values) => {
           {{ errors.open }}
         </div>
       </div>
-      <p class="input-subtext"> Bij een openbare ploeg kunnen alle deelnemers zich toevoegen. Wanneer een ploeg niet openbaar is, is er een wachtwoord of uitnodigingslink nodig om deel te nemen.</p>
+      <p class="input-subtext">
+        Bij een openbare ploeg kunnen alle deelnemers zich toevoegen. Wanneer een ploeg niet openbaar is, is er een wachtwoord of uitnodigingslink nodig om deel te nemen.
+      </p>
 
       <div v-if="!open" class="input-group">
         <label for="password" class="input">Wachtwoord:</label>

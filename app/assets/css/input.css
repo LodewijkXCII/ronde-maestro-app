@@ -7,7 +7,7 @@ select {
 }
 
 fieldset {
-  padding-block: .5rem;
+  padding-block: 0.5rem;
   border: 0;
 
   display: grid;
@@ -17,19 +17,18 @@ fieldset {
   .input-group {
     margin-block: 0.25rem;
     padding-left: 1rem;
-    
   }
 
   legend {
     font-weight: 800;
-    margin-bottom: .05rem;
+    margin-bottom: 0.05rem;
   }
 
   .subtle {
     font-size: var(--fs-300);
     font-weight: 300;
     line-height: 1.1;
-    margin-top: -.5rem;
+    margin-top: -0.5rem;
   }
 }
 
@@ -55,18 +54,16 @@ fieldset {
   &:checked {
     background-color: var(--clr-primary);
     border-color: var(--clr-background-mute);
-    
   }
 }
 
 .input-group {
   width: 100%;
   margin: 0.75rem 0;
-  padding-block: .25rem;
+  padding-block: 0.25rem;
   position: relative;
   user-select: none;
   display: grid;
-
 
   &:first-of-type:not(.checkbox-hidden) {
     margin-top: 0;
@@ -84,7 +81,6 @@ fieldset {
     background-color: var(--clr-primary-mute);
     border-color: var(--clr-primary);
     font-weight: 800;
-
   }
 
   .input__error {
@@ -101,7 +97,7 @@ fieldset {
     width: 100%;
     height: 3em;
     padding: 0.75rem 0.5rem;
-    margin-block: .5rem;
+    margin-block: 0.5rem;
     background-color: var(--clr-background-mute);
     color: currentColor;
     border-radius: 2px;
@@ -122,11 +118,7 @@ fieldset {
     &:focus,
     &:focus-within {
       border-width: 3px;
-      border-image: linear-gradient(
-        to left,
-        var(--clr-primary),
-        var(--clr-secondary)
-      );
+      border-image: linear-gradient(to left, var(--clr-primary), var(--clr-secondary));
       border-image-slice: 1;
     }
   }
@@ -172,7 +164,7 @@ form .btn {
   margin-top: 0.5rem;
 }
 
-label:not(.swap, :where(:not([type='radio']))) {
+label:not(.swap, :where(:not([type="radio"]))) {
   font-weight: 700;
   display: flex;
   flex-wrap: wrap;
@@ -267,7 +259,7 @@ input {
   background-color: transparent;
   border: none;
   padding: 0 1em 0 0;
-  
+
   font-family: inherit;
   font-size: inherit;
   cursor: inherit;
@@ -287,7 +279,7 @@ input {
 
   &::placeholder {
     color: var(--clr-text);
-    opacity: .25; /* Firefox */
+    opacity: 0.25; /* Firefox */
   }
 
   &::-ms-input-placeholder {

@@ -22,7 +22,7 @@ onMounted(() => {
     <section class="hero">
       <div class="hero-image">
         <picture>
-          <img src="/img/bryan-lucas.webp" alt="RondeMaestro" srcset="" />
+          <img src="/img/bryan-lucas.webp" alt="RondeMaestro" srcset="">
         </picture>
       </div>
 
@@ -31,7 +31,9 @@ onMounted(() => {
           <div class="badge badge-outline">
             Binnenkort de {{ currentRace?.name }}!
           </div>
-          <h1 class="title">Word de ultieme ploegleider</h1>
+          <h1 class="title">
+            Word de ultieme ploegleider
+          </h1>
           <p>
             RondeMaestro, hét wielerspel waarbij je
             <strong>dagelijks</strong> dezelfde kansen hebt. Selecteer elke dag
@@ -43,9 +45,13 @@ onMounted(() => {
               <NuxtLink v-if="!authStore.user" to="/registreren">
                 Gratis inschrijven <Icon name="tabler:chevron-right" />
               </NuxtLink>
-              <NuxtLink v-else to="/dashboard"> Naar dashboard </NuxtLink>
+              <NuxtLink v-else to="/dashboard">
+                Naar dashboard
+              </NuxtLink>
             </button>
-            <div class="btn">Hoe werkt het?</div>
+            <div class="btn">
+              Hoe werkt het?
+            </div>
           </div>
         </div>
         <!-- <div class="hero-image">
@@ -60,7 +66,9 @@ onMounted(() => {
       <div class="text-block">
         <h1>
           Tourpoules, maar dan
-          <div class="highlight">beter</div>
+          <div class="highlight">
+            beter
+          </div>
         </h1>
         <p>
           RondeMaestro vindt dat de standaard Tourpoules leuker kunnen. En
@@ -174,7 +182,7 @@ onMounted(() => {
     <section class="home-section">
       <div class="two-cols">
         <picture>
-          <img src="/img/tour-de-france-5543968_1920.webp" alt="" />
+          <img src="/img/tour-de-france-5543968_1920.webp" alt="">
         </picture>
 
         <div>
@@ -234,11 +242,7 @@ onMounted(() => {
   flex: 1;
   margin-top: -1rem;
   padding-top: 3rem;
-  background: linear-gradient(
-    10deg,
-    var(--clr-background-app) 30%,
-    var(--clr-primary-mute)
-  );
+  background: linear-gradient(10deg, var(--clr-background-app) 30%, var(--clr-primary-mute));
   color: var(--clr-primary-content);
   /* box-shadow: var(--box-shadow); */
   overflow: hidden;
@@ -465,11 +469,7 @@ onMounted(() => {
 }
 
 .cta {
-  background: linear-gradient(
-    to bottom,
-    var(--clr-primary-mute),
-    hsl(from var(--clr-primary-mute) h s l / 10%)
-  );
+  background: linear-gradient(to bottom, var(--clr-primary-mute), hsl(from var(--clr-primary-mute) h s l / 10%));
   max-width: 80ch;
 
   padding-inline: 6rem;

@@ -1,40 +1,40 @@
 <template>
-<div class="divider">
+  <div class="divider">
     <span class="icon-group">
-        <Icon name="tabler:bike" />
-        <Icon name="tabler:bike" />
-        <Icon name="tabler:bike" />
+      <Icon name="tabler:bike" />
+      <Icon name="tabler:bike" />
+      <Icon name="tabler:bike" />
     </span>
-</div>
+  </div>
 </template>
 
 <style>
 .divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: 2rem;
+  padding-block: 0.5rem;
+
+  .icon-group {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding-inline: 2rem;
-    padding-block: .5rem;
+    gap: 5px;
 
-    .icon-group {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-
-        span {
-            height: 18px;
-            width: 18px;
-        }
+    span {
+      height: 18px;
+      width: 18px;
     }
+  }
 
-    &::before,
-    &::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background:var(--clr-primary-mute);
-    }
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--clr-primary-mute);
+  }
 
-    color: var(--clr-primary-mute);
+  color: var(--clr-primary-mute);
 }
 </style>

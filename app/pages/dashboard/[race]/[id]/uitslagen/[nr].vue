@@ -3,9 +3,9 @@
 import type { FetchError } from "ofetch";
 
 import type {
-    ResultCyclistByStage,
-    ResultResponse,
-    ResultUsersByStage,
+  ResultCyclistByStage,
+  ResultResponse,
+  ResultUsersByStage,
 } from "~/types/results";
 
 import getParamId from "~/utils/param-extractor";
@@ -23,19 +23,31 @@ const { currentStage } = storeToRefs(sideBarStore);
 const errorMessage = ref("");
 const cyclistResult = ref<ResultCyclistByStage[]>([]);
 const usersResult = ref<ResultUsersByStage[]>([]);
+const notRiddenRef = ref(false);
 
-const resultLimit = 100
+// const resultLimit = 100
 
 const loading = ref(false);
 
-const visibleRows = computed(() =>
-  getResultWithUser(usersResult.value, authStore.user.id, resultLimit)
+const leaders = computed(() =>
+  (usersResult.value ?? []).filter(user => user.absolutePosition === 1),
 );
+
+// Prevent late async results from overwriting shared store state after navigating away
+let active = true;
+onBeforeUnmount(() => {
+  active = false;
+});
+
+// const visibleRows = computed(() =>
+//   getResultWithUser(usersResult.value, authStore.user.id, resultLimit)
+// );
+//
 
 const userStandingData = computed(() => {
   if (usersResult.value) {
     const foundUser = usersResult.value.find(
-      (user) => user.userId === authStore.user.id,
+      user => user.userId === authStore.user.id,
     );
     if (!foundUser) {
       return {
@@ -48,7 +60,7 @@ const userStandingData = computed(() => {
       points: foundUser.points,
       position: foundUser.absolutePosition,
       winnerDiff:
-        (usersResult.value.find((user) => user.absolutePosition === 1)
+        (usersResult.value.find(user => user.absolutePosition === 1)
           ?.points || 0) - foundUser.points,
     };
   }
@@ -67,61 +79,77 @@ async function setRaceAndStageData(newRace: typeof sideBarStore.currentRace) {
   const stageNr = getParamId(route.params.nr);
 
   if (!route.params.id || !raceId || !stageNr || !newRace || !newRace.stages) {
+    loading.value = false;
     return (errorMessage.value = "Er is geen juiste data gevonden");
   }
 
   startlistStore.activeRaceIdForFetch = raceId;
   await startlistStore.refreshStartlistData();
 
-  const foundStage =
-    newRace.stages.find((stage) => stage.stageNr === stageNr) || null;
+  if (!active) {
+    return;
+  }
+
+  const foundStage
+    = newRace.stages.find(stage => stage.stageNr === stageNr) || null;
 
   sideBarStore.currentStage = foundStage;
 
   if (!foundStage || !foundStage.id) {
     console.warn("No valid stage found for results fetch.");
+    loading.value = false;
     return (errorMessage.value = "Geen etappe gevonden met deze gegevens.");
   }
 
   try {
-    const { cyclist, users } = await $fetch<ResultResponse>(
+    const { cyclist, users, notRidden } = await $fetch<ResultResponse>(
       `${config.public.apiBase}/results/stage/${currentStage.value?.id}`,
       {
         method: "get",
         credentials: "include",
       },
     );
+    if (!active) {
+      return;
+    }
+
+    if (notRidden) {
+      notRiddenRef.value = true;
+      return;
+    }
+
     if (cyclist && users) {
       cyclistResult.value = cyclist.sort((a, b) => a.position - b.position);
       usersResult.value = users;
     }
-  } catch (e) {
+  }
+  catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
 
+const { page, totalPages, pagedItems, userPage, showPagination, goToUser }
+  = usePagination(usersResult, 10);
+
 watch(
-  () => ({
-    raceId: route.params.id,
-    stageNr: route.params.nr,
-    currentRace: sideBarStore.currentRace,
-  }),
-  async ({ currentRace: newCurrentRace }) => {
+  () => [route.params.id, route.params.nr, sideBarStore.currentRace?.id],
+  async () => {
     if (
-      !sideBarStore.upcomingRace &&
-      sideBarStore.upcomingRaceStatus !== "pending"
+      !sideBarStore.upcomingRace
+      && sideBarStore.upcomingRaceStatus !== "pending"
     ) {
       await sideBarStore.refreshUpcomingRace();
     }
-    setRaceAndStageData(newCurrentRace);
+    if (!active) {
+      return;
+    }
+    setRaceAndStageData(sideBarStore.currentRace);
   },
-  {
-    immediate: true,
-    deep: true,
-  },
+  { immediate: true },
 );
 </script>
 
@@ -156,7 +184,7 @@ watch(
         <span> Er is geen juiste data gevonden. Probeer het opnieuw. </span>
       </div>
 
-      <template v-else-if="currentRace && currentStage">
+      <section v-else-if="currentRace && currentStage">
         <h2>Uitslag</h2>
 
         <div class="result-header">
@@ -165,9 +193,7 @@ watch(
               <h3>{{ currentRace.name }}</h3>
               <div v-if="currentStage" class="stage-section--stage__info">
                 <p>
-                  <span v-if="!sideBarStore.isClassicSeason"
-                    >{{ currentStage.stageNr }}: </span
-                  >{{
+                  <span v-if="!sideBarStore.isClassicSeason">{{ currentStage.stageNr }}: </span>{{
                     new Date(currentStage.date).toLocaleDateString("nl-NL", {
                       day: "2-digit",
                       month: "short",
@@ -181,7 +207,7 @@ watch(
                   :src="`${config.public.s3BucketURL}/${currentStage.stageType.image}`"
                   :alt="currentStage.stageType.name"
                   class="stage-type-image"
-                /><span>{{ currentStage.stageType.name }}</span>
+                ><span>{{ currentStage.stageType.name }}</span>
               </div>
               <p v-else>
                 {{
@@ -212,14 +238,27 @@ watch(
               :stages="sideBarStore.allStages"
             /> -->
           </div>
-          <div class="profile-list">
+          <div v-if="notRiddenRef" class="profile-list">
+            <div
+              role="alert"
+              class="alert alert-warning"
+            >
+              <Icon name="tabler:alert-square-rounded" />
+              <span>Deze etappe heeft geen uitslag, maar is wel verreden. Dit kan verschillende oorzaken hebben. Er zijn geen punten gescoordt deze etappe.</span>
+            </div>
+          </div>
+          <div v-else class="profile-list">
             <div class="profile-list--item">
               <span>Jouw positie</span>
-              <h4 class="rank-highlight"># {{ userStandingData.position }}</h4>
+              <h4 class="rank-highlight">
+                # {{ userStandingData.position }}
+              </h4>
             </div>
             <div class="profile-list--item">
               <span>Jouw punten</span>
-              <h4 class="rank-highlight">{{ userStandingData.points }} pnt</h4>
+              <h4 class="rank-highlight">
+                {{ userStandingData.points }} pnt
+              </h4>
             </div>
             <div class="profile-list--item">
               <span>Winnaar</span>
@@ -238,28 +277,71 @@ watch(
           </div>
         </div>
 
-        <div class="result-body">
+        <div v-if="!notRiddenRef" class="result-body">
           <div>
             <h3>Etappe klassement</h3>
 
             <div class="standings-list">
-              <template
-                v-for="row in visibleRows"
-                :key="row.type === 'gap' ? 'gap' : row.user.userId"
+              <template v-if="page > 1">
+                <li
+                  v-for="user in leaders"
+                  :key="user.userId"
+                  class="standings-user winner"
+                  :class="{ 'current-user': authStore.user?.id === user.userId }"
+                >
+                  <details :open="authStore.user?.id === user.userId">
+                    <summary>
+                      <div class="standings-user--info__position">
+                        <span>{{ user.absolutePosition }}</span>
+                      </div>
+                      <div class="standings-user--info">
+                        {{ user.name }}
+                      </div>
+                      <div>{{ user.points }} ptn</div>
+                      <Icon
+                        name="tabler:chevron-right"
+                        size="16"
+                        class="nav-icon"
+                      />
+                    </summary>
+
+                    <h4>Geselecteerde renners</h4>
+                    <div class="cyclist-result-list">
+                      <CyclistCardMedium
+                        v-for="{ cyclist } in user.entries"
+                        :key="cyclist.id"
+                        :cyclist
+                        :show-specialies="false"
+                        show-team-data
+                        no-user-select
+                        rider-selected="false"
+                      >
+                        <template #actionSlot>
+                          <div v-if="cyclist.results[0]" class="points">
+                            <span>{{ cyclist.results[0]?.points }}</span> pnt
+                          </div>
+                        </template>
+                      </CyclistCardMedium>
+                    </div>
+                  </details>
+                </li>
+                <AppDivider />
+              </template>
+              <div
+                v-for="user in pagedItems"
+                :key="user.userId"
+                class="standings-user"
+                :class="[{ 'current-user': authStore.user?.id === user.userId }, placedUser(user.absolutePosition)]"
               >
-              <div v-if="row.type === 'gap'">...</div>
-              <div v-else
-              class="standings-user"
-              :class="{ 'current-user': authStore.user?.id === row.user.userId }">
-                <details :open="authStore.user?.id === row.user.userId">
+                <details :open="authStore.user?.id === user.userId">
                   <summary>
                     <div class="standings-user--info__position">
-                      <span>{{ row.user.absolutePosition }}</span>
+                      <span>{{ user.absolutePosition }}</span>
                     </div>
                     <div class="standings-user--info">
-                      {{ row.user.name }}
+                      {{ user.name }}
                     </div>
-                    <div>{{ row.user.points }} ptn</div>
+                    <div>{{ user.points }} ptn</div>
                     <Icon
                       name="tabler:chevron-right"
                       size="16"
@@ -270,7 +352,7 @@ watch(
                   <h4>Geselecteerde renners</h4>
                   <div class="cyclist-result-list">
                     <CyclistCardMedium
-                      v-for="{ cyclist } in row.user.entries"
+                      v-for="{ cyclist } in user.entries"
                       :key="cyclist.id"
                       :cyclist
                       :show-specialies="false"
@@ -287,9 +369,24 @@ watch(
                   </div>
                 </details>
               </div>
-              </template>
+            </div>
+
+            <div v-if="showPagination" class="pagination">
+              <div class="pagination-controls">
+                <button class="btn" :disabled="page === 1" @click="page--">
+                  <Icon name="tabler:chevron-left" />
+                </button>
+                <span>Pagina {{ page }} van {{ totalPages }}</span>
+                <button class="btn" :disabled="page === totalPages" @click="page++">
+                  <Icon name="tabler:chevron-right" />
+                </button>
+              </div>
+              <button v-if="userPage && userPage !== page" class="btn" @click="goToUser">
+                Mijn positie
+              </button>
             </div>
           </div>
+
           <!-- USER SELECTION WITH RESULT -->
           <div class="cyclist-result">
             <!-- CYCLIST RESULT -->
@@ -324,7 +421,7 @@ watch(
           Bekijk algemeen klassement
           <Icon name="tabler:arrow-right" />
         </NuxtLink>
-      </template>
+      </section>
     </div>
   </main>
 </template>

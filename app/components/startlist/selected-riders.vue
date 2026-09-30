@@ -43,13 +43,13 @@ async function handleSubmit() {
 
   if (stageUnderway(currentStage.value.date)) {
     loading.value = false;
-    return (errorMessage.value =
-      "De rit is al onderweg. Je kan niet meer invullen.");
+    return (errorMessage.value
+      = "De rit is al onderweg. Je kan niet meer invullen.");
   }
 
   if (
-    selectedRidersComponents.value.length < selectableRiders.value &&
-    selectedRidersComponents.value.length >= 1
+    selectedRidersComponents.value.length < selectableRiders.value
+    && selectedRidersComponents.value.length >= 1
   ) {
     // TODO MAKE USE OF OTHER LIBARY
     // eslint-disable-next-line no-alert
@@ -92,11 +92,13 @@ async function handleSubmit() {
     // }
     // else {
     // }
-  } catch (e) {
+  }
+  catch (e) {
     const error = e as FetchError;
 
     errorMessage.value = getFetchErrorMessage(error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -160,6 +162,13 @@ onBeforeRouteLeave(() => {
       </span>
     </div>
 
+    <div v-if="currentStage && stageUnderway(currentStage.date)" role="alert" class="alert alert-error">
+      <Icon name="tabler:alert-square-rounded" />
+      <span>
+        Deze etappe is onderweg, de uitslag volgt zodra de etappe is verwerkt
+      </span>
+    </div>
+
     <div class="selected-riders-container">
       <CyclistCardMedium
         v-for="cyclist in selectedRidersComponents"
@@ -187,10 +196,10 @@ onBeforeRouteLeave(() => {
       <button
         class="btn btn-primary btn-full-width"
         :disabled="
-          !selectedRidersStore.formDirty ||
-          selectedRidersComponents.length === 0 ||
-          selectedRidersComponents.length > selectableRiders ||
-          loading
+          !selectedRidersStore.formDirty
+            || selectedRidersComponents.length === 0
+            || selectedRidersComponents.length > selectableRiders
+            || loading
         "
         @click="handleSubmit"
       >
@@ -233,10 +242,6 @@ onBeforeRouteLeave(() => {
   }
 }
 
-.selected-riders > .cyclistCard .withdraw {
-  pointer-events: initial;
-}
-
 .selected-riders .dashboard-card .selected-riders {
   background: transparent;
   padding: 0;
@@ -248,6 +253,10 @@ onBeforeRouteLeave(() => {
   gap: 0.5rem;
   margin-block: calc(2 * var(--_padding-size));
   position: relative;
+}
+
+.selected-riders-container > .cyclistCard.withdraw {
+  pointer-events: auto;
 }
 
 .selected-riders-container::before,

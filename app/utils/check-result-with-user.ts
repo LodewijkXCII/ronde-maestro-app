@@ -1,6 +1,6 @@
-export type StandingsRow<T> =
-  | { type: "user"; user: T; position: number }
-  | { type: "gap" };
+export type StandingsRow<T>
+  = | { type: "user"; user: T; position: number }
+    | { type: "gap" };
 
 export function getResultWithUser<T extends { userId: string }>(
   userList: T[],
@@ -16,7 +16,7 @@ export function getResultWithUser<T extends { userId: string }>(
   });
 
   const userIndex = currentUserId
-    ? userList.findIndex((user) => user.userId === currentUserId)
+    ? userList.findIndex(user => user.userId === currentUserId)
     : -1;
 
   if (userIndex === -1 || userIndex < limit || limit <= topCount) {

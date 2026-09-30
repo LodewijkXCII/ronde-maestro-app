@@ -3,7 +3,7 @@
     "dbaeumer.vscode-eslint",
     "Vue.volar"
   ],
-  "unwantedRecommendations" : [
+  "unwantedRecommendations": [
     "tailwindbradlc.vscode-tailwindcss"
   ]
 }

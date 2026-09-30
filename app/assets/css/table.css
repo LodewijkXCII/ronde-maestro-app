@@ -8,8 +8,7 @@
   margin: 1em 0;
 
   &:where(.race-table) {
-    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr minmax(6ch, 10ch)
-      minmax(2ch, 15ch);
+    --_grid-columns: minmax(1ch, 50px) minmax(3ch, 80px) 1fr minmax(6ch, 10ch) minmax(2ch, 15ch);
   }
   &:where(.result-table) {
     --_grid-columns: 5ch 1fr minmax(4ch, auto) 3ch 3ch;
@@ -18,7 +17,7 @@
     --_grid-columns: 5ch minmax(10ch, auto) 7ch 7ch;
   }
   &:where(.users-table) {
-    --_grid-columns: 1fr 15ch 7ch
+    --_grid-columns: 1fr 15ch 7ch;
   }
 
   .table-header {
@@ -42,7 +41,9 @@
       background-color: var(--clr-background);
     }
 
-    &:hover:not(.table-header), &:focus-visible:not(.table-header), &:focus:not(.table-header) {
+    &:hover:not(.table-header),
+    &:focus-visible:not(.table-header),
+    &:focus:not(.table-header) {
       background-color: var(--clr-primary-mute);
       outline: 1px solid var(--clr-primary-dark);
       outline-offset: -1px;

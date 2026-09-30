@@ -39,7 +39,7 @@ const sideBarStore = useSideBarStore();
         <img
           :src="`${config.public.s3BucketURL}/${stage.stageType.image}`"
           :alt="stage.stageType.name"
-        />
+        >
       </div>
     </div>
     <div class="actions">

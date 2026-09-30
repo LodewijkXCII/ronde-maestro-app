@@ -7,31 +7,31 @@ import type { RaceTotalPoints, ResultPerStage } from "~/types/results";
 const sideBarStore = useSideBarStore();
 const raceStore = useRaceStore();
 const authUser = useAuthStore().user;
-const route = useRoute();
-const router = useRouter();
 
 const loading = ref(false);
 const errorMessage = ref("");
 const { raceResult } = storeToRefs(raceStore);
 
-const selectedStage = ref<number | null>(null);
-
 const currentRace = computed(() => {
   return sideBarStore.currentRace;
 });
 
+const leaders = computed(() =>
+  (raceResult.value ?? []).filter(user => user.absolutePosition === 1),
+);
+
 const resultPerStage = ref<ResultPerStage[]>([]);
-const selectedStageResult = ref<ResultPerStage>();
 
 function combineResultsAndStages(
   result: RaceTotalPoints[],
 ): ResultPerStage[] | undefined {
   if (
-    !sideBarStore.isClassicSeason &&
-    (!currentRace.value || !currentRace.value.stages)
+    !sideBarStore.isClassicSeason
+    && (!currentRace.value || !currentRace.value.stages)
   ) {
     return [];
-  } else if (sideBarStore.isClassicSeason && !sideBarStore.allStages) {
+  }
+  else if (sideBarStore.isClassicSeason && !sideBarStore.allStages) {
     return [];
   }
 
@@ -51,7 +51,7 @@ function combineResultsAndStages(
     for (const user of result) {
       for (const userStageResult of user.stages) {
         const foundStage = combinedResults.find(
-          (combined) => combined.stage.stageNr === userStageResult.stageNr,
+          combined => combined.stage.stageNr === userStageResult.stageNr,
         );
 
         if (foundStage) {
@@ -82,45 +82,35 @@ async function getRaceData() {
       return;
     }
     combineResultsAndStages(raceStore.raceResult);
-    selectStageFromQuery();
-  } catch (e) {
+  }
+  catch (e) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
 
-function selectStageFromQuery() {
-  console.log(route);
-  const querySlug =
-    (route.query.race as string) || (route.query.stage as string);
-  if (querySlug) {
-    const foundStage = resultPerStage.value.find(
-      (stageResult) =>
-        slugify(getRaceName(stageResult.stage.raceId)) === querySlug,
-    );
-    if (foundStage) {
-      selectedStage.value = foundStage.stage.stageNr;
-    }
-  }
-}
+const pageSize = 10;
+const { page, totalPages, pagedItems, userPage, showPagination, goToUser }
+  = usePagination(() => raceResult.value ?? [], pageSize);
 
 onMounted(() => {
   getRaceData();
 });
 
-watch(selectedStage, (newValue) => {
-  const foundStage = resultPerStage.value.find(
-    (stage) => stage.stage.stageNr === newValue,
-  );
-  if (foundStage) {
-    selectedStageResult.value = foundStage;
-    const raceName = getRaceName(foundStage.stage.raceId);
-    // Update the query parameter without causing a full page reload
-    router.push({ query: { race: slugify(raceName) } });
-  }
-});
+// watch(selectedStage, (newValue) => {
+//   const foundStage = resultPerStage.value.find(
+//     stage => stage.stage.stageNr === newValue,
+//   );
+//   if (foundStage) {
+//     selectedStageResult.value = foundStage;
+//     const raceName = getRaceName(foundStage.stage.raceId);
+//     // Update the query parameter without causing a full page reload
+//     router.push({ query: { race: slugify(raceName) } });
+//   }
+// });
 </script>
 
 <template>
@@ -146,9 +136,9 @@ watch(selectedStage, (newValue) => {
 
       <template
         v-else-if="
-          (currentRace || sideBarStore.isClassicSeason) &&
-          !loading &&
-          raceResult
+          (currentRace || sideBarStore.isClassicSeason)
+            && !loading
+            && raceResult
         "
       >
         <section>
@@ -159,14 +149,34 @@ watch(selectedStage, (newValue) => {
           </p>
 
           <ul v-if="raceResult.length" class="standings-list">
+            <template v-if="page > 1">
+              <li
+                v-for="user in leaders"
+                :key="user.userId"
+                class="standings-user winner"
+                :class="{ 'current-user': authUser?.id === user.userId }"
+              >
+                <div class="standings-user--info__position">
+                  <span>{{ user.absolutePosition }}</span>
+                </div>
+                <div class="standings-user--info">
+                  {{ user.name }}
+                </div>
+                <div>{{ user.totalPoints }} ptn</div>
+              </li>
+              <AppDivider />
+            </template>
             <li
-              v-for="(user, index) in raceResult"
+              v-for="user in pagedItems"
               :key="user.userId"
               class="standings-user"
-              :class="{ 'current-user': authUser?.id === user.userId }"
+              :class="[
+                { 'current-user': authUser?.id === user.userId },
+                placedUser(user.absolutePosition),
+              ]"
             >
               <div class="standings-user--info__position">
-                <span>{{ index + 1 }}</span>
+                <span>{{ user.absolutePosition }}</span>
               </div>
               <div class="standings-user--info">
                 {{ user.name }}
@@ -174,6 +184,21 @@ watch(selectedStage, (newValue) => {
               <div>{{ user.totalPoints }} ptn</div>
             </li>
           </ul>
+
+          <div v-if="showPagination" class="pagination">
+            <div class="pagination-controls">
+              <button class="btn" :disabled="page === 1" @click="page--">
+                <Icon name="tabler:chevron-left" />
+              </button>
+              <span>Pagina {{ page }} van {{ totalPages }}</span>
+              <button class="btn" :disabled="page === totalPages" @click="page++">
+                <Icon name="tabler:chevron-right" />
+              </button>
+            </div>
+            <button v-if="userPage && userPage !== page" class="btn" @click="goToUser">
+              Mijn positie
+            </button>
+          </div>
         </section>
         <p v-if="!raceResult.length && !resultPerStage.length">
           Er is nog geen uitslag bekend. Kom later terug.

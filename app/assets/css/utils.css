@@ -631,7 +631,7 @@ span.points {
     .standings-user--info__position {
       color: var(--clr-text);
     }
-    &:nth-child(1) {
+    &.winner {
       background: hsl(51 100% 40% / 30%);
 
       .standings-user--info__position {
@@ -641,7 +641,7 @@ span.points {
         font-weight: 800;
       }
     }
-    &:nth-child(2) {
+    &.second {
       background: hsl(0 0% 75% / 30%);
 
       .standings-user--info__position {
@@ -651,7 +651,7 @@ span.points {
         font-weight: 800;
       }
     }
-    &:nth-child(3) {
+    &.third {
       background: hsl(32, 95%, 44%, 0.3);
 
       .standings-user--info__position {
@@ -666,7 +666,6 @@ span.points {
   .standings-user summary {
     gap: 0.5rem;
   }
-
 }
 
 .selection-list {
@@ -712,4 +711,20 @@ span.points {
   .cyclistCard {
     font-weight: initial;
   }
+}
+
+.pagination,
+.pagination-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.pagination {
+  justify-content: space-between;
 }
